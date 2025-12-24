@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { AppEvent, EventType } from "./types";
 
-function id() {
+export function id() {
   return crypto.randomBytes(8).toString("hex");
 }
 
