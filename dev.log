@@ -1,0 +1,97 @@
+
+> mvp@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts --mock
+
+[INFO] 19:01:37 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[7:01:38 PM] mock:system  { msg: 'mock started' }
+[overlay] http://127.0.0.1:5175/overlay/main
+[7:01:39 PM] mock:share agent_one {}
+[7:01:41 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:01:42 PM] mock:like chat_katze { likeDelta: 6 }
+[7:01:44 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:01:46 PM] mock:like agent_one { likeDelta: 2 }
+[7:01:47 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:01:49 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:01:50 PM] mock:gift agent_one { giftName: 'Lion', count: 1 }
+[7:01:52 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:01:53 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:01:55 PM] mock:gift chat_katze { giftName: 'TikTok', count: 2 }
+[7:01:56 PM] mock:like chat_katze { likeDelta: 10 }
+[7:01:58 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:00 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:01 PM] mock:like chat_katze { likeDelta: 7 }
+[7:02:03 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:04 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:06 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:07 PM] mock:gift agent_one { giftName: 'TikTok', count: 1 }
+[7:02:09 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:10 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:12 PM] mock:like agent_one { likeDelta: 5 }
+[7:02:14 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:15 PM] mock:like gift_goblin { likeDelta: 7 }
+[7:02:17 PM] mock:share chat_katze {}
+[7:02:18 PM] mock:follow agent_one {}
+[7:02:20 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:21 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:23 PM] mock:like chat_katze { likeDelta: 7 }
+[7:02:24 PM] mock:share chat_katze {}
+[7:02:26 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 1 }
+[7:02:28 PM] mock:gift agent_one { giftName: 'Lion', count: 1 }
+[7:02:29 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:31 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:32 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:34 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:35 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:37 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:02:38 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:40 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[7:02:42 PM] mock:share chat_katze {}
+[7:02:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:45 PM] mock:like agent_one { likeDelta: 5 }
+[7:02:46 PM] mock:like chat_katze { likeDelta: 10 }
+[7:02:48 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:02:49 PM] mock:gift agent_one { giftName: 'Rose', count: 2 }
+[7:02:51 PM] mock:like chat_katze { likeDelta: 8 }
+[7:02:52 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:02:54 PM] mock:like gift_goblin { likeDelta: 2 }
+[7:02:56 PM] mock:like gift_goblin { likeDelta: 6 }
+[7:02:57 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:02:59 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 3 }
+[7:03:00 PM] mock:follow agent_one {}
+[7:03:02 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:03:03 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 2 }
+[7:03:05 PM] mock:like chat_katze { likeDelta: 3 }
+[7:03:06 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 1 }
+[7:03:08 PM] mock:like agent_one { likeDelta: 10 }
+[7:03:10 PM] mock:like chat_katze { likeDelta: 6 }
+[7:03:11 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:13 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:14 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:16 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:17 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:19 PM] mock:like gift_goblin { likeDelta: 4 }
+[7:03:20 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:03:22 PM] mock:like chat_katze { likeDelta: 3 }
+[7:03:24 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:03:25 PM] mock:like gift_goblin { likeDelta: 8 }
+[7:03:27 PM] mock:like agent_one { likeDelta: 7 }
+[7:03:28 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:30 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:31 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:33 PM] mock:gift agent_one { giftName: 'Lion', count: 3 }
+[7:03:34 PM] mock:like gift_goblin { likeDelta: 2 }
+[7:03:36 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:03:38 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:39 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:41 PM] mock:like chat_katze { likeDelta: 2 }
+[7:03:42 PM] mock:share chat_katze {}
+[7:03:44 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:45 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:47 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:48 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[7:03:50 PM] mock:like gift_goblin { likeDelta: 8 }
+[7:03:52 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[7:03:53 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[7:03:55 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[7:03:56 PM] mock:like chat_katze { likeDelta: 6 }
+[7:03:58 PM] mock:gift agent_one { giftName: 'Galaxy', count: 2 }
