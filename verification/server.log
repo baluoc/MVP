@@ -1,0 +1,70 @@
+
+> mvp@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts --mock --port 5178
+
+[INFO] 22:46:21 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[Stats] Loaded 1 users.
+[overlay] http://127.0.0.1:5178/overlay/main
+[Mock] Started. Generating events...
+[10:46:21 PM] mock:system  { msg: 'mock started' }
+[10:46:23 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[10:46:25 PM] mock:follow chat_katze {}
+[10:46:27 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[10:46:28 PM] mock:gift new_fan_99 {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[10:46:30 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[10:46:31 PM] mock:share new_fan_99 {}
+[10:46:33 PM] mock:like gift_goblin { likeDelta: 2 }
+[10:46:35 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[10:46:36 PM] mock:follow agent_one {}
+[10:46:38 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[10:46:39 PM] mock:share agent_one {}
+[10:46:41 PM] mock:share agent_one {}
+[10:46:43 PM] mock:like gift_goblin { likeDelta: 4 }
+[10:46:44 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[10:46:46 PM] mock:share chat_katze {}
+[10:46:47 PM] mock:gift agent_one {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[10:46:49 PM] mock:like new_fan_99 { likeDelta: 4 }
+[10:46:50 PM] mock:gift agent_one {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[10:46:52 PM] mock:follow chat_katze {}
+[10:46:54 PM] mock:like agent_one { likeDelta: 8 }
+[10:46:55 PM] mock:like chat_katze { likeDelta: 4 }
+[10:46:57 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[10:46:58 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[10:47:00 PM] mock:follow chat_katze {}
+[10:47:02 PM] mock:like agent_one { likeDelta: 9 }
+[10:47:03 PM] mock:gift chat_katze {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[10:47:05 PM] mock:gift agent_one {
+  giftName: 'Galaxy',
+  count: 2,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[10:47:06 PM] mock:like new_fan_99 { likeDelta: 6 }
+[10:47:08 PM] mock:like gift_goblin { likeDelta: 7 }
+[10:47:10 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[10:47:11 PM] mock:like chat_katze { likeDelta: 7 }

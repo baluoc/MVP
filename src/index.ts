@@ -90,7 +90,13 @@ async function main() {
     ringBuffer.push(ev);
     // overlay
     const cmd = eventToOverlay(ev);
-    if (cmd) overlay.broadcast(cmd);
+    if (cmd) {
+      if (Array.isArray(cmd)) {
+        cmd.forEach(c => overlay.broadcast(c));
+      } else {
+        overlay.broadcast(cmd);
+      }
+    }
   });
 
   // NEU: Alle 2 Sekunden Dashboard-Daten senden

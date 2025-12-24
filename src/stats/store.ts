@@ -64,6 +64,7 @@ export class UserStatsStore {
         subscribeCount: 0,
         memberCount: 0,
         diamondCount: 0,
+        points: 0,
       };
       this.map.set(key, row);
     }
@@ -100,6 +101,23 @@ export class UserStatsStore {
       default:
         break;
     }
+
+    // Recalculate score after updates
+    row.points = this.calculateScore(row);
+  }
+
+  private calculateScore(stats: UserStats): number {
+    // Policy:
+    // Like: 1
+    // Chat: 5
+    // Follow: 50
+    // Gift: 10 per diamond
+    return (
+      (stats.likeCount * 1) +
+      (stats.chatCount * 5) +
+      (stats.followCount * 50) +
+      (stats.diamondCount * 10)
+    );
   }
 
   private handleGift(row: UserStats, ev: AppEvent) {
@@ -142,7 +160,7 @@ export class UserStatsStore {
 
   getLeaderboard() {
     return Array.from(this.map.values())
-      .sort((a, b) => b.diamondCount - a.diamondCount)
+      .sort((a, b) => b.points - a.points)
       .slice(0, 5);
   }
 
@@ -174,6 +192,14 @@ export class UserStatsStore {
       const raw = fs.readFileSync(DB_FILE, "utf-8");
       const entries = JSON.parse(raw);
       this.map = new Map(entries);
+
+      // Retroactive score calculation
+      for (const user of this.map.values()) {
+        if (user.points === undefined) {
+          user.points = this.calculateScore(user);
+        }
+      }
+
       console.log(`[Stats] Loaded ${this.map.size} users.`);
     } catch (e) {
       console.error("[Stats] Load failed:", e);
