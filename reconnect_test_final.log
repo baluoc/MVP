@@ -1,0 +1,11 @@
+
+> mvp@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts --user non_existent_user_xyz123
+
+[INFO] 20:09:36 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[Stats] Loaded 3 users.
+[overlay] http://127.0.0.1:5175/overlay/main
+[8:09:38 PM] tiktok:error  { msg: 'connect failed', error: '' }
+[TikTok] Connection failed. Retrying in 10s...
+[8:09:49 PM] tiktok:error  { msg: 'connect failed', error: '' }
+[TikTok] Connection failed. Retrying in 10s...

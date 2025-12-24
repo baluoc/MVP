@@ -1,4 +1,8 @@
+import fs from "fs";
+import path from "path";
 import { AppEvent, UserStats } from "../core/types";
+
+const DB_FILE = path.resolve("data", "stats.json");
 
 function userKey(ev: AppEvent): string | null {
   const u = ev.user;
@@ -19,7 +23,13 @@ export class UserStatsStore {
   private giftDedupeMap = new Map<string, number>(); // key -> expiresAt
 
   constructor() {
-    // Periodic cleanup every 10 seconds
+    // Load data on startup
+    this.load();
+
+    // Autosave every 30 seconds
+    setInterval(() => this.save(), 30000);
+
+    // Periodic cleanup for dedupe map every 10 seconds
     setInterval(() => this.cleanupDedupe(), 10000);
   }
 
@@ -134,5 +144,30 @@ export class UserStatsStore {
   reset() {
     this.map.clear();
     this.giftDedupeMap.clear();
+    this.save();
+  }
+
+  private save() {
+    try {
+      if (!fs.existsSync("data")) {
+        fs.mkdirSync("data");
+      }
+      const data = JSON.stringify(Array.from(this.map.entries()), null, 2);
+      fs.writeFileSync(DB_FILE, data);
+    } catch (e) {
+      console.error("[Stats] Save failed:", e);
+    }
+  }
+
+  private load() {
+    try {
+      if (!fs.existsSync(DB_FILE)) return;
+      const raw = fs.readFileSync(DB_FILE, "utf-8");
+      const entries = JSON.parse(raw);
+      this.map = new Map(entries);
+      console.log(`[Stats] Loaded ${this.map.size} users.`);
+    } catch (e) {
+      console.error("[Stats] Load failed:", e);
+    }
   }
 }
