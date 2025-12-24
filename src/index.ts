@@ -1,4 +1,5 @@
 import path from "path";
+import express from "express";
 import { EventBus } from "./core/bus";
 import { createOverlayServer } from "./overlay/server";
 import { UserStatsStore } from "./stats/store";
@@ -47,6 +48,9 @@ async function main() {
 
   // 2. Overlay Server
   const overlay = createOverlayServer(port);
+
+  // NEU: Statische Dateien (Dashboard) ausliefern
+  overlay.app.use(express.static("public"));
 
   // 3. Bus, Stats, Ringbuffer
   const bus = new EventBus();
