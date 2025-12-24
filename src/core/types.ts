@@ -16,7 +16,7 @@ export type AppUser = {
   userId?: string;
   uniqueId?: string; // @handle
   nickname?: string; // display name
-  avatarUrl?: string;
+  profilePictureUrl?: string; // NEW: Standardized field
 };
 
 export type AppEvent = {
@@ -29,14 +29,15 @@ export type AppEvent = {
   raw?: any;
 };
 
+// Updated OverlayCommand to carry images
 export type OverlayCommand =
-  | { kind: "toast"; title: string; text: string; ms?: number }
-  | { kind: "gift"; from: string; giftName: string; count: number; ms?: number }
+  | { kind: "toast"; title: string; text: string; userImage?: string; ms?: number } // Added userImage
+  | { kind: "gift"; from: string; userImage?: string; giftName: string; giftIconUrl?: string; count: number; ms?: number } // Added images
   | { kind: "dashboard-update"; stats: any; leaderboard: any }
   | { kind: "speak"; text: string };
 
 export type UserStats = {
-  key: string; // stable key in our store (prefer userId else uniqueId)
+  key: string;
   userId?: string;
   uniqueId?: string;
   nickname?: string;
@@ -52,7 +53,6 @@ export type UserStats = {
   memberCount: number;
   diamondCount: number;
 
-  // optional: points (computed by policy later)
   points?: number;
 };
 
