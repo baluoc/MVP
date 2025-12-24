@@ -367,8 +367,8 @@
                                  <div id="stat-chats" style="font-size: 20px; font-weight: 700; color: white;">0</div>
                              </div>
                              <div>
-                                 <div style="font-size: 12px; color: var(--text-muted);">Views</div>
-                                 <div id="stat-views" style="font-size: 20px; font-weight: 700; color: white;">0</div>
+                                 <div id="lbl-mvp" style="font-size: 12px; color: var(--text-muted);">Views</div>
+                                 <div id="stat-mvp" style="font-size: 16px; font-weight: 700; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100px;">0</div>
                              </div>
                          </div>
                      </div>
@@ -404,6 +404,33 @@
         let likeCount = 0;
         let chatCount = 0;
 
+        // TTS Queue
+        const speakQueue = [];
+        let isSpeaking = false;
+
+        function processQueue() {
+            if (isSpeaking || speakQueue.length === 0) return;
+            const text = speakQueue.shift();
+            isSpeaking = true;
+
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'de-DE';
+            ut.onend = () => {
+                isSpeaking = false;
+                setTimeout(processQueue, 500);
+            };
+            ut.onerror = () => {
+                isSpeaking = false;
+                processQueue();
+            };
+            window.speechSynthesis.speak(ut);
+        }
+
+        function speak(text) {
+            speakQueue.push(text);
+            processQueue();
+        }
+
         function connect() {
             // Using WebSocket as server supports it (based on memory and previous files)
             const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/overlay/ws";
@@ -418,9 +445,33 @@
                 const cmd = JSON.parse(event.data);
 
                 if (cmd.kind === 'dashboard-update') {
-                    if (cmd.stats && cmd.stats.viewers !== undefined) {
-                        document.getElementById('stat-views').innerText = cmd.stats.viewers;
+                    // Update MVP if available (Leaderboard sorted by points)
+                    const mvpBox = document.getElementById('stat-mvp');
+                    const mvpLabel = document.getElementById('lbl-mvp');
+
+                    if (cmd.leaderboard && cmd.leaderboard.length > 0) {
+                        const mvp = cmd.leaderboard[0];
+                        mvpLabel.innerText = "MVP";
+                        // Format: Name (Points)
+                        // Truncate name logic handled by CSS text-overflow
+                        const points = mvp.points || 0;
+                        const name = mvp.nickname || mvp.uniqueId || "User";
+                        // Short number format for points? (e.g. 12k). Simple impl for now:
+                        mvpBox.innerText = `${name} (${points})`;
+                        mvpBox.title = `${name} (${points})`; // Tooltip for full info
+                    } else {
+                        // Fallback to Views if no MVP or empty leaderboard?
+                        // Prompt asked to REPLACE Views with MVP.
+                        // If no data, show placeholder or keep views?
+                        // "Zeige dort statt 'Views' nun den Top-User"
+                        if (cmd.stats && cmd.stats.viewers !== undefined) {
+                             mvpLabel.innerText = "Views";
+                             mvpBox.innerText = cmd.stats.viewers;
+                        }
                     }
+                }
+                else if (cmd.kind === 'speak') {
+                    speak(cmd.text);
                 }
                 else if (cmd.kind === 'toast') {
                     // Update connected user if present

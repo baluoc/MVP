@@ -53,7 +53,7 @@ export type UserStats = {
   memberCount: number;
   diamondCount: number;
 
-  points?: number;
+  points: number; // Changed from optional to required for logic consistency
 };
 
 export type ScoringPolicy = Partial<
