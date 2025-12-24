@@ -8,8 +8,27 @@ function userKey(ev: AppEvent): string | null {
   return null;
 }
 
+function extractGiftId(raw: any): string | undefined {
+  if (!raw) return undefined;
+  // Common paths for giftId
+  return raw.giftId || raw.gift_id || raw.giftDetails?.giftId || raw.gift?.gift_id || raw.gift?.id;
+}
+
 export class UserStatsStore {
   private map = new Map<string, UserStats>();
+  private giftDedupeMap = new Map<string, number>(); // key -> expiresAt
+
+  constructor() {
+    // Periodic cleanup every 10 seconds
+    setInterval(() => this.cleanupDedupe(), 10000);
+  }
+
+  private cleanupDedupe() {
+    const now = Date.now();
+    for (const [k, expires] of this.giftDedupeMap) {
+      if (expires < now) this.giftDedupeMap.delete(k);
+    }
+  }
 
   ingest(ev: AppEvent) {
     const key = userKey(ev);
@@ -53,7 +72,7 @@ export class UserStatsStore {
         row.likeCount += Number(ev.payload.likeDelta ?? 1);
         break;
       case "gift":
-        row.giftCount += Number(ev.payload.count ?? 1);
+        this.handleGift(row, ev);
         break;
       case "share":
         row.shareCount += 1;
@@ -72,11 +91,48 @@ export class UserStatsStore {
     }
   }
 
+  private handleGift(row: UserStats, ev: AppEvent) {
+    const raw = ev.raw || {};
+    const giftName = ev.payload.giftName || "unknown";
+    const repeatCount = Number(ev.payload.count ?? 1);
+
+    // Strategy A: Check for repeatEnd / streaking signals
+    const hasRepeatEnd = raw.repeatEnd === true || raw.repeat_end === true;
+    const hasStreaking = raw.streaking !== undefined || raw.is_streaking !== undefined;
+
+    const isEnd = hasRepeatEnd || (hasStreaking && (raw.streaking === false || raw.is_streaking === false));
+
+    // If we have explicit signals about streaking/repeat
+    if (hasRepeatEnd || hasStreaking) {
+      if (isEnd) {
+        row.giftCount += repeatCount;
+      }
+      return;
+    }
+
+    // Strategy B: Fallback (no repeat info)
+    const giftId = extractGiftId(raw) || giftName;
+    // dedupeKey = userKey + giftId + floor(ts/1000)
+    const bucket = Math.floor(ev.ts / 1000);
+    const dedupeKey = `${row.key}:${giftId}:${bucket}`;
+
+    if (this.giftDedupeMap.has(dedupeKey)) {
+      return; // Already counted in this second
+    }
+
+    // Mark seen (TTL 10s)
+    this.giftDedupeMap.set(dedupeKey, Date.now() + 10000);
+
+    // Count it
+    row.giftCount += repeatCount;
+  }
+
   getAll(): UserStats[] {
     return Array.from(this.map.values());
   }
 
   reset() {
     this.map.clear();
+    this.giftDedupeMap.clear();
   }
 }
