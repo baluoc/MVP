@@ -3,8 +3,16 @@ import http from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { OverlayCommand } from "../core/types";
 
-export function createOverlayServer(port: number) {
+export interface OverlayServer {
+  app: express.Express;
+  server: http.Server;
+  broadcast: (cmd: OverlayCommand) => void;
+}
+
+export function createOverlayServer(port: number): OverlayServer {
   const app = express();
+  app.use(express.json()); // Enable JSON body parsing
+
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: "/overlay/ws" });
 

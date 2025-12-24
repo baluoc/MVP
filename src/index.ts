@@ -1,10 +1,15 @@
+import path from "path";
 import { EventBus } from "./core/bus";
-import { AppEvent, OverlayCommand } from "./core/types";
 import { createOverlayServer } from "./overlay/server";
 import { UserStatsStore } from "./stats/store";
 import { createStatsRouter } from "./api/stats";
 import { startMock } from "./connectors/mock";
 import { startTikTok } from "./connectors/tiktok";
+import { eventToOverlay } from "./core/eventToOverlay";
+import { AddonHost } from "./addons/host";
+import { ConfigStore } from "./core/configStore";
+import { RingBuffer } from "./core/ringbuffer";
+import { createApiRouter } from "./api/routes";
 
 function getArg(name: string) {
   const i = process.argv.indexOf(name);
@@ -14,30 +19,24 @@ function hasArg(name: string) {
   return process.argv.includes(name);
 }
 
-function eventToOverlay(ev: AppEvent): OverlayCommand | null {
-  const userLabel = ev.user?.nickname ?? ev.user?.uniqueId ?? "User";
-  switch (ev.type) {
-    case "chat":
-      return { kind: "toast", title: `Chat ${userLabel}`, text: String(ev.payload.text ?? ""), ms: 3500 };
-    case "gift":
-      return { kind: "gift", from: userLabel, giftName: String(ev.payload.giftName ?? "Gift"), count: Number(ev.payload.count ?? 1), ms: 4000 };
-    case "like":
-      return { kind: "toast", title: "Like", text: `${userLabel} +${ev.payload.likeDelta ?? 1}`, ms: 1500 };
-    case "share":
-      return { kind: "toast", title: "Share", text: `${userLabel} shared`, ms: 2500 };
-    case "follow":
-      return { kind: "toast", title: "Follow", text: `${userLabel} followed`, ms: 2500 };
-    case "error":
-      return { kind: "toast", title: "Fehler", text: String(ev.payload.error ?? ev.payload.msg ?? "unknown"), ms: 4000 };
-    default:
-      return null;
-  }
-}
-
 async function main() {
-  const port = Number(getArg("--port") ?? "5175");
+  // 1. Args & Config
+  const portArg = getArg("--port");
   const mock = hasArg("--mock");
   const user = getArg("--user") || getArg("-u");
+
+  const configStore = new ConfigStore();
+  const coreConfig = configStore.getCore();
+
+  // Override port if arg provided, else config, else default
+  const port = portArg ? Number(portArg) : (coreConfig.port || 5175);
+
+  // Update config if arg is different? Maybe strictly transient arg.
+  // Let's stick to using port for server.
+  if (coreConfig.port !== port) {
+      // optional: update config with new default?
+      // configStore.setCore({ port });
+  }
 
   if (!mock && !user) {
     console.log("Usage:");
@@ -46,28 +45,53 @@ async function main() {
     process.exit(1);
   }
 
-  const bus = new EventBus();
-  const stats = new UserStatsStore();
+  // 2. Overlay Server
   const overlay = createOverlayServer(port);
 
-  // attach stats api
+  // 3. Bus, Stats, Ringbuffer
+  const bus = new EventBus();
+  const stats = new UserStatsStore();
+  const ringBuffer = new RingBuffer(500);
+
+  // 4. API Routes
+  // Legacy stats routes
   overlay.app.use("/api", createStatsRouter(stats));
 
+  // New Core APIs
+  const connectorState = () => ({
+      mode: mock ? "mock" : "tiktok",
+      user: user || "mock",
+      connected: true // simplistic for now, ideally track connection status
+  });
+
+  const addonsDir = path.join(__dirname, "../addons");
+  const addonHost = new AddonHost(bus, overlay, stats, configStore, addonsDir);
+
+  overlay.app.use("/api", createApiRouter(addonHost, ringBuffer, configStore, connectorState));
+
+  // 5. Main bus subscription
   bus.subscribe((ev) => {
     // log
     console.log(`[${new Date(ev.ts).toLocaleTimeString()}] ${ev.source}:${ev.type} ${ev.user?.uniqueId ?? ""}`, ev.payload);
     // stats
     stats.ingest(ev);
+    // ringbuffer
+    ringBuffer.push(ev);
     // overlay
     const cmd = eventToOverlay(ev);
     if (cmd) overlay.broadcast(cmd);
   });
 
+  // 6. Start Add-ons
+  await addonHost.loadAll();
+
+  // 7. Start Connector
   if (mock) {
     startMock(bus);
-    return;
+  } else {
+    // For real connector, we might want to track connection state in a variable for API
+    await startTikTok(user!, bus);
   }
-  await startTikTok(user!, bus);
 }
 
 main().catch((e) => {

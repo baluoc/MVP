@@ -1,0 +1,16 @@
+{
+  "id": "demo-gift-toast",
+  "name": "Demo Gift Toast",
+  "version": "1.1.0",
+  "main": "index.ts",
+  "description": "Shows a custom toast for gifts, configurable.",
+  "author": "Jules",
+  "permissions": ["overlay"],
+  "configSchema": {
+    "type": "object",
+    "properties": {
+      "minCount": { "type": "number", "default": 1 },
+      "prefix": { "type": "string", "default": "Demo Addon" }
+    }
+  }
+}
