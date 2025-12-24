@@ -63,6 +63,7 @@ export class UserStatsStore {
         followCount: 0,
         subscribeCount: 0,
         memberCount: 0,
+        diamondCount: 0,
       };
       this.map.set(key, row);
     }
@@ -135,6 +136,14 @@ export class UserStatsStore {
 
     // Count it
     row.giftCount += repeatCount;
+    // Estimate diamonds (fallback to 1 if unknown)
+    row.diamondCount += Number(ev.payload.diamondCost ?? 1) * repeatCount;
+  }
+
+  getLeaderboard() {
+    return Array.from(this.map.values())
+      .sort((a, b) => b.diamondCount - a.diamondCount)
+      .slice(0, 5);
   }
 
   getAll(): UserStats[] {

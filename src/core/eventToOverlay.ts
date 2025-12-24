@@ -13,6 +13,12 @@ export function eventToOverlay(ev: AppEvent): OverlayCommand | null {
       return { kind: "toast", title: "Share", text: `${userLabel} shared`, ms: 2500 };
     case "follow":
       return { kind: "toast", title: "Follow", text: `${userLabel} followed`, ms: 2500 };
+    case "subscribe":
+      return { kind: "toast", title: "⭐ NEUER ABO", text: `${userLabel} hat abonniert!`, ms: 5000 };
+    case "question":
+      return { kind: "toast", title: `❓ FRAGE von ${userLabel}`, text: String(ev.payload.text ?? ""), ms: 6000 };
+    case "tts":
+      return { kind: "speak", text: String(ev.payload.text ?? "") };
     case "error":
       return { kind: "toast", title: "Fehler", text: String(ev.payload.error ?? ev.payload.msg ?? "unknown"), ms: 4000 };
     default:

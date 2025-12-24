@@ -6,7 +6,9 @@ export type EventType =
   | "follow"
   | "subscribe"
   | "member"
-  | "roomStats"
+  | "question"
+  | "roomUser"
+  | "tts"
   | "system"
   | "error";
 
@@ -20,7 +22,7 @@ export type AppUser = {
 export type AppEvent = {
   id: string;
   ts: number;
-  source: "tiktok" | "mock";
+  source: "tiktok" | "mock" | "system";
   type: EventType;
   user?: AppUser;
   payload: Record<string, any>;
@@ -29,7 +31,9 @@ export type AppEvent = {
 
 export type OverlayCommand =
   | { kind: "toast"; title: string; text: string; ms?: number }
-  | { kind: "gift"; from: string; giftName: string; count: number; ms?: number };
+  | { kind: "gift"; from: string; giftName: string; count: number; ms?: number }
+  | { kind: "dashboard-update"; stats: any; leaderboard: any }
+  | { kind: "speak"; text: string };
 
 export type UserStats = {
   key: string; // stable key in our store (prefer userId else uniqueId)
@@ -46,6 +50,7 @@ export type UserStats = {
   followCount: number;
   subscribeCount: number;
   memberCount: number;
+  diamondCount: number;
 
   // optional: points (computed by policy later)
   points?: number;

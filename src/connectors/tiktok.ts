@@ -1,4 +1,4 @@
-import { EventBus } from "../core/eventBus";
+import { EventBus } from "../core/bus";
 import { AppEvent } from "../core/types";
 import { id } from "../core/normalize";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -37,7 +37,7 @@ export async function startTikTok(uniqueId: string, bus: EventBus) {
           source: "tiktok",
           type: "gift",
           user: { userId: String(data.userId ?? ""), uniqueId: data.uniqueId, nickname: data.nickname },
-          payload: { giftName: data.giftName, count: data.repeatCount ?? 1 },
+          payload: { giftName: data.giftName, count: data.repeatCount ?? 1, diamondCost: data.diamondCount },
           raw: data,
         };
         bus.publish(ev);
@@ -77,6 +77,44 @@ export async function startTikTok(uniqueId: string, bus: EventBus) {
           type: "follow",
           user: { userId: String(data.userId ?? ""), uniqueId: data.uniqueId, nickname: data.nickname },
           payload: {},
+          raw: data,
+        };
+        bus.publish(ev);
+      });
+
+      conn.on("subscribe", (data: any) => {
+        const ev: AppEvent = {
+          id: id(),
+          ts: Date.now(),
+          source: "tiktok",
+          type: "subscribe",
+          user: { userId: String(data.userId ?? ""), uniqueId: data.uniqueId, nickname: data.nickname },
+          payload: {},
+          raw: data,
+        };
+        bus.publish(ev);
+      });
+
+      conn.on("questionNew", (data: any) => {
+        const ev: AppEvent = {
+          id: id(),
+          ts: Date.now(),
+          source: "tiktok",
+          type: "question",
+          user: { userId: String(data.userId ?? ""), uniqueId: data.uniqueId, nickname: data.nickname },
+          payload: { text: data.questionText },
+          raw: data,
+        };
+        bus.publish(ev);
+      });
+
+      conn.on("roomUser", (data: any) => {
+        const ev: AppEvent = {
+          id: id(),
+          ts: Date.now(),
+          source: "tiktok",
+          type: "roomUser",
+          payload: { viewerCount: data.viewerCount },
           raw: data,
         };
         bus.publish(ev);
