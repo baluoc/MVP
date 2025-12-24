@@ -515,3 +515,526 @@
 [8:36:40 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
 [8:36:42 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
 [8:36:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:36:44 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:36:46 PM] mock:share gift_goblin {}
+[8:36:47 PM] mock:follow gift_goblin {}
+[8:36:49 PM] mock:like agent_one { likeDelta: 2 }
+[8:36:50 PM] mock:like agent_one { likeDelta: 4 }
+[8:36:51 PM] mock:share agent_one {}
+[8:36:53 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[8:36:54 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:36:56 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:36:57 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:36:58 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:00 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:01 PM] mock:follow chat_katze {}
+[8:37:03 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:37:04 PM] mock:like gift_goblin { likeDelta: 5 }
+[8:37:05 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:07 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:09 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:10 PM] mock:like chat_katze { likeDelta: 7 }
+[8:37:11 PM] mock:like gift_goblin { likeDelta: 8 }
+[8:37:13 PM] mock:like chat_katze { likeDelta: 6 }
+[8:37:14 PM] mock:like agent_one { likeDelta: 6 }
+[8:37:16 PM] mock:share gift_goblin {}
+[8:37:17 PM] mock:gift gift_goblin { giftName: 'Rose', count: 2 }
+[8:37:18 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:37:20 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:21 PM] mock:share agent_one {}
+[8:37:23 PM] mock:like chat_katze { likeDelta: 2 }
+[8:37:24 PM] mock:gift chat_katze { giftName: 'Rose', count: 3 }
+[8:37:25 PM] mock:follow gift_goblin {}
+[8:37:27 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:28 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 1 }
+[8:37:30 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:31 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:37:32 PM] mock:like agent_one { likeDelta: 6 }
+[8:37:34 PM] mock:like agent_one { likeDelta: 5 }
+[8:37:35 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:37 PM] mock:share gift_goblin {}
+[8:37:38 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:39 PM] mock:gift chat_katze { giftName: 'Rose', count: 1 }
+[8:37:41 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:42 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:37:44 PM] mock:like chat_katze { likeDelta: 5 }
+[8:37:45 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:46 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:48 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:37:49 PM] mock:like gift_goblin { likeDelta: 8 }
+[8:37:51 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:37:52 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 2 }
+[8:37:53 PM] mock:gift agent_one { giftName: 'Lion', count: 1 }
+[8:37:55 PM] mock:like chat_katze { likeDelta: 5 }
+[8:37:56 PM] mock:like chat_katze { likeDelta: 1 }
+[8:37:58 PM] mock:gift agent_one { giftName: 'Rose', count: 1 }
+[8:37:59 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:00 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 1 }
+[8:38:02 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:38:03 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:38:05 PM] mock:share gift_goblin {}
+[8:38:06 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:38:07 PM] mock:gift agent_one { giftName: 'Galaxy', count: 2 }
+[8:38:09 PM] mock:like chat_katze { likeDelta: 9 }
+[8:38:10 PM] mock:gift agent_one { giftName: 'Galaxy', count: 2 }
+[8:38:12 PM] mock:follow agent_one {}
+[8:38:13 PM] mock:gift chat_katze { giftName: 'TikTok', count: 3 }
+[8:38:14 PM] mock:gift chat_katze { giftName: 'TikTok', count: 2 }
+[8:38:16 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:17 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:38:19 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:20 PM] mock:like chat_katze { likeDelta: 7 }
+[8:38:21 PM] mock:like chat_katze { likeDelta: 10 }
+[8:38:23 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:38:24 PM] mock:gift gift_goblin { giftName: 'Rose', count: 3 }
+[8:38:26 PM] mock:like gift_goblin { likeDelta: 6 }
+[8:38:27 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:28 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:38:30 PM] mock:like agent_one { likeDelta: 8 }
+[8:38:31 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:33 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:38:34 PM] mock:like gift_goblin { likeDelta: 2 }
+[8:38:35 PM] mock:share agent_one {}
+[8:38:37 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:38:38 PM] mock:like agent_one { likeDelta: 10 }
+[8:38:40 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:38:41 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:42 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 1 }
+[8:38:44 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:38:45 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:47 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:38:48 PM] mock:like gift_goblin { likeDelta: 3 }
+[8:38:49 PM] mock:share chat_katze {}
+[8:38:51 PM] mock:like chat_katze { likeDelta: 3 }
+[8:38:52 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:38:54 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:55 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:38:57 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:38:58 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:38:59 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:01 PM] mock:like gift_goblin { likeDelta: 3 }
+[8:39:02 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:04 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:05 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:39:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:08 PM] mock:like agent_one { likeDelta: 10 }
+[8:39:09 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:39:11 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:12 PM] mock:like agent_one { likeDelta: 5 }
+[8:39:13 PM] mock:share chat_katze {}
+[8:39:15 PM] mock:gift chat_katze { giftName: 'Rose', count: 2 }
+[8:39:16 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:18 PM] mock:like chat_katze { likeDelta: 2 }
+[8:39:19 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:39:20 PM] mock:gift agent_one { giftName: 'Rose', count: 2 }
+[8:39:22 PM] mock:like chat_katze { likeDelta: 10 }
+[8:39:23 PM] mock:like agent_one { likeDelta: 6 }
+[8:39:25 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:39:26 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:27 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:39:29 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:30 PM] mock:like gift_goblin { likeDelta: 7 }
+[8:39:32 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:39:33 PM] mock:like gift_goblin { likeDelta: 5 }
+[8:39:34 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:39:36 PM] mock:like chat_katze { likeDelta: 3 }
+[8:39:37 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:39:39 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:39:40 PM] mock:gift chat_katze { giftName: 'Rose', count: 3 }
+[8:39:41 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:43 PM] mock:gift agent_one { giftName: 'Rose', count: 1 }
+[8:39:44 PM] mock:gift chat_katze { giftName: 'Rose', count: 2 }
+[8:39:46 PM] mock:like agent_one { likeDelta: 10 }
+[8:39:47 PM] mock:gift gift_goblin { giftName: 'Rose', count: 3 }
+[8:39:48 PM] mock:like chat_katze { likeDelta: 4 }
+[8:39:50 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:39:51 PM] mock:gift gift_goblin { giftName: 'Rose', count: 3 }
+[8:39:53 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:39:54 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:39:55 PM] mock:like agent_one { likeDelta: 1 }
+[8:39:57 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:39:58 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:40:00 PM] mock:gift chat_katze { giftName: 'TikTok', count: 1 }
+[8:40:01 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:40:02 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:40:04 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:40:05 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 1 }
+[8:40:07 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 3 }
+[8:40:08 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:40:09 PM] mock:share chat_katze {}
+[8:40:11 PM] mock:follow gift_goblin {}
+[8:40:12 PM] mock:like agent_one { likeDelta: 9 }
+[8:40:14 PM] mock:gift chat_katze { giftName: 'Lion', count: 1 }
+[8:40:15 PM] mock:follow chat_katze {}
+[8:40:16 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:40:18 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:19 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 3 }
+[8:40:21 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:22 PM] mock:like agent_one { likeDelta: 1 }
+[8:40:23 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:40:25 PM] mock:like gift_goblin { likeDelta: 3 }
+[8:40:26 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:40:28 PM] mock:share gift_goblin {}
+[8:40:29 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:40:30 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:40:32 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:33 PM] mock:gift chat_katze { giftName: 'TikTok', count: 3 }
+[8:40:35 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:40:36 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:37 PM] mock:like chat_katze { likeDelta: 2 }
+[8:40:39 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:40 PM] mock:gift agent_one { giftName: 'TikTok', count: 2 }
+[8:40:42 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:40:43 PM] mock:like chat_katze { likeDelta: 8 }
+[8:40:45 PM] mock:share chat_katze {}
+[8:40:46 PM] mock:share agent_one {}
+[8:40:47 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[8:40:49 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:40:50 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:52 PM] mock:share gift_goblin {}
+[8:40:53 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:40:54 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:40:56 PM] mock:like gift_goblin { likeDelta: 5 }
+[8:40:57 PM] mock:gift gift_goblin { giftName: 'Lion', count: 3 }
+[8:40:59 PM] mock:gift agent_one { giftName: 'Lion', count: 3 }
+[8:41:00 PM] mock:follow chat_katze {}
+[8:41:01 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:41:03 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:41:04 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:41:06 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:07 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:08 PM] mock:like chat_katze { likeDelta: 8 }
+[8:41:10 PM] mock:gift gift_goblin { giftName: 'Rose', count: 1 }
+[8:41:11 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:41:13 PM] mock:follow chat_katze {}
+[8:41:14 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 3 }
+[8:41:15 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:41:17 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:41:18 PM] mock:like chat_katze { likeDelta: 7 }
+[8:41:20 PM] mock:like gift_goblin { likeDelta: 4 }
+[8:41:21 PM] mock:like chat_katze { likeDelta: 5 }
+[8:41:22 PM] mock:share chat_katze {}
+[8:41:24 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 2 }
+[8:41:25 PM] mock:share gift_goblin {}
+[8:41:27 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:41:28 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:41:29 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:31 PM] mock:like chat_katze { likeDelta: 7 }
+[8:41:32 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 2 }
+[8:41:34 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:35 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 2 }
+[8:41:36 PM] mock:follow gift_goblin {}
+[8:41:38 PM] mock:follow gift_goblin {}
+[8:41:39 PM] mock:like chat_katze { likeDelta: 7 }
+[8:41:41 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:41:42 PM] mock:share gift_goblin {}
+[8:41:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:45 PM] mock:gift chat_katze { giftName: 'TikTok', count: 1 }
+[8:41:46 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:41:48 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:41:49 PM] mock:like agent_one { likeDelta: 1 }
+[8:41:50 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:41:52 PM] mock:share gift_goblin {}
+[8:41:53 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:41:55 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:56 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:41:57 PM] mock:like agent_one { likeDelta: 10 }
+[8:41:59 PM] mock:like chat_katze { likeDelta: 7 }
+[8:42:00 PM] mock:gift gift_goblin { giftName: 'Lion', count: 2 }
+[8:42:02 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:03 PM] mock:like agent_one { likeDelta: 4 }
+[8:42:04 PM] mock:follow agent_one {}
+[8:42:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:07 PM] mock:like chat_katze { likeDelta: 10 }
+[8:42:09 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:42:10 PM] mock:like gift_goblin { likeDelta: 8 }
+[8:42:11 PM] mock:like agent_one { likeDelta: 8 }
+[8:42:13 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 1 }
+[8:42:14 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:42:16 PM] mock:like chat_katze { likeDelta: 4 }
+[8:42:17 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 2 }
+[8:42:18 PM] mock:like chat_katze { likeDelta: 7 }
+[8:42:20 PM] mock:gift agent_one { giftName: 'Galaxy', count: 1 }
+[8:42:21 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:23 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:24 PM] mock:like chat_katze { likeDelta: 5 }
+[8:42:25 PM] mock:gift gift_goblin { giftName: 'Rose', count: 2 }
+[8:42:27 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:28 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:30 PM] mock:like chat_katze { likeDelta: 10 }
+[8:42:31 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 3 }
+[8:42:33 PM] mock:share agent_one {}
+[8:42:34 PM] mock:like chat_katze { likeDelta: 8 }
+[8:42:35 PM] mock:like chat_katze { likeDelta: 10 }
+[8:42:37 PM] mock:like agent_one { likeDelta: 9 }
+[8:42:38 PM] mock:share agent_one {}
+[8:42:40 PM] mock:gift agent_one { giftName: 'Lion', count: 1 }
+[8:42:41 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:42:42 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:42:44 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:42:45 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:47 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:42:48 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:42:49 PM] mock:like chat_katze { likeDelta: 7 }
+[8:42:51 PM] mock:like chat_katze { likeDelta: 2 }
+[8:42:52 PM] mock:like agent_one { likeDelta: 10 }
+[8:42:54 PM] mock:like agent_one { likeDelta: 1 }
+[8:42:55 PM] mock:like gift_goblin { likeDelta: 7 }
+[8:42:56 PM] mock:like agent_one { likeDelta: 4 }
+[8:42:58 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:42:59 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:01 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:02 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:03 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:05 PM] mock:like gift_goblin { likeDelta: 8 }
+[8:43:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:08 PM] mock:follow agent_one {}
+[8:43:09 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:43:10 PM] mock:share chat_katze {}
+[8:43:12 PM] mock:follow gift_goblin {}
+[8:43:13 PM] mock:gift agent_one { giftName: 'Rose', count: 2 }
+[8:43:15 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:16 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:17 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:19 PM] mock:follow agent_one {}
+[8:43:20 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:43:22 PM] mock:gift chat_katze { giftName: 'Lion', count: 2 }
+[8:43:23 PM] mock:share gift_goblin {}
+[8:43:24 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:26 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:27 PM] mock:follow agent_one {}
+[8:43:29 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:30 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 1 }
+[8:43:31 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:33 PM] mock:follow gift_goblin {}
+[8:43:34 PM] mock:like agent_one { likeDelta: 4 }
+[8:43:36 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:43:37 PM] mock:gift agent_one { giftName: 'Galaxy', count: 1 }
+[8:43:38 PM] mock:follow chat_katze {}
+[8:43:40 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:41 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:44 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:45 PM] mock:gift chat_katze { giftName: 'TikTok', count: 1 }
+[8:43:47 PM] mock:like agent_one { likeDelta: 1 }
+[8:43:48 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:43:50 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:43:51 PM] mock:like agent_one { likeDelta: 4 }
+[8:43:52 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:54 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:43:55 PM] mock:share agent_one {}
+[8:43:57 PM] mock:share chat_katze {}
+[8:43:58 PM] mock:share gift_goblin {}
+[8:43:59 PM] mock:like chat_katze { likeDelta: 7 }
+[8:44:01 PM] mock:like chat_katze { likeDelta: 10 }
+[8:44:02 PM] mock:like gift_goblin { likeDelta: 6 }
+[8:44:04 PM] mock:like chat_katze { likeDelta: 3 }
+[8:44:05 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:06 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:44:08 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:09 PM] mock:share agent_one {}
+[8:44:11 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:12 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 1 }
+[8:44:13 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:15 PM] mock:share chat_katze {}
+[8:44:16 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:18 PM] mock:gift gift_goblin { giftName: 'Lion', count: 3 }
+[8:44:19 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:21 PM] mock:like agent_one { likeDelta: 4 }
+[8:44:22 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:23 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:25 PM] mock:like chat_katze { likeDelta: 5 }
+[8:44:26 PM] mock:like chat_katze { likeDelta: 8 }
+[8:44:28 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:29 PM] mock:gift chat_katze { giftName: 'Rose', count: 2 }
+[8:44:30 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 3 }
+[8:44:32 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:33 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:35 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:36 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:37 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:39 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:40 PM] mock:like agent_one { likeDelta: 3 }
+[8:44:42 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:43 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:44 PM] mock:share chat_katze {}
+[8:44:46 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:44:47 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 3 }
+[8:44:49 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:50 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:44:51 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:53 PM] mock:follow agent_one {}
+[8:44:54 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:44:56 PM] mock:like chat_katze { likeDelta: 2 }
+[8:44:57 PM] mock:share gift_goblin {}
+[8:44:58 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:00 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:01 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 2 }
+[8:45:03 PM] mock:follow agent_one {}
+[8:45:04 PM] mock:like agent_one { likeDelta: 4 }
+[8:45:05 PM] mock:gift chat_katze { giftName: 'Lion', count: 2 }
+[8:45:07 PM] mock:share chat_katze {}
+[8:45:08 PM] mock:like chat_katze { likeDelta: 5 }
+[8:45:10 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:11 PM] mock:like chat_katze { likeDelta: 5 }
+[8:45:12 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:14 PM] mock:gift chat_katze { giftName: 'Lion', count: 1 }
+[8:45:15 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:17 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 1 }
+[8:45:18 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 2 }
+[8:45:19 PM] mock:follow agent_one {}
+[8:45:21 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:22 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:24 PM] mock:like chat_katze { likeDelta: 3 }
+[8:45:25 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:45:26 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:28 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:45:29 PM] mock:like agent_one { likeDelta: 4 }
+[8:45:31 PM] mock:like agent_one { likeDelta: 2 }
+[8:45:32 PM] mock:like gift_goblin { likeDelta: 6 }
+[8:45:33 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:45:35 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:36 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:38 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:39 PM] mock:gift gift_goblin { giftName: 'Lion', count: 1 }
+[8:45:40 PM] mock:gift agent_one { giftName: 'TikTok', count: 1 }
+[8:45:42 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:45:43 PM] mock:like agent_one { likeDelta: 7 }
+[8:45:45 PM] mock:like chat_katze { likeDelta: 9 }
+[8:45:46 PM] mock:like agent_one { likeDelta: 2 }
+[8:45:47 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:45:49 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:50 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:45:52 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:45:53 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:45:54 PM] mock:like gift_goblin { likeDelta: 6 }
+[8:45:56 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:45:57 PM] mock:share gift_goblin {}
+[8:45:59 PM] mock:like chat_katze { likeDelta: 3 }
+[8:46:00 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:46:01 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:46:03 PM] mock:gift chat_katze { giftName: 'Rose', count: 2 }
+[8:46:04 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:46:06 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:46:07 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:09 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:10 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:11 PM] mock:like chat_katze { likeDelta: 8 }
+[8:46:13 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:14 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 2 }
+[8:46:16 PM] mock:like chat_katze { likeDelta: 2 }
+[8:46:17 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:46:18 PM] mock:share agent_one {}
+[8:46:20 PM] mock:like agent_one { likeDelta: 1 }
+[8:46:21 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:23 PM] mock:like agent_one { likeDelta: 10 }
+[8:46:24 PM] mock:like agent_one { likeDelta: 5 }
+[8:46:25 PM] mock:like chat_katze { likeDelta: 8 }
+[8:46:27 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:46:28 PM] mock:follow chat_katze {}
+[8:46:30 PM] mock:gift agent_one { giftName: 'Rose', count: 3 }
+[8:46:31 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:32 PM] mock:share gift_goblin {}
+[8:46:34 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:46:35 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[8:46:37 PM] mock:share gift_goblin {}
+[8:46:38 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:46:39 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:41 PM] mock:gift chat_katze { giftName: 'Lion', count: 1 }
+[8:46:42 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:46:44 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:45 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:46 PM] mock:follow agent_one {}
+[8:46:48 PM] mock:like chat_katze { likeDelta: 5 }
+[8:46:49 PM] mock:share chat_katze {}
+[8:46:51 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:46:52 PM] mock:gift agent_one { giftName: 'Galaxy', count: 2 }
+[8:46:53 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:46:55 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:46:56 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:46:58 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:46:59 PM] mock:like gift_goblin { likeDelta: 3 }
+[8:47:00 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:47:02 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:47:03 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:47:05 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:47:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:47:07 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:09 PM] mock:gift agent_one { giftName: 'Galaxy', count: 1 }
+[8:47:10 PM] mock:follow chat_katze {}
+[8:47:12 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:13 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:47:14 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:47:16 PM] mock:gift agent_one { giftName: 'Galaxy', count: 3 }
+[8:47:17 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:47:19 PM] mock:like agent_one { likeDelta: 2 }
+[8:47:20 PM] mock:gift gift_goblin { giftName: 'Lion', count: 2 }
+[8:47:21 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:23 PM] mock:like gift_goblin { likeDelta: 9 }
+[8:47:24 PM] mock:follow gift_goblin {}
+[8:47:26 PM] mock:like gift_goblin { likeDelta: 2 }
+[8:47:27 PM] mock:like chat_katze { likeDelta: 5 }
+[8:47:28 PM] mock:gift gift_goblin { giftName: 'Lion', count: 3 }
+[8:47:30 PM] mock:like agent_one { likeDelta: 7 }
+[8:47:31 PM] mock:like chat_katze { likeDelta: 9 }
+[8:47:33 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:34 PM] mock:share gift_goblin {}
+[8:47:35 PM] mock:like gift_goblin { likeDelta: 1 }
+[8:47:37 PM] mock:like agent_one { likeDelta: 10 }
+[8:47:38 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:47:40 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:41 PM] mock:follow chat_katze {}
+[8:47:42 PM] mock:like chat_katze { likeDelta: 1 }
+[8:47:44 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:47:45 PM] mock:gift chat_katze { giftName: 'TikTok', count: 2 }
+[8:47:47 PM] mock:follow chat_katze {}
+[8:47:48 PM] mock:gift agent_one { giftName: 'Galaxy', count: 1 }
+[8:47:49 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:51 PM] mock:like gift_goblin { likeDelta: 10 }
+[8:47:52 PM] mock:share agent_one {}
+[8:47:54 PM] mock:follow agent_one {}
+[8:47:55 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:57 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:47:58 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:47:59 PM] mock:gift chat_katze { giftName: 'Galaxy', count: 3 }
+[8:48:01 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:02 PM] mock:gift agent_one { giftName: 'Rose', count: 2 }
+[8:48:04 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:05 PM] mock:like chat_katze { likeDelta: 4 }
+[8:48:06 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:08 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:09 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:11 PM] mock:share chat_katze {}
+[8:48:12 PM] mock:like agent_one { likeDelta: 7 }
+[8:48:13 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:15 PM] mock:like agent_one { likeDelta: 6 }
+[8:48:16 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:18 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:19 PM] mock:gift chat_katze { giftName: 'Rose', count: 3 }
+[8:48:20 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 2 }
+[8:48:22 PM] mock:gift gift_goblin { giftName: 'Galaxy', count: 3 }
+[8:48:23 PM] mock:share agent_one {}
+[8:48:25 PM] mock:share gift_goblin {}
+[8:48:26 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:27 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:29 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:30 PM] mock:gift agent_one { giftName: 'TikTok', count: 3 }
+[8:48:32 PM] mock:follow chat_katze {}
+[8:48:33 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:34 PM] mock:gift chat_katze { giftName: 'Lion', count: 3 }
+[8:48:36 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:37 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:39 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:40 PM] mock:gift chat_katze { giftName: 'Lion', count: 1 }
+[8:48:41 PM] mock:like gift_goblin { likeDelta: 6 }
+[8:48:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:44 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:46 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:47 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:48 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[8:48:50 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:51 PM] mock:like agent_one { likeDelta: 4 }
+[8:48:53 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[8:48:54 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[8:48:55 PM] mock:gift agent_one { giftName: 'Lion', count: 2 }
+[8:48:57 PM] mock:gift gift_goblin { giftName: 'TikTok', count: 1 }
