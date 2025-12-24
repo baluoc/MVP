@@ -1,39 +1,69 @@
-import crypto from "crypto";
-import { AppEvent } from "../core/types";
 import { EventBus } from "../core/bus";
+import { AppEvent } from "../core/types";
+import { id } from "../core/normalize";
 
-function id() {
-  return crypto.randomBytes(8).toString("hex");
-}
-
-const users = [
-  { userId: "101", uniqueId: "agent_one", nickname: "Agent One" },
-  { userId: "102", uniqueId: "chat_katze", nickname: "Chat Katze" },
-  { userId: "103", uniqueId: "gift_goblin", nickname: "Gift Goblin" },
+// Mock Data Definitions
+const MOCK_USERS = [
+  { uniqueId: "agent_one", nickname: "Agent One", avatar: "https://api.dicebear.com/9.x/bottts/svg?seed=agent_one" },
+  { uniqueId: "gift_goblin", nickname: "Gift Goblin", avatar: "https://api.dicebear.com/9.x/adventurer/svg?seed=gift_goblin" },
+  { uniqueId: "chat_katze", nickname: "Chat Katze", avatar: "https://api.dicebear.com/9.x/micah/svg?seed=chat_katze" },
+  { uniqueId: "new_fan_99", nickname: "New Fan", avatar: "https://api.dicebear.com/9.x/avataaars/svg?seed=new_fan" },
 ];
 
-const gifts = ["Rose", "TikTok", "Galaxy", "Lion"];
+const MOCK_GIFTS = [
+  { id: 5655, name: "Rose", cost: 1, icon: "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png" },
+  { id: 5828, name: "Galaxy", cost: 1000, icon: "https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png" }, // Placeholder URL pattern
+  { id: 6104, name: "Lion", cost: 29999, icon: "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png" },
+  { id: 1, name: "TikTok", cost: 1, icon: "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png" }
+];
 
-export function startMock(bus: EventBus) {
+// Helper to get random item
+const randomItem = <T>(arr: T[]): T => arr[Math.floor(Math.random() * arr.length)];
+
+export async function startMock(bus: EventBus) {
+  console.log("[Mock] Started. Generating events...");
   bus.publish({ id: id(), ts: Date.now(), source: "mock", type: "system", payload: { msg: "mock started" } });
 
+  // Simulation Loop
   setInterval(() => {
-    const u = users[Math.floor(Math.random() * users.length)];
-    const pick = Math.random();
-    let ev: AppEvent;
+    const type = Math.random() > 0.7 ? "gift" : (Math.random() > 0.5 ? "chat" : "like");
+    const user = randomItem(MOCK_USERS);
 
-    if (pick < 0.45) {
-      ev = { id: id(), ts: Date.now(), source: "mock", type: "chat", user: u, payload: { text: "Hallo aus dem Mock" } };
-    } else if (pick < 0.7) {
-      ev = { id: id(), ts: Date.now(), source: "mock", type: "like", user: u, payload: { likeDelta: 1 + Math.floor(Math.random() * 10) } };
-    } else if (pick < 0.88) {
-      ev = { id: id(), ts: Date.now(), source: "mock", type: "gift", user: u, payload: { giftName: gifts[Math.floor(Math.random() * gifts.length)], count: 1 + Math.floor(Math.random() * 3) } };
-    } else if (pick < 0.95) {
-      ev = { id: id(), ts: Date.now(), source: "mock", type: "share", user: u, payload: {} };
-    } else {
-      ev = { id: id(), ts: Date.now(), source: "mock", type: "follow", user: u, payload: {} };
+    let event: AppEvent = {
+      id: id(),
+      ts: Date.now(),
+      source: "mock",
+      type: type as any,
+      user: {
+        userId: user.uniqueId,
+        uniqueId: user.uniqueId,
+        nickname: user.nickname,
+        profilePictureUrl: user.avatar // Inject Avatar
+      },
+      payload: {},
+      raw: {}
+    };
+
+    if (type === "chat") {
+      event.payload.text = "Hallo aus dem Mock";
+    } else if (type === "like") {
+      event.payload.likeDelta = Math.floor(Math.random() * 10) + 1;
+    } else if (type === "gift") {
+      const gift = randomItem(MOCK_GIFTS);
+      event.payload.giftName = gift.name;
+      event.payload.count = Math.floor(Math.random() * 3) + 1;
+      event.payload.diamondCost = gift.cost;
+      event.payload.giftIconUrl = gift.icon; // Inject Gift Icon
     }
 
-    bus.publish(ev);
-  }, 1000 + Math.floor(Math.random() * 1000));
+    // Occasional special events
+    if (Math.random() > 0.9) {
+      const action = Math.random() > 0.5 ? "follow" : "share";
+      event.type = action as any;
+      event.payload = {};
+    }
+
+    bus.publish(event);
+
+  }, 1500 + Math.random() * 2000);
 }

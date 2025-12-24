@@ -40,6 +40,17 @@
             to { opacity: 1; transform: translateX(0); }
         }
         .item-enter { animation: slideIn 0.3s ease-out forwards; }
+
+        /* Neue Styles für Avatare und Icons */
+        .chat-avatar {
+            width: 24px; height: 24px; border-radius: 50%;
+            margin-right: 8px; vertical-align: middle; border: 1px solid #ff0050;
+        }
+        .event-gift-icon {
+            width: 40px; height: 40px; margin-right: 10px;
+            object-fit: contain; vertical-align: middle;
+        }
+        .chat-line { display: flex; align-items: center; margin-bottom: 4px; }
     </style>
 </head>
 <body class="h-screen flex overflow-hidden font-sans text-sm">
@@ -174,6 +185,8 @@
         const statusBadge = document.getElementById("ws-indicator");
         const statusText = document.getElementById("ws-text");
         const liveIndicator = document.getElementById("live-indicator");
+        const chatList = document.getElementById("chat-container");
+        const eventList = document.getElementById("event-container");
 
         let stats = { likes: 0, chats: 0, gifts: 0, shares: 0 };
 
@@ -214,14 +227,15 @@
             if (cmd.kind === "toast" && cmd.title.startsWith("Chat")) {
                 stats.chats++;
                 updateStats();
-                addChatItem(cmd.title.replace("Chat ", ""), cmd.text);
+                // Pass the whole cmd object to get userImage
+                addChat({ title: cmd.title.replace("Chat ", ""), text: cmd.text, userImage: cmd.userImage });
             }
 
             // --- 2. Gifts ---
             if (cmd.kind === "gift") {
                 stats.gifts += cmd.count;
                 updateStats();
-                addEventItem("gift", cmd.from, `sent ${cmd.giftName} x${cmd.count}`);
+                addEvent(cmd);
             }
 
             // --- 3. Likes ---
@@ -232,10 +246,10 @@
             }
 
             // --- 4. Follow/Share ---
-            if (cmd.kind === "toast" && (cmd.title === "Follow" || cmd.title === "Share")) {
+            if (cmd.kind === "toast" && (cmd.title === "Follow" || cmd.title === "Share" || cmd.title.includes("ABO") || cmd.title.includes("FRAGE"))) {
                 if (cmd.title === "Share") stats.shares++;
                 updateStats();
-                addEventItem(cmd.title.toLowerCase(), cmd.text.split(' ')[0], cmd.title);
+                addEvent(cmd);
             }
         }
 
@@ -246,37 +260,72 @@
             document.getElementById("count-shares").textContent = stats.shares.toLocaleString();
         }
 
-        function addChatItem(user, text) {
-            const container = document.getElementById("chat-container");
-            const div = document.createElement("div");
-            div.className = "item-enter text-sm mb-2 break-words";
-            div.innerHTML = `<span class="font-bold text-slate-400">${user}:</span> <span class="text-slate-200">${text}</span>`;
+        function addChat(data) {
+            const div = document.createElement('div');
+            div.style.padding = "4px 0";
+            div.style.borderBottom = "1px solid rgba(255,255,255,0.05)";
 
-            // "Warte auf..." entfernen
-            if (container.children[0] && container.children[0].classList.contains("text-center")) {
-                container.innerHTML = "";
-            }
+            // Avatar Logik: Nutze das Bild vom Event oder generiere eins als Fallback
+            const avatarUrl = data.userImage || `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.title}`;
 
-            container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
-        }
-
-        function addEventItem(type, user, details) {
-            const container = document.getElementById("event-container");
-            const div = document.createElement("div");
-            let icon = type === "gift" ? "🎁" : type === "follow" ? "➕" : "↗️";
-            let colorClass = type === "gift" ? "border-accent/50 bg-accent/5" : type === "follow" ? "border-blue-500/50 bg-blue-500/5" : "border-white/20";
-
-            div.className = `item-enter flex items-center p-2 rounded border ${colorClass} text-xs`;
+            // HTML mit Bild und Text zusammenbauen
             div.innerHTML = `
-                <div class="mr-2 text-base">${icon}</div>
-                <div>
-                    <div class="font-bold text-white">${user}</div>
-                    <div class="text-textDim">${details}</div>
+                <div style="display:flex; align-items:flex-start;">
+                    <img src="${avatarUrl}" class="chat-avatar" alt="User">
+                    <div>
+                        <span style="color: #ff0050; font-weight: bold; font-size: 0.9em;">${data.title}: </span>
+                        <span style="color: #ccc; font-size: 0.9em;">${data.text}</span>
+                    </div>
                 </div>
             `;
-            container.insertBefore(div, container.firstChild);
-            if (container.children.length > 50) container.lastChild.remove();
+
+            // "Warte auf..." entfernen
+            if (chatList.children[0] && chatList.children[0].classList.contains("text-center")) {
+                chatList.innerHTML = "";
+            }
+
+            chatList.appendChild(div);
+            chatList.scrollTop = chatList.scrollHeight;
+        }
+
+        function addEvent(data) {
+            const div = document.createElement('div');
+            // Behalte deine schönen Event-Card Styles
+            div.className = 'event-card item-enter';
+            div.style.marginBottom = "8px";
+            div.style.padding = "10px";
+            div.style.background = "rgba(255, 255, 255, 0.05)";
+            div.style.borderRadius = "6px";
+            div.style.borderLeft = "3px solid #00f2ea";
+
+            let iconHtml = '';
+            let title = data.title || data.from;
+            let text = data.text || (data.giftName ? `sent ${data.giftName} x${data.count}` : "");
+
+            // Wenn es ein Geschenk ist, zeige das Icon groß an
+            if (data.kind === 'gift') {
+                div.style.borderLeft = "3px solid #ff0050"; // Roter Rand für Geschenke
+                if(data.giftIconUrl) {
+                    iconHtml = `<img src="${data.giftIconUrl}" class="event-gift-icon">`;
+                } else {
+                    iconHtml = `<span style="font-size:24px; margin-right:10px;">🎁</span>`;
+                }
+            } else {
+                iconHtml = `<span style="font-size:20px; margin-right:10px;">ℹ️</span>`;
+            }
+
+            div.innerHTML = `
+                <div style="display:flex; align-items:center;">
+                    ${iconHtml}
+                    <div>
+                        <div style="font-weight:bold; color:white;">${title}</div>
+                        <div style="color:#aaa; font-size:0.85em;">${text}</div>
+                    </div>
+                </div>
+            `;
+
+            eventList.prepend(div);
+            if (eventList.children.length > 20) eventList.lastChild.remove();
         }
 
         connect();

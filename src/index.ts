@@ -73,8 +73,15 @@ async function main() {
 
   overlay.app.use("/api", createApiRouter(addonHost, ringBuffer, configStore, connectorState));
 
+  let currentViewerCount = 0;
+
   // 5. Main bus subscription
   bus.subscribe((ev) => {
+    // Viewer Count abfangen
+    if (ev.type === "roomUser" && typeof ev.payload.viewerCount === 'number') {
+      currentViewerCount = ev.payload.viewerCount;
+    }
+
     // log
     console.log(`[${new Date(ev.ts).toLocaleTimeString()}] ${ev.source}:${ev.type} ${ev.user?.uniqueId ?? ""}`, ev.payload);
     // stats
@@ -85,6 +92,15 @@ async function main() {
     const cmd = eventToOverlay(ev);
     if (cmd) overlay.broadcast(cmd);
   });
+
+  // NEU: Alle 2 Sekunden Dashboard-Daten senden
+  setInterval(() => {
+    overlay.broadcast({
+      kind: "dashboard-update",
+      stats: { viewers: currentViewerCount },
+      leaderboard: stats.getLeaderboard()
+    });
+  }, 2000);
 
   // 6. Start Add-ons
   await addonHost.loadAll();
