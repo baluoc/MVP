@@ -5,9 +5,19 @@ const { runReplay } = require('./replay_helper');
 
 const FIXTURE = path.resolve(__dirname, '../../fixtures/events.sample.json');
 
+const TEST_CONFIG = {
+    points: {
+        name: "TestPunkte",
+        coin: 10,
+        share: 50,
+        chat: 5,
+        subBonus: 10
+    }
+};
+
 describe('Integration Replay Test', () => {
 
-    const { stats, overlayBroadcasts } = runReplay(FIXTURE);
+    const { stats, overlayBroadcasts } = runReplay(FIXTURE, TEST_CONFIG);
 
     after(() => {
         if(stats.dispose) stats.dispose();

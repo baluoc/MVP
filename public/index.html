@@ -151,7 +151,7 @@
                 <div style="display:flex; flex-direction:column; gap:20px; overflow:hidden;">
                     <!-- Live Metrics -->
                     <div class="card" style="height:auto; min-height:150px;">
-                        <div class="card-header"><span class="card-title">Live Metrics</span></div>
+                        <div class="card-header"><span class="card-title">Live-Statistiken</span></div>
                         <div class="card-body">
                             <div style="font-size:2rem; font-weight:bold;" id="metric-viewers">0</div>
                             <div style="font-size:0.8rem; color:var(--muted); text-transform:uppercase;">Zuschauer</div>
@@ -935,7 +935,7 @@
                  div.style.border = "1px solid var(--border)";
                  div.style.borderRadius = "4px";
                  div.style.cursor = "pointer";
-                 div.innerText = s.name;
+                 div.innerText = s.name || s.id; // Bug fix: fallback if name missing
                  div.onclick = () => selectScene(s.id);
                  list.appendChild(div);
             });
@@ -957,7 +957,8 @@
 
         function selectScene(id) {
             selectedSceneId = id;
-            document.getElementById('composer-current-scene-name').innerText = scratchConfig.overlay.scenes.find(s=>s.id===id)?.name || "Szene";
+            const s = scratchConfig.overlay.scenes.find(s=>s.id===id);
+            document.getElementById('composer-current-scene-name').innerText = (s?.name || s?.id) || "Szene";
             renderComposerSceneList();
             renderStage();
             renderProps();

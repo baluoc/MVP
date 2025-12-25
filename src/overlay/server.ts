@@ -2,6 +2,7 @@ import express from "express";
 import http from "http";
 import { WebSocketServer, WebSocket } from "ws";
 import { OverlayCommand } from "../core/types";
+import { ConfigStore } from "../core/configStore";
 
 export interface OverlayServer {
   app: express.Express;
@@ -9,12 +10,28 @@ export interface OverlayServer {
   broadcast: (cmd: OverlayCommand) => void;
 }
 
+// We need access to config for initial state
 export function createOverlayServer(port: number): OverlayServer {
   const app = express();
   app.use(express.json()); // Enable JSON body parsing
 
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: "/overlay/ws" });
+
+  // Quick config read (fresh on connect)
+  const configStore = new ConfigStore();
+
+  wss.on('connection', (ws) => {
+      // Send initial scene state
+      const conf = configStore.getCore();
+      const activeId = conf.overlay?.activeSceneId || "default";
+
+      const msg: OverlayCommand = {
+          kind: "scene_state",
+          activeSceneId: activeId
+      };
+      if (ws.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg));
+  });
 
   function broadcast(cmd: OverlayCommand) {
     const msg = JSON.stringify(cmd);

@@ -1,0 +1,6 @@
+[
+  { "id": "1", "name": "Rose", "cost": 1, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/rose_v2.png~tplv-obj.png" },
+  { "id": "2", "name": "TikTok", "cost": 1, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/tiktok_v2.png~tplv-obj.png" },
+  { "id": "3", "name": "Finger Heart", "cost": 5, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/finger_heart_v2.png~tplv-obj.png" },
+  { "id": "4", "name": "Panda", "cost": 5, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/panda_v2.png~tplv-obj.png" }
+]

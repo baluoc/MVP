@@ -115,8 +115,8 @@ describe('Core Logic Audit', () => {
              assert.strictEqual(user.points, 100, 'Gift 10 coins should give 100 points');
         });
 
-        it('should apply sub bonus if implemented', () => {
-             // We pass a sub user. If logic exists, points > 5
+        it('should apply sub bonus', () => {
+             // We pass a sub user.
              const event = {
                  type: 'chat',
                  ts: Date.now(),
@@ -126,12 +126,29 @@ describe('Core Logic Audit', () => {
              stats.ingest(event, TEST_CONFIG.points);
 
              const user = stats.getAll().find(u => u.uniqueId === 'sub1');
-             if (user.points === 5) {
-                 // Not implemented yet
-                 console.log("      [GAP] Sub Bonus logic seems missing");
-             } else {
-                 assert.ok(user.points > 5, 'Sub bonus should increase points');
-             }
+             // Base 5 * 1.1 = 5.5 -> floor(5.5) = 5 if using Math.floor
+             // Wait, 5 * 1.1 = 5.5.
+             // If I use Math.floor, it is 5. So no bonus visible for small numbers?
+             // Let's check config: subBonus: 10%.
+             // If points = 100 (gift), then 110.
+
+             // Let's use a gift to verify bonus clearly
+             const giftEvent = {
+                 type: 'gift',
+                 ts: Date.now(),
+                 user: { uniqueId: 'sub1', nickname: 'Subscriber', isSubscriber: true },
+                 payload: { count: 1, diamondCost: 10 } // 100 points base
+             };
+             stats.ingest(giftEvent, TEST_CONFIG.points);
+
+             // Total base: 5 (chat) + 100 (gift) = 105.
+             // Bonus 10% on 105 = 10.5 -> 115.5 -> 115?
+
+             // Actually recalcScore recalculates total.
+             // Base score = (10 * 10) + (1 * 5) = 105.
+             // Bonus = 105 * 1.1 = 115.5 => 115.
+
+             assert.strictEqual(user.points, 115, 'Sub bonus should apply 10%');
         });
     });
 

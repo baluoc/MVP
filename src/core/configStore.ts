@@ -197,9 +197,24 @@ export class ConfigStore {
       } else {
         this.data = { ...DEFAULT_CONFIG };
       }
+      this.normalizeOverlay();
     } catch (e) {
       this.data = { ...DEFAULT_CONFIG };
     }
+  }
+
+  // Ensure scenes structure is robust
+  private normalizeOverlay() {
+      if(!this.data.overlay) this.data.overlay = { ...DEFAULT_CONFIG.overlay };
+      if(!this.data.overlay.scenes) this.data.overlay.scenes = [];
+
+      this.data.overlay.scenes.forEach((s: any) => {
+          if(!s.id) s.id = "scene_" + Math.random().toString(36).substr(2, 9);
+          if(!s.name) s.name = "Szene " + s.id;
+          if(!s.width) s.width = 1080;
+          if(!s.height) s.height = 1920;
+          if(!Array.isArray(s.widgets)) s.widgets = [];
+      });
   }
 
   save() {
