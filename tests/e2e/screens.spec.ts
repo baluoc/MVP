@@ -25,12 +25,17 @@ test('automated screenshots of all views', async ({ page }) => {
   await expect(page.getByTestId('view-settings-system')).toBeVisible();
   await expect(page.getByTestId('page-title')).toHaveText(/Einstellungen: System/); // German Title Check
   await expect(page.getByTestId('view-dashboard')).toBeHidden(); // Negative Assertion
+  // Strict Nav Check
+  await expect(page.getByTestId('nav-system')).toHaveClass(/active/);
+  await expect(page.getByTestId('nav-dashboard')).not.toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_system.png') });
 
   // 3. Points & Level
   await page.getByTestId('nav-points').click();
   await expect(page.getByTestId('view-settings-points')).toBeVisible();
   await expect(page.getByTestId('view-settings-system')).toBeHidden(); // Negative Assertion
+  await expect(page.getByTestId('nav-points')).toHaveClass(/active/);
+  await expect(page.getByTestId('nav-system')).not.toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_points.png') });
 
   // 4. Broadcast
@@ -75,6 +80,9 @@ test('automated screenshots of all views', async ({ page }) => {
   await page.getByTestId('nav-overlays').click();
   await expect(page.getByTestId('view-overlays')).toBeVisible();
   await expect(page.getByTestId('page-title')).toHaveText('Overlays');
+
+  // Nav check
+  await expect(page.getByTestId('nav-overlays')).toHaveClass(/active/);
 
   // Robustness check: Scenes dropdown should be populated and not undefined
   const sceneSelect = page.locator('#active-scene-select');

@@ -567,7 +567,6 @@
             // 1. Reset all Views and Navs
             document.querySelectorAll('.view').forEach(el => {
                 el.classList.remove('active');
-                // CLEANUP: Ensure no inline display overrides CSS
                 el.style.display = '';
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -576,13 +575,14 @@
             const view = document.getElementById('view-' + id);
             if (view) {
                 view.classList.add('active');
-                // No style.display setting here! CSS handles block/flex
             }
 
-            // 3. Highlight Target Nav (Robust via data-view)
+            // 3. Highlight Target Nav (Strict Match)
             const activeNav = document.querySelector(`.nav-item[data-view='${id}']`);
             if (activeNav) {
                 activeNav.classList.add('active');
+            } else {
+                console.warn("No nav item found for view:", id);
             }
 
             currentView = id;

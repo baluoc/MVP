@@ -193,13 +193,13 @@ export function createApiRouter(
 
   // --- STATUS & ADDONS ---
 
-  r.get("/status", (_req, res) => {
+  r.get("/status", (req, res) => {
     const coreConfig = configStore.getCore();
     const cState = connectorState();
     res.json({
       uptime: process.uptime(),
       version: "1.0.0",
-      overlay: { url: `ws://localhost:${coreConfig.port || 5175}/overlay/ws` },
+      overlay: { url: `${req.protocol}://${req.get('host')}/overlay/main` },
       addonsLoaded: addonHost.getAddonsList().length,
       // Expanded Connector State
       connected: cState.connected,

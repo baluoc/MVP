@@ -157,6 +157,19 @@ export class UserStatsStore {
       .slice(0, 5);
   }
 
+  findUser(uniqueId: string | undefined): UserStats | undefined {
+      if (!uniqueId) return undefined;
+      // Fast path: map key
+      const k = `u:${uniqueId.toLowerCase()}`;
+      if (this.map.has(k)) return this.map.get(k);
+
+      // Slow path: search values
+      for(const u of this.map.values()) {
+          if (u.uniqueId?.toLowerCase() === uniqueId.toLowerCase()) return u;
+      }
+      return undefined;
+  }
+
   getAll(): UserStats[] { return Array.from(this.map.values()); }
 
   reset() {

@@ -14,7 +14,7 @@ Die Konfiguration wird über `src/core/configStore.ts` geladen und persistiert i
 | **obs** | `ip: "127.0.0.1"`, `port: 4455` | ✅ (Broadcast Tab) | ❌ (Addon Host Stub) | **Stub** |
 | **streamerbot** | `address: "127.0.0.1"`, `port: 8080` | ✅ (Broadcast Tab) | ❌ (Addon Host Stub) | **Stub** |
 | **chat** | `enableSend: false`, `sessionCookie: ""` | ✅ (Chat Tab) | ✅ (API Live via TikTokService) | Live (mit Gate) |
-| **commands** | `!help`, `!score`, `!send`, `!spin` | ✅ (Befehle Tab) | ❌ (Command Parser Missing) | **Stub** |
+| **commands** | `!help`, `!score`, `!send`, `!spin` | ✅ (Befehle Tab) | ✅ (Command Core Implemented) | Core v1 (!score, !commands, !help) |
 | **gifts** | `blackWhiteDefault: false` | ✅ (Geschenke Tab) | ❌ (Logic missing) | **Stub** |
 | **overlay** | `activeSceneId: "default"`, `scenes: [...]` | ✅ (Composer/Overlay) | ✅ (Overlay Server) | Stabil |
 
@@ -149,10 +149,10 @@ Automatisierte Screenshots aller Views liegen in `jules_review/verification/`:
 
 ### Was ist Stub/Mock?
 *   **Integrationen (OBS/Streamer.bot):** Konfiguration UI existiert, aber Backend-Logik fehlt.
-*   **Command Parsing:** `!score`, `!send` werden erkannt (Regex/Trigger), aber Logik (z.B. Transfer) fehlt noch im Core.
+*   **Erweiterte Commands:** `!send`, `!spin` sind als Stubs in Config, aber noch nicht im Core implementiert.
 
 ### Lücken (Blocker für Add-ons)
-*   **Command Handler:** Zentrale Command-Registry fehlt noch, Commands sind aktuell "Hardcoded" oder nicht existent.
+*   Keine kritischen Blocker mehr für Add-ons.
 
 ### Session/Cookie: Stand, Risiken, Next steps
 *   **Stand:** `sessionId` wird in Config verschlüsselt (Base64 oder Plain currently Plain text in local file) gespeichert. API gibt sie nie heraus. Connector nutzt sie für `sendMessage`.
@@ -160,8 +160,8 @@ Automatisierte Screenshots aller Views liegen in `jules_review/verification/`:
 *   **Next Steps:** Webview-Login implementieren, um Session automatisch zu erneuern.
 
 ### Next 5 Tasks
-1.  **Sub-Bonus Implementierung:** `UserStatsStore` muss `isSubscriber` auswerten.
-2.  **Command System Core:** Zentrale `CommandRegistry` und Parser implementieren.
-3.  **OBS/Streamer.bot Client:** WebSocket Clients im Backend implementieren.
-4.  **Overlay Widgets:** "Goal Bar" und "Leaderboard" Widgets im Frontend implementieren.
-5.  **Webview Login:** Echten Login Flow bauen (statt Copy-Paste).
+1.  **Commands erweitern:** `!send` (Transfer) und `!spin` implementieren.
+2.  **OBS/Streamer.bot Client:** WebSocket Clients im Backend implementieren.
+3.  **Webview Login:** Echten Login Flow bauen (statt Copy-Paste).
+4.  **Add-on System API:** Verfeinern und dokumentieren.
+5.  **Level System:** Backend-Logik für Levels implementieren (aktuell nur Config).

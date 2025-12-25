@@ -110,9 +110,9 @@
                  // Chat container
                  el.innerHTML = `<div id="chat-container-${w.id}" style="height:100%; display:flex; flex-direction:column; justify-content:flex-end; gap:10px;"></div>`;
               } else if (w.type === 'leaderboard') {
-                 el.innerHTML = `<div id="leaderboard-${w.id}" class="w-leaderboard"><h3>Bestenliste</h3><div class="rows">Loading...</div></div>`;
+                 el.innerHTML = `<div id="leaderboard-${w.id}" class="w-leaderboard"><h3>Bestenliste</h3><div class="rows">Lädt...</div></div>`;
               } else if (w.type === 'goal') {
-                 el.innerHTML = `<div id="goal-${w.id}" class="w-goal"><div class="w-goal-text"><span>Community Goal</span><span id="goal-val-${w.id}">0 / 0</span></div><div class="w-goal-bar-bg"><div id="goal-bar-${w.id}" class="w-goal-bar-fill"></div></div></div>`;
+                 el.innerHTML = `<div id="goal-${w.id}" class="w-goal"><div class="w-goal-text"><span>Community-Ziel</span><span id="goal-val-${w.id}">0 / 0</span></div><div class="w-goal-bar-bg"><div id="goal-bar-${w.id}" class="w-goal-bar-fill"></div></div></div>`;
               }
               stage.appendChild(el);
           });

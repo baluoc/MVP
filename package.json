@@ -9,7 +9,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/index.js",
     "smoke": "ts-node-dev --transpile-only scripts/ws-smoke.ts",
-    "test:unit": "npm run build && node --test tests/unit/config.test.js tests/unit/core_logic.test.js",
+    "test:unit": "npm run build && node --test tests/unit/config.test.js tests/unit/core_logic.test.js && npx tsx tests/unit/commands.test.ts",
     "test:integration": "npm run build && node --test tests/integration/replay.test.js",
     "replay": "npm run build && node scripts/replay-events.js",
     "test:e2e": "npx playwright test",
