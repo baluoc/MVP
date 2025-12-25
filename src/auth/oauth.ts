@@ -69,7 +69,8 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
       const resource = `${baseUrl}${mcpPath}`;
 
       res.json({
-          resource: resource
+          resource: resource,
+          authorization_servers: [ baseUrl ]
       });
   });
 
@@ -81,14 +82,27 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
       const resource = `${baseUrl}${mcpPath}`;
 
       res.json({
-          resource: resource
+          resource: resource,
+          authorization_servers: [ baseUrl ]
       });
   });
 
 
   // 2. Authorization Endpoint (Consent)
   app.get('/authorize', (req, res) => {
-    const { response_type, client_id, redirect_uri, code_challenge, code_challenge_method, state } = req.query;
+    const { response_type, client_id, redirect_uri, code_challenge, code_challenge_method, state, resource } = req.query;
+
+    // Validate Resource if present
+    if (resource) {
+        const baseUrl = getPublicBaseUrl(req, configStore);
+        const conf = configStore?.getCore();
+        const mcpPath = conf?.mcp?.path || "/mcp";
+        const expectedResource = `${baseUrl}${mcpPath}`;
+
+        if (resource !== expectedResource) {
+             return res.status(400).json({ error: 'invalid_target', message: `Invalid resource. Expected: ${expectedResource}` });
+        }
+    }
 
     if (response_type !== 'code') return res.status(400).send('Unsupported response_type');
     if (!code_challenge) return res.status(400).send('Missing code_challenge (PKCE required)');
@@ -129,7 +143,19 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
 
   // 4. Token Endpoint
   app.post('/token', express.urlencoded({ extended: true }), (req, res) => {
-    const { grant_type, code, redirect_uri, code_verifier, client_id } = req.body;
+    const { grant_type, code, redirect_uri, code_verifier, client_id, resource } = req.body;
+
+    // Validate Resource if present
+    if (resource) {
+        const baseUrl = getPublicBaseUrl(req, configStore);
+        const conf = configStore?.getCore();
+        const mcpPath = conf?.mcp?.path || "/mcp";
+        const expectedResource = `${baseUrl}${mcpPath}`;
+
+        if (resource !== expectedResource) {
+             return res.status(400).json({ error: 'invalid_target', message: `Invalid resource. Expected: ${expectedResource}` });
+        }
+    }
 
     if (grant_type !== 'authorization_code') return res.status(400).json({ error: 'unsupported_grant_type' });
     if (!code || !code_verifier) return res.status(400).json({ error: 'invalid_request' });
@@ -170,34 +196,30 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
 
 // Middleware to verify token for protected MCP routes
 export function verifyAuth(req: express.Request, res: express.Response, next: express.NextFunction) {
-    // Check if MCP auth is enabled in config?
-    // Requirement says "mcp.auth (well-known...)"
-    // If we are proxied, we might want to check the token here or let MCP service check it?
-    // Since MCP is a child process and we proxy, we can check here at the gate.
-
-    // For MVP, we can skip strict token check on localhost loopback if we want,
-    // BUT requirements say "Token redacted in Responses/Logs" and "No Alibi".
-    // Let's implement a simple Bearer check.
-
     const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        // Allow internal calls? Or fail?
-        // If the user uses the UI, the UI uses the backend session/proxy.
-        // The /api/mcp proxy is protected by the main app session/auth if any.
-        // BUT external tools (ChatGPT) use the OAuth token.
-        // So we need to support BOTH: Session-based (UI) AND Token-based (External).
 
-        // If it's a browser request (UI), we assume the existing protection (if any) or open access (MVP often open).
-        // Let's check if there's a valid token first.
-        return next();
+    const getBaseUrl = () => {
+         const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol;
+         const host = (req.headers['x-forwarded-host'] as string) || req.get('host');
+         return `${proto}://${host}`;
+    };
+    const baseUrl = getBaseUrl();
+    const resourceMetadata = `${baseUrl}/.well-known/oauth-protected-resource`;
+
+    const unauthorized = () => {
+         res.setHeader('WWW-Authenticate', `Bearer resource_metadata="${resourceMetadata}"`);
+         res.status(401).json({ error: 'unauthorized', message: 'Bearer token required' });
+    };
+
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+         return unauthorized();
     }
 
     const token = authHeader.split(' ')[1];
     if (accessTokens.has(token)) {
-        // Valid OAuth token
-        // Extend req with user info if needed
-        next();
+         // Valid OAuth token
+         next();
     } else {
-        return res.status(401).json({ error: 'invalid_token' });
+         return unauthorized();
     }
 }

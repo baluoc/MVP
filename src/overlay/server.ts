@@ -43,8 +43,8 @@ export function createOverlayServer(port: number, configStore: ConfigStore): Ove
   });
 
   // lightweight stats API will be attached from index.ts (router)
-  server.listen(port, "127.0.0.1", () => {
-    console.log(`[overlay] http://127.0.0.1:${port}/overlay/main`);
+  server.listen(port, "0.0.0.0", () => {
+    console.log(`[overlay] http://localhost:${port}/overlay/main`);
   });
 
   return { app, server, broadcast };
