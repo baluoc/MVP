@@ -1,0 +1,160 @@
+
+> mvp@1.0.0 test:unit
+> npm run build && node --test tests/unit/config.test.js tests/unit/core_logic.test.js tests/unit/commands.test.js tests/unit/streamerbot.test.js tests/unit/obs.test.js
+
+
+> mvp@1.0.0 build
+> tsc -p tsconfig.json
+
+TAP version 13
+# Subtest: Command Logic
+    # Subtest: parseCommand - basics
+    ok 1 - parseCommand - basics
+      ---
+      duration_ms: 2.141921
+      type: 'test'
+      ...
+    # Subtest: parseCommand - triggers from config
+    ok 2 - parseCommand - triggers from config
+      ---
+      duration_ms: 0.234119
+      type: 'test'
+      ...
+    # Subtest: buildCommandResponse - score
+    ok 3 - buildCommandResponse - score
+      ---
+      duration_ms: 0.400733
+      type: 'test'
+      ...
+    # Subtest: buildCommandResponse - commands listing
+    ok 4 - buildCommandResponse - commands listing
+      ---
+      duration_ms: 0.213947
+      type: 'test'
+      ...
+    1..4
+ok 1 - Command Logic
+  ---
+  duration_ms: 4.565606
+  type: 'test'
+  ...
+# Subtest: ConfigStore Migration Logic
+    # Subtest: should normalize overlay scenes
+    ok 1 - should normalize overlay scenes
+      ---
+      duration_ms: 1.070236
+      type: 'test'
+      ...
+    1..1
+ok 2 - ConfigStore Migration Logic
+  ---
+  duration_ms: 2.264017
+  type: 'suite'
+  ...
+# Subtest: Core Logic Audit
+    # Subtest: 1. Normalization Layer
+        # Subtest: should normalize chat events correctly
+        ok 1 - should normalize chat events correctly
+          ---
+          duration_ms: 1.258095
+          type: 'test'
+          ...
+        # Subtest: should normalize gift events including cost
+        ok 2 - should normalize gift events including cost
+          ---
+          duration_ms: 0.368606
+          type: 'test'
+          ...
+        1..2
+    ok 1 - 1. Normalization Layer
+      ---
+      duration_ms: 2.60032
+      type: 'suite'
+      ...
+    # Subtest: 2. Points System Logic
+        # Subtest: should award points for chat
+        ok 1 - should award points for chat
+          ---
+          duration_ms: 0.827841
+          type: 'test'
+          ...
+        # Subtest: should award points for share
+        ok 2 - should award points for share
+          ---
+          duration_ms: 0.256122
+          type: 'test'
+          ...
+        # Subtest: should award points for gifts (coins * multiplier)
+        ok 3 - should award points for gifts (coins * multiplier)
+          ---
+          duration_ms: 0.497934
+          type: 'test'
+          ...
+        # Subtest: should apply sub bonus
+        ok 4 - should apply sub bonus
+          ---
+          duration_ms: 0.389274
+          type: 'test'
+          ...
+        1..4
+    ok 2 - 2. Points System Logic
+      ---
+      duration_ms: 3.399252
+      type: 'suite'
+      ...
+    # Subtest: 3. Overlay Scene Logic
+        # Subtest: should update active scene in config without side effects
+        ok 1 - should update active scene in config without side effects
+          ---
+          duration_ms: 0.638329
+          type: 'test'
+          ...
+        1..1
+    ok 3 - 3. Overlay Scene Logic
+      ---
+      duration_ms: 0.980414
+      type: 'suite'
+      ...
+    # Subtest: 4. Session Config Logic
+        # Subtest: should deep merge session config without losing keys
+        ok 1 - should deep merge session config without losing keys
+          ---
+          duration_ms: 1.75106
+          type: 'test'
+          ...
+        1..1
+    ok 4 - 4. Session Config Logic
+      ---
+      duration_ms: 1.887508
+      type: 'suite'
+      ...
+    1..4
+ok 3 - Core Logic Audit
+  ---
+  duration_ms: 9.897824
+  type: 'suite'
+  ...
+# Subtest: OBSService - Connect and Actions
+ok 4 - OBSService - Connect and Actions
+  ---
+  duration_ms: 2.753661
+  type: 'test'
+  ...
+# [Streamer.bot] Connecting to ws://127.0.0.1:8080/...
+# [Streamer.bot] Connected
+# [Streamer.bot] Disconnected
+# Subtest: StreamerBotService - DoAction Payload
+ok 5 - StreamerBotService - DoAction Payload
+  ---
+  duration_ms: 13.797961
+  type: 'test'
+  ...
+1..5
+# tests 16
+# suites 6
+# pass 16
+# fail 0
+# cancelled 0
+# skipped 0
+# todo 0
+# duration_ms 207.801398

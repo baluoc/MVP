@@ -15,13 +15,15 @@ export class StreamerBotService extends EventEmitter {
     private isConnected: boolean = false;
     private reconnectInterval: NodeJS.Timeout | null = null;
     private explicitDisconnect: boolean = false;
+    private WebSocketClass: any;
 
     // Cache
     private actions: any[] = [];
     private events: any = {};
 
-    constructor() {
+    constructor(WebSocketClass: any = WebSocket) {
         super();
+        this.WebSocketClass = WebSocketClass;
     }
 
     public configure(cfg: SBConfig) {
@@ -46,89 +48,91 @@ export class StreamerBotService extends EventEmitter {
         console.log(`[Streamer.bot] Connecting to ${url}...`);
 
         try {
-            this.ws = new WebSocket(url);
+            this.ws = new this.WebSocketClass(url);
 
-            this.ws.on('open', () => {
-                this.isConnected = true;
-                console.log('[Streamer.bot] Connected');
-                this.emit('connected');
+            if (this.ws) {
+                this.ws.on('open', () => {
+                    this.isConnected = true;
+                    console.log('[Streamer.bot] Connected');
+                    this.emit('connected');
 
-                // Note: Don't fetch immediately if auth is required. Wait for 'info' or explicit 'AuthenticationRequired' (v0.x varies).
-                // But standard flow:
-                // Connect -> Receive { info } with possible authenticationRequired: true
-                // If not auth required -> GetActions/Events
-            });
+                    // Note: Don't fetch immediately if auth is required. Wait for 'info' or explicit 'AuthenticationRequired' (v0.x varies).
+                    // But standard flow:
+                    // Connect -> Receive { info } with possible authenticationRequired: true
+                    // If not auth required -> GetActions/Events
+                });
 
-            this.ws.on('close', () => {
-                this.isConnected = false;
-                this.ws = null;
-                console.log('[Streamer.bot] Disconnected');
-                this.emit('disconnected');
-                if (!this.explicitDisconnect) {
-                    this.attemptReconnect();
-                }
-            });
+                this.ws.on('close', () => {
+                    this.isConnected = false;
+                    this.ws = null;
+                    console.log('[Streamer.bot] Disconnected');
+                    this.emit('disconnected');
+                    if (!this.explicitDisconnect) {
+                        this.attemptReconnect();
+                    }
+                });
 
-            this.ws.on('error', (err) => {
-                console.error('[Streamer.bot] Error:', err.message);
-                this.ws = null;
-            });
+                this.ws.on('error', (err: any) => {
+                    console.error('[Streamer.bot] Error:', err.message);
+                    this.ws = null;
+                });
 
-            this.ws.on('message', (data) => {
-                 try {
-                     const msg = JSON.parse(data.toString());
+                this.ws.on('message', (data: any) => {
+                    try {
+                        const msg = JSON.parse(data.toString());
 
-                     // Auth Handling
-                     // Check if message indicates auth required (e.g. from initial info or error)
-                     // Based on docs, SB sends `{"info": "Streamer.bot WebSocket Server", "version": "...", "source": "ws", "authenticationRequired": true, "salt": "...", "challenge": "..."}` on connect.
+                        // Auth Handling
+                        // Check if message indicates auth required (e.g. from initial info or error)
+                        // Based on docs, SB sends `{"info": "Streamer.bot WebSocket Server", "version": "...", "source": "ws", "authenticationRequired": true, "salt": "...", "challenge": "..."}` on connect.
 
-                     if (msg.info && msg.authenticationRequired) {
-                         if (this.config.password) {
-                             const auth = calculateStreamerBotAuth(this.config.password, msg.salt, msg.challenge);
-                             this.sendJson({
-                                 request: 'Authenticate',
-                                 authentication: auth,
-                                 id: 'auth-req'
-                             });
-                         } else {
-                             console.warn("[Streamer.bot] Auth required but no password configured.");
-                         }
-                         return; // Wait for Auth response
-                     }
+                        if (msg.info && msg.authenticationRequired) {
+                            if (this.config.password) {
+                                const auth = calculateStreamerBotAuth(this.config.password, msg.salt, msg.challenge);
+                                this.sendJson({
+                                    request: 'Authenticate',
+                                    authentication: auth,
+                                    id: 'auth-req'
+                                });
+                            } else {
+                                console.warn("[Streamer.bot] Auth required but no password configured.");
+                            }
+                            return; // Wait for Auth response
+                        }
 
-                     // Auth Response?
-                     // If we sent Authenticate, we expect a response.
-                     if (msg.id === 'auth-req') {
-                         if (msg.status === 'ok') {
-                             console.log("[Streamer.bot] Authenticated successfully");
-                             this.getActions();
-                             this.getEvents();
-                         } else {
-                             console.error("[Streamer.bot] Authentication failed");
-                         }
-                         return;
-                     }
+                        // Auth Response?
+                        // If we sent Authenticate, we expect a response.
+                        if (msg.id === 'auth-req') {
+                            if (msg.status === 'ok') {
+                                console.log("[Streamer.bot] Authenticated successfully");
+                                this.getActions();
+                                this.getEvents();
+                            } else {
+                                console.error("[Streamer.bot] Authentication failed");
+                            }
+                            return;
+                        }
 
-                     // Standard Init (if no auth required, we might not get the info block in older versions, or just proceed)
-                     // Simple heuristic: If we receive "info" and auth NOT required, trigger init.
-                     if (msg.info && !msg.authenticationRequired) {
-                         this.getActions();
-                         this.getEvents();
-                     }
+                        // Standard Init (if no auth required, we might not get the info block in older versions, or just proceed)
+                        // Simple heuristic: If we receive "info" and auth NOT required, trigger init.
+                        if (msg.info && !msg.authenticationRequired) {
+                            this.getActions();
+                            this.getEvents();
+                        }
 
-                     // Handle Responses
-                     if (msg.status === 'ok') {
-                         if (msg.actions) {
-                             this.actions = msg.actions;
-                         }
-                         if (msg.events) {
-                             this.events = msg.events;
-                             // Auto Subscribe to ALL events once we know they exist
-                             this.subscribeToDefaults();
-                         }
-                     }
-                 } catch(e) { console.error("[Streamer.bot] Parse error", e); }
-            });
+                        // Handle Responses
+                        if (msg.status === 'ok') {
+                            if (msg.actions) {
+                                this.actions = msg.actions;
+                            }
+                            if (msg.events) {
+                                this.events = msg.events;
+                                // Auto Subscribe to ALL events once we know they exist
+                                this.subscribeToDefaults();
+                            }
+                        }
+                    } catch(e) { console.error("[Streamer.bot] Parse error", e); }
+                });
+            }
 
         } catch (e: any) {
             console.error('[Streamer.bot] Connection setup failed:', e.message);
