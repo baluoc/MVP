@@ -1,0 +1,162 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>TK Overlay</title>
+    <style>
+      body { margin: 0; background: transparent; font-family: system-ui, sans-serif; overflow: hidden; }
+      #stage { position: relative; width: 1080px; height: 1920px; transform-origin: top left; }
+
+      /* Widgets */
+      .widget { position: absolute; overflow: hidden; }
+
+      /* Toast Widget */
+      .w-toast {
+        background: rgba(0,0,0,.75); color: #fff; padding: 16px;
+        border-radius: 12px; display: flex; flex-direction: column;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+        animation: slideIn 0.3s ease-out;
+      }
+      .w-toast .title { font-weight: 700; margin-bottom: 4px; font-size: 1.2rem; color: #ff0050; }
+      .w-toast .text { font-size: 1rem; }
+
+      @keyframes slideIn { from { transform: translateX(-20px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+      /* Gift Widget */
+      .w-gift-alert {
+        background: rgba(255, 0, 80, 0.9); color: white;
+        padding: 20px; border-radius: 20px; text-align: center;
+        border: 4px solid #fff;
+        animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      .w-gift-alert img { width: 100px; height: 100px; }
+      .w-gift-alert .user { font-weight: 800; font-size: 1.5rem; text-transform: uppercase; margin-top: 10px; }
+      .w-gift-alert .gift { font-size: 1.2rem; opacity: 0.9; }
+
+      @keyframes popIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <script>
+      const stage = document.getElementById("stage");
+      const wsUrl = (location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/overlay/ws";
+      const ws = new WebSocket(wsUrl);
+
+      let config = {};
+      let activeSceneId = "default";
+      let widgets = [];
+
+      // Scale stage to fit window
+      function resize() {
+        const scale = Math.min(window.innerWidth / 1080, window.innerHeight / 1920);
+        stage.style.transform = `scale(${scale})`;
+      }
+      window.onresize = resize;
+      resize();
+
+      async function loadConfig() {
+          try {
+            const res = await fetch('/api/settings');
+            const data = await res.json();
+            config = data.overlay || {};
+            activeSceneId = config.activeSceneId || "default";
+            renderScene();
+          } catch(e) { console.error("Config load failed", e); }
+      }
+
+      function renderScene() {
+          stage.innerHTML = "";
+          if (!config.scenes) return;
+          const scene = config.scenes.find(s => s.id === activeSceneId);
+          if (!scene) return;
+
+          widgets = scene.widgets || [];
+          widgets.forEach(w => {
+              if(!w.visible) return;
+              const el = document.createElement("div");
+              el.id = "widget-" + w.id;
+              el.className = "widget";
+              el.style.left = w.x + "px";
+              el.style.top = w.y + "px";
+              el.style.width = w.w + "px";
+              el.style.height = w.h + "px";
+              // Placeholder content based on type
+              if(w.type === 'chat') {
+                 // Chat container
+                 el.innerHTML = `<div id="chat-container-${w.id}" style="height:100%; display:flex; flex-direction:column; justify-content:flex-end; gap:10px;"></div>`;
+              }
+              stage.appendChild(el);
+          });
+      }
+
+      function handleEvent(cmd) {
+          if (cmd.kind === "speak") {
+             const u = new SpeechSynthesisUtterance(cmd.text);
+             window.speechSynthesis.speak(u);
+          }
+          else if (cmd.kind === "scene-change") {
+              activeSceneId = cmd.sceneId;
+              // Ideally re-fetch full config if we suspect config changed, but here we just switch ID from cached config
+              // If config changed, we might need to reload config too.
+              // Let's reload config to be safe
+              loadConfig();
+          }
+          else if (cmd.kind === "dashboard-update") {
+              // Heartbeat
+          }
+          else if (cmd.kind === "toast") {
+              // Find alert widget or fallback
+              // Simple: append to body temporarily if no alert widget, OR find 'alert' type widget
+              const alertWidget = widgets.find(w => w.type === 'alert');
+              const container = alertWidget ? document.getElementById("widget-" + alertWidget.id) : stage;
+
+              const toast = document.createElement("div");
+              toast.className = "w-toast";
+              toast.innerHTML = `<div class="title">${cmd.title}</div><div class="text">${cmd.text}</div>`;
+
+              if(alertWidget) {
+                  // If container is stage, we need absolute pos, but here we are inside widget div
+                  // Actually widget div is fixed size.
+                  container.appendChild(toast);
+              } else {
+                   toast.style.position = "absolute";
+                   toast.style.bottom = "50px";
+                   toast.style.left = "50px";
+                   stage.appendChild(toast);
+              }
+              setTimeout(() => toast.remove(), cmd.ms || 4000);
+          }
+          else if (cmd.kind === "gift") {
+              const alertWidget = widgets.find(w => w.type === 'alert');
+              const container = alertWidget ? document.getElementById("widget-" + alertWidget.id) : stage;
+
+              const div = document.createElement("div");
+              div.className = "w-gift-alert";
+              div.innerHTML = `
+                <img src="${cmd.giftIconUrl || 'https://via.placeholder.com/100'}" />
+                <div class="user">${cmd.from}</div>
+                <div class="gift">sent ${cmd.count}x ${cmd.giftName}</div>
+              `;
+               if(!alertWidget) {
+                   div.style.position = "absolute";
+                   div.style.top = "300px";
+                   div.style.left = "200px";
+               }
+               container.appendChild(div);
+               setTimeout(() => div.remove(), 5000);
+          }
+      }
+
+      ws.onmessage = (e) => {
+        const cmd = JSON.parse(e.data);
+        handleEvent(cmd);
+      };
+
+      // Initial Load
+      loadConfig();
+
+    </script>
+  </body>
+</html>

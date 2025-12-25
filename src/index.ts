@@ -69,7 +69,8 @@ async function main() {
       connectorState,
       stats,
       connectSystem,
-      getGiftCatalog // NEW
+      getGiftCatalog,
+      overlay.broadcast // Pass broadcast function
   ));
 
   // Bus Logic

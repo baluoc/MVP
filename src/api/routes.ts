@@ -3,6 +3,7 @@ import { AddonHost } from "../addons/host";
 import { RingBuffer } from "../core/ringbuffer";
 import { ConfigStore } from "../core/configStore";
 import { UserStatsStore } from "../stats/store";
+import { getWidgetRegistry } from "../overlay/registry";
 
 export function createApiRouter(
   addonHost: AddonHost,
@@ -11,7 +12,8 @@ export function createApiRouter(
   connectorState: () => any,
   stats: UserStatsStore,
   onConnect: (uniqueId: string) => void,
-  getGiftCatalog: () => any[] // New param
+  getGiftCatalog: () => any[], // New param
+  broadcastOverlay: (cmd: any) => void // New param for live updates
 ) {
   const r = Router();
 
@@ -83,6 +85,33 @@ export function createApiRouter(
   // 5. Gifts Catalog (NEW)
   r.get("/gifts", (req, res) => {
       res.json(getGiftCatalog());
+  });
+
+  // --- OVERLAY API ---
+
+  r.get("/overlay/widgets", (req, res) => {
+    res.json(getWidgetRegistry());
+  });
+
+  r.post("/overlay/active-scene", (req, res) => {
+    const { sceneId } = req.body;
+    if (!sceneId) return res.status(400).json({ error: "Missing sceneId" });
+
+    // Config Update
+    const conf = configStore.getCore();
+    if(!conf.overlay) conf.overlay = {};
+
+    // Simple check if scene exists
+    const exists = conf.overlay.scenes.find((s: any) => s.id === sceneId);
+    if (!exists) return res.status(404).json({ error: "Scene not found" });
+
+    conf.overlay.activeSceneId = sceneId;
+    configStore.setCore(conf);
+
+    // Broadcast change so overlay updates immediately
+    broadcastOverlay({ kind: 'scene-change', sceneId });
+
+    res.json({ ok: true });
   });
 
   // --- STATUS & ADDONS ---

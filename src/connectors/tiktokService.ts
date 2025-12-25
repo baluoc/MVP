@@ -125,6 +125,7 @@ export class TikTokService {
       // Enrich payload
       const giftIcon = this.getGiftIcon(d);
       emit("gift", {
+        giftId: d.giftId, // Add giftId
         giftName: d.giftName,
         count: d.repeatCount ?? 1,
         diamondCost: d.diamondCount,

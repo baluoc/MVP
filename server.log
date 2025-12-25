@@ -1,7 +1,25 @@
 
-> mvp@1.0.0 dev
-> ts-node-dev --respawn --transpile-only src/index.ts --mock
+> mvp@1.0.0 start
+> node dist/src/index.js
 
-[INFO] 01:48:37 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
-[overlay] http://127.0.0.1:5175/overlay/main
-System ready. Waiting for connection...
+node:events:497
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use 127.0.0.1:5175
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at node:net:2206:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on WebSocketServer instance at:
+    at Server.emit (node:events:519:28)
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -98,
+  syscall: 'listen',
+  address: '127.0.0.1',
+  port: 5175
+}
+
+Node.js v22.21.1
