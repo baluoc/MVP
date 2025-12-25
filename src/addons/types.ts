@@ -12,6 +12,13 @@ export interface AddonManifest {
   ui?: any; // reserved for GUI layout hints
 }
 
+export interface DashboardWidget {
+    id: string;
+    title: string;
+    html: string; // The HTML content to inject
+    script?: string; // Optional JS to run
+}
+
 export interface AddonContext {
   events: {
     subscribe(fn: (ev: AppEvent) => void): () => void;
@@ -27,6 +34,17 @@ export interface AddonContext {
     get(): any; // get config for this addon
     set(cfg: any): void; // update config for this addon
   };
+  dashboard: {
+      registerWidget(widget: DashboardWidget): void;
+  };
+  integrations: {
+      obs: {
+          sendRaw(type: string, data: any): Promise<any>;
+      };
+      streamerbot: {
+          doAction(actionId: string): Promise<void>;
+      }
+  }
 }
 
 export interface AddonModule {

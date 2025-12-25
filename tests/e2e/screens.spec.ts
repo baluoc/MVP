@@ -14,9 +14,14 @@ test('automated screenshots of all views', async ({ page }) => {
   // 1. Dashboard
   await page.goto('/');
   await expect(page.getByTestId('view-dashboard')).toBeVisible();
-  await expect(page.getByTestId('page-title')).toHaveText('Dashboard');
+  // Updated Title Expectation
+  await expect(page.getByTestId('page-title')).toHaveText('Live Dashboard');
   await expect(page.locator('#metric-viewers')).toBeVisible();
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard.png') });
+
+  // Wait for preview iframe to load (scale transform applied)
+  await page.waitForTimeout(500);
+
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard_rich.png') });
 
   // 2. System Settings
   await page.getByTestId('nav-system').click();
@@ -103,14 +108,14 @@ test('automated screenshots of all views', async ({ page }) => {
   await page.getByTestId('nav-composer').click();
   await expect(page.getByTestId('view-overlay-composer')).toBeVisible();
   await expect(page.locator('#stage-container')).toBeVisible();
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '10_overlay_composer.png') });
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '10_composer_wide.png') });
 
   // 11. User DB
   await page.getByTestId('nav-users').click();
   await expect(page.getByTestId('view-users')).toBeVisible();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_users.png') });
 
-  // Extra: Reset Modal
+  // Extra: Reset Modal (Trigger from System Settings)
   await page.getByTestId('nav-system').click();
   await page.getByTestId('btn-reset-stats').click();
   await expect(page.getByTestId('modal-reset')).toHaveClass(/active/);

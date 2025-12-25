@@ -4,7 +4,9 @@ import { EventBus } from "../core/bus";
 import { OverlayServer } from "../overlay/server";
 import { UserStatsStore } from "../stats/store";
 import { ConfigStore } from "../core/configStore";
-import { AddonContext, AddonManifest, AddonModule } from "./types";
+import { AddonContext, AddonManifest, AddonModule, DashboardWidget } from "./types";
+import { obsService } from "../connectors/obsService";
+import { streamerBotService } from "../connectors/streamerbotService";
 
 interface LoadedAddon {
   manifest: AddonManifest;
@@ -12,6 +14,7 @@ interface LoadedAddon {
   dispose?: () => void;
   status: "active" | "error" | "disabled";
   error?: string;
+  widgets: DashboardWidget[];
 }
 
 export class AddonHost {
@@ -60,6 +63,7 @@ export class AddonHost {
         manifest,
         dirPath: addonPath,
         status: "disabled",
+        widgets: []
       });
 
       const enabled = this.configStore.isAddonEnabled(manifest.id);
@@ -117,6 +121,7 @@ export class AddonHost {
 
     entry.status = "disabled";
     entry.dispose = undefined;
+    entry.widgets = []; // Clear widgets on deactivate
     console.log(`[AddonHost] Deactivated ${id}`);
   }
 
@@ -137,7 +142,8 @@ export class AddonHost {
       description: a.manifest.description,
       enabled: this.configStore.isAddonEnabled(a.manifest.id),
       status: a.status,
-      error: a.error
+      error: a.error,
+      widgets: a.widgets // Expose widgets
     }));
   }
 
@@ -157,6 +163,22 @@ export class AddonHost {
         get: () => this.configStore.getAddonConfig(addonId),
         set: (cfg) => this.configStore.setAddonConfig(addonId, cfg),
       },
+      dashboard: {
+          registerWidget: (widget) => {
+              const entry = this.addons.get(addonId);
+              if(entry) {
+                  entry.widgets.push(widget);
+              }
+          }
+      },
+      integrations: {
+          obs: {
+              sendRaw: (t, d) => obsService.sendRaw(t, d)
+          },
+          streamerbot: {
+              doAction: (id) => streamerBotService.doAction(id)
+          }
+      }
     };
   }
 }

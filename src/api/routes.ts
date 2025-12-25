@@ -4,6 +4,8 @@ import { RingBuffer } from "../core/ringbuffer";
 import { ConfigStore } from "../core/configStore";
 import { UserStatsStore } from "../stats/store";
 import { getWidgetRegistry } from "../overlay/registry";
+import { obsService } from "../connectors/obsService";
+import { streamerBotService } from "../connectors/streamerbotService";
 
 export function createApiRouter(
   addonHost: AddonHost,
@@ -17,6 +19,15 @@ export function createApiRouter(
   sendChat?: (text: string) => Promise<{ok: boolean, mode: string, reason?: string}>
 ) {
   const r = Router();
+
+  // Initialize Services with Config
+  const conf = configStore.getCore();
+  if (conf.obs) obsService.configure(conf.obs);
+  if (conf.streamerbot) streamerBotService.configure(conf.streamerbot);
+  // Migrate legacy Simabot if present?
+  if (conf.simabot && conf.simabot.enabled) {
+     // Optional: migrate config on fly or just ignore
+  }
 
   // --- CORE ROUTES ---
 
@@ -34,26 +45,19 @@ export function createApiRouter(
     // SECURITY: Clone and redact sensitive fields
     const core = JSON.parse(JSON.stringify(configStore.getCore()));
 
-    // Redact TikTok SessionId
-    if (core.tiktok?.session) {
-      core.tiktok.session.sessionId = ""; // Redacted
-    }
-
-    // Redact OBS Password
-    if (core.obs) {
-      core.obs.password = ""; // Redacted
-    }
-
-    // Redact Streamer.bot token if exists
-    if (core.streamerbot) {
-       // Assuming token field might exist in future
-    }
+    if (core.tiktok?.session) core.tiktok.session.sessionId = "";
+    if (core.obs) core.obs.password = "";
+    if (core.streamerbot) core.streamerbot.password = "";
 
     res.json(core);
   });
 
   r.post("/settings", (req, res) => {
     configStore.setCore(req.body);
+    // Reconfigure services dynamically
+    if (req.body.obs) obsService.configure(req.body.obs);
+    if (req.body.streamerbot) streamerBotService.configure(req.body.streamerbot);
+
     res.json({ ok: true });
   });
 
@@ -168,19 +172,7 @@ export function createApiRouter(
       if (catalog && catalog.length > 0) {
           res.json(catalog);
       } else {
-          // Fallback logic
           try {
-              // Ensure we are loading from the right place relative to dist/src/api
-              // But standard require resolves from current file.
-              // In dev: src/api/routes.ts -> ../../fixtures/gifts_fallback.json
-              // In dist: dist/src/api/routes.js -> ../../../fixtures/gifts_fallback.json
-
-              // We can use process.cwd() to be safe, or just standard require if structure is preserved.
-              // Since tsc preserves structure under dist/, let's check.
-              // dist/src/api -> dist/fixtures ?? NO, fixtures is root.
-              // So in dist: require('../../../fixtures/gifts_fallback.json')
-
-              // To support both TS-node and compiled code, we can use process.cwd()
               const path = require('path');
               const fallbackPath = path.join(process.cwd(), 'fixtures', 'gifts_fallback.json');
               const fallback = require(fallbackPath);
@@ -216,43 +208,115 @@ export function createApiRouter(
     res.json({ ok: true });
   });
 
-  // --- STUB ENDPOINTS FOR INTEGRATIONS (Epics 6, 7, 8) ---
-
-  // OBS
-  r.post("/obs/test", (req, res) => {
-     // Stub
-     res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  // --- OBS INTEGRATION (REAL) ---
+  r.post("/obs/connect", async (req, res) => {
+      try {
+          await obsService.connect();
+          res.json({ ok: true });
+      } catch(e:any) {
+          res.status(500).json({ ok: false, reason: e.message });
+      }
   });
 
-  r.post("/obs/action", (req, res) => {
-     res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  r.post("/obs/disconnect", async (req, res) => {
+      await obsService.disconnect();
+      res.json({ ok: true });
   });
 
-  // Streamer.bot
+  r.post("/obs/test", async (req, res) => {
+      const status = obsService.getStatus();
+      if(status.connected) {
+          res.json({ ok: true, info: status });
+      } else {
+          try {
+              await obsService.connect();
+              res.json({ ok: true, info: "Connected" });
+          } catch(e:any) {
+              res.json({ ok: false, reason: e.message });
+          }
+      }
+  });
+
+  r.post("/obs/action", async (req, res) => {
+      const { type, data } = req.body;
+      if(!type) return res.status(400).json({ error: "Missing action type" });
+
+      try {
+          if (type === 'switchScene') {
+              await obsService.switchScene(data.sceneName);
+          } else {
+              await obsService.sendRaw(type, data);
+          }
+          res.json({ ok: true });
+      } catch(e:any) {
+          res.status(500).json({ ok: false, reason: e.message });
+      }
+  });
+
+  r.post("/obs/raw", async (req, res) => {
+      const { requestType, requestData } = req.body;
+      try {
+          const result = await obsService.sendRaw(requestType, requestData);
+          res.json({ ok: true, result });
+      } catch(e:any) {
+          res.status(500).json({ ok: false, reason: e.message });
+      }
+  });
+
+
+  // --- STREAMER.BOT INTEGRATION (REAL) ---
+  r.post("/streamerbot/connect", async (req, res) => {
+      try {
+          streamerBotService.connect();
+          res.json({ ok: true });
+      } catch(e:any) {
+          res.status(500).json({ ok: false, reason: e.message });
+      }
+  });
+
+  r.post("/streamerbot/disconnect", (req, res) => {
+      streamerBotService.disconnect();
+      res.json({ ok: true });
+  });
+
   r.post("/streamerbot/test", (req, res) => {
-      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+      const status = streamerBotService.getStatus();
+      if(status.connected) {
+          res.json({ ok: true, info: status });
+      } else {
+          streamerBotService.connect();
+          // Async connect, just return connecting state
+          res.json({ ok: true, info: "Connecting..." });
+      }
   });
 
-  r.post("/streamerbot/action", (req, res) => {
-      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  r.post("/streamerbot/action", async (req, res) => {
+      const { action } = req.body; // Expecting action name/id
+      if(!action) return res.status(400).json({ error: "Missing action" });
+
+      try {
+          await streamerBotService.doAction(action);
+          res.json({ ok: true });
+      } catch(e:any) {
+           res.status(500).json({ ok: false, reason: e.message });
+      }
   });
 
-  // Simabot
-  r.post("/simabot/test", (req, res) => {
-      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
-  });
-
-  r.post("/simabot/action", (req, res) => {
-      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  r.post("/streamerbot/raw", (req, res) => {
+      const { payload } = req.body;
+      try {
+          streamerBotService.sendJson(payload);
+          res.json({ ok: true });
+      } catch(e:any) {
+           res.status(500).json({ ok: false, reason: e.message });
+      }
   });
 
   // --- STATUS & ADDONS ---
 
   r.get("/status", (req, res) => {
-    const coreConfig = configStore.getCore();
     const cState = connectorState();
 
-    // Explicit overlay URL construction
     const host = req.get('host');
     const proto = req.protocol;
 
@@ -265,7 +329,10 @@ export function createApiRouter(
       uniqueId: cState.uniqueId,
       roomInfo: cState.roomInfo,
       lastError: cState.lastError,
-      mode: cState.mode
+      mode: cState.mode,
+      // Integrations status
+      obs: obsService.getStatus(),
+      streamerbot: streamerBotService.getStatus()
     });
   });
 
