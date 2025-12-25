@@ -40,15 +40,20 @@
              padding-bottom: 20px;
         }
 
-        /* Preview Stage */
+        /* Preview Stage - HEX PATTERN */
         .stage-container-preview {
             width: 100%;
             aspect-ratio: 9/16;
-            background:
-                linear-gradient(#333 1px, transparent 1px),
-                linear-gradient(90deg, #333 1px, transparent 1px);
-            background-size: 20px 20px;
             background-color: #000;
+            background-image:
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
+                linear-gradient(60deg, #1a1a1a 25%, transparent 25.5%, transparent 75%, #1a1a1a 75%, #1a1a1a),
+                linear-gradient(60deg, #1a1a1a 25%, transparent 25.5%, transparent 75%, #1a1a1a 75%, #1a1a1a);
+            background-size: 40px 70px;
+            background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
             border: 1px solid var(--border);
             border-radius: 8px;
             overflow: hidden;
@@ -66,31 +71,71 @@
         }
         .stage-overlay-label {
             position: absolute;
-            top: 10px; left: 10px;
+            top: 10px;
+            left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
             color: #ccc;
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 12px;
             text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.1);
         }
+        .stage-overlay-label.bottom {
+            top: auto; bottom: 10px;
+        }
+
+        /* Pulsing Live Badge */
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 80, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0); } }
+        .live-badge {
+            background: var(--primary); color: white;
+            font-size: 0.7rem; padding: 4px 8px; border-radius: 4px;
+            font-weight: 700; display: inline-flex; align-items: center; gap: 6px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .live-badge.active { animation: pulse-red 2s infinite; }
+        .live-badge.inactive { background: #333; color: #888; animation: none; }
+
 
         /* Event Log Cards */
         .log-entry {
-             background: rgba(255,255,255,0.03);
+             background: var(--panel);
              border: 1px solid var(--border);
-             border-left: 3px solid var(--muted);
-             border-radius: 6px;
-             padding: 10px;
+             border-left: 4px solid var(--muted);
+             border-radius: 8px;
+             padding: 12px;
              margin-bottom: 8px;
              font-size: 0.85rem;
              display: flex;
-             gap: 10px;
-             align-items: flex-start;
+             gap: 12px;
+             align-items: center;
+             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
-        .log-entry.gift { border-left-color: var(--primary); background: rgba(255,0,80,0.05); }
+        .log-entry.gift { border-left-color: var(--primary); }
         .log-entry.sub { border-left-color: var(--warning); }
-        .log-entry img { width: 24px; height: 24px; border-radius: 50%; }
+        .log-entry.chat { border-left-color: var(--accent); }
+
+        .log-icon { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0; }
+        .log-content { flex: 1; min-width: 0; }
+        .log-title { font-weight: 600; color: var(--text); margin-bottom: 2px; }
+        .log-desc { color: var(--muted); font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .log-time { font-size: 0.65rem; color: #555; align-self: flex-start; }
+
+        /* Chat Specific */
+        .chat-bubble {
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 8px 12px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            display: flex; gap: 10px;
+        }
+        .chat-avatar { width: 28px; height: 28px; border-radius: 50%; background: #333; flex-shrink: 0; }
+        .chat-name { font-weight: 700; margin-right: 5px; font-size: 0.8rem; }
+        .chat-text { color: #ddd; word-break: break-word; line-height: 1.4; }
+
 
         /* --- CARDS & GRID --- */
         .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; padding-bottom: 50px; }
@@ -167,7 +212,7 @@
         <div class="brand"><span>TK</span> EVENT SERVER</div>
 
         <div class="nav-group">Monitoring</div>
-        <div class="nav-item active" onclick="showView('dashboard')" data-view="dashboard" data-testid="nav-dashboard">📊 Live Dashboard</div>
+        <div class="nav-item active" onclick="showView('dashboard')" data-view="dashboard" data-testid="nav-dashboard">📊 Live Übersicht</div>
         <div class="nav-item" onclick="showView('users')" data-view="users" data-testid="nav-users">📈 Statistiken / DB</div>
 
         <div class="nav-group">Konfiguration</div>
@@ -198,8 +243,8 @@
         <!-- Top Bar -->
         <div style="height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--bg);">
             <div style="display:flex; align-items:center; gap:15px;">
-                <div style="font-weight: 600; font-size: 0.9rem;" id="page-title" data-testid="page-title">Live Dashboard</div>
-                <div id="live-badge" style="background:rgba(255,0,80,0.1); color:var(--primary); font-size:0.7rem; padding:2px 6px; border-radius:4px; font-weight:700; opacity:0;">● LIVE STREAM AKTIV</div>
+                <div style="font-weight: 600; font-size: 0.9rem;" id="page-title" data-testid="page-title">Live Übersicht</div>
+                <div id="live-badge" class="live-badge inactive" data-testid="live-badge">OFFLINE</div>
             </div>
 
             <div style="display:flex; gap:10px; align-items: center;">
@@ -222,8 +267,9 @@
                 <!-- Col 1: Live Vorschau -->
                 <div style="display:flex; flex-direction:column; gap:15px;">
                     <div class="stage-container-preview" id="preview-container">
-                        <div class="stage-overlay-label">TIKTOK OUTPUT (1080x1920)</div>
+                        <div class="stage-overlay-label">TIKTOK OUTPUT</div>
                         <iframe id="preview-frame" class="stage-iframe" src="about:blank"></iframe>
+                        <div class="stage-overlay-label bottom">LIVE FEED (1080x1920)</div>
                     </div>
 
                     <div class="card">
@@ -310,34 +356,60 @@
              <div class="settings-grid">
                 <!-- OBS -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">OBS WebSocket</span></div>
+                    <div class="card-header"><span class="card-title">OBS Integration</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>IP Adresse</label> <input type="text" data-bind="obs.ip"></div>
-                        <div class="form-row"><label>Port</label> <input type="number" data-bind="obs.port"></div>
-                        <div class="form-row"><label>Passwort</label> <input type="password" data-bind="obs.password"></div>
+                        <details>
+                            <summary>Verbindungseinstellungen</summary>
+                            <div class="details-content">
+                                <div class="form-row"><label>IP Adresse</label> <input type="text" data-bind="obs.ip"></div>
+                                <div class="form-row"><label>Port</label> <input type="number" data-bind="obs.port"></div>
+                                <div class="form-row"><label>Passwort</label> <input type="password" data-bind="obs.password"></div>
+                                <button class="btn-secondary" onclick="testIntegration('obs')">Verbinden / Testen</button>
+                            </div>
+                        </details>
+
+                        <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
+                            <label>Szene Wechseln</label>
+                            <div style="display:flex; gap:5px;">
+                                <select id="obs-scenes-list"><option>-- Wähle --</option></select>
+                                <button class="btn-secondary" onclick="obsSwitchScene()">Go</button>
+                            </div>
+                            <button class="btn-icon" style="margin-top:5px; width:100%;" onclick="obsLoadScenes()">Szenen laden</button>
+                        </div>
+
+                        <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
+                            <label>Source Toggle (Sichtbarkeit)</label>
+                            <div style="display:flex; gap:5px;">
+                                <input type="text" id="obs-source-name" placeholder="Quellenname">
+                                <button class="btn-secondary" onclick="obsToggleSource()">Toggle</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('obs')">Verbindung testen</button></div>
                 </div>
+
                 <!-- Streamer.bot -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Streamer.bot</span></div>
+                    <div class="card-header"><span class="card-title">Streamer.bot Integration</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>Adresse</label> <input type="text" data-bind="streamerbot.address"></div>
-                        <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
-                        <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
+                         <details>
+                            <summary>Verbindungseinstellungen</summary>
+                            <div class="details-content">
+                                <div class="form-row"><label>Adresse</label> <input type="text" data-bind="streamerbot.address"></div>
+                                <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
+                                <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
+                                <button class="btn-secondary" onclick="testIntegration('streamerbot')">Verbinden / Testen</button>
+                            </div>
+                        </details>
+
+                        <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
+                            <label>Aktionen (DoAction)</label>
+                            <div style="display:flex; gap:5px;">
+                                <select id="sb-actions-list"><option>-- Wähle --</option></select>
+                                <button class="btn-secondary" onclick="sbDoAction()">Starten</button>
+                            </div>
+                            <button class="btn-icon" style="margin-top:5px; width:100%;" onclick="sbLoadActions()">Aktionen laden</button>
+                        </div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('streamerbot')">Verbindung testen</button></div>
-                </div>
-                <!-- Simabot -->
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Simabot Integration</span></div>
-                    <div class="card-body">
-                        <div class="check-group"><input type="checkbox" data-bind="simabot.enabled"> <span>Aktivieren</span></div>
-                        <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;">
-                        <div class="form-row"><label>Endpoint URL</label> <input type="text" data-bind="simabot.endpoint"></div>
-                        <div class="form-row"><label>Token</label> <input type="password" data-bind="simabot.token"></div>
-                    </div>
-                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('simabot')">Verbindung testen</button></div>
                 </div>
              </div>
         </div>
@@ -382,17 +454,6 @@
                     </div>
                 </div>
 
-                <div class="card">
-                    <div class="card-header"><span class="card-title">Chat Integration (Legacy)</span></div>
-                    <div class="card-body">
-                        <div class="check-group">
-                            <input type="checkbox" data-bind="chat.enableSend" data-testid="check-chat-send"> <strong>Chat Senden aktivieren</strong>
-                        </div>
-                        <div class="check-group">
-                            <input type="checkbox" data-bind="chat.enableZoom"> <span>Zoom Chat aktivieren</span>
-                        </div>
-                    </div>
-                </div>
              </div>
         </div>
 
@@ -534,7 +595,7 @@
         <div id="view-overlay-composer" class="view" style="display:none; flex-direction: column; height: 100vh; overflow:hidden;" data-testid="view-overlay-composer">
             <div style="display:flex; height:100%;">
                 <!-- Left: Scenes & Widgets -->
-                <div style="width: 300px; min-width: 250px; background: var(--panel); border-right: 1px solid var(--border); display:flex; flex-direction:column; resize:horizontal; overflow:auto;">
+                <div style="width: 320px; min-width: 300px; background: var(--panel); border-right: 1px solid var(--border); display:flex; flex-direction:column; resize:horizontal; overflow:auto;">
                     <div style="padding:10px; border-bottom:1px solid var(--border); font-weight:600;">Szenen</div>
                     <div id="composer-scene-list" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:5px; min-height: 200px;"></div>
                     <button class="btn-secondary" style="margin:10px;" onclick="addScene()">+ Neue Szene</button>
@@ -655,7 +716,7 @@
         let availableWidgets = [];
 
         const VIEW_TITLES = {
-            "dashboard": "Live Dashboard",
+            "dashboard": "Live Übersicht",
             "settings-system": "Einstellungen: System",
             "settings-points": "Einstellungen: Punkte & Level",
             "settings-broadcast": "Einstellungen: Broadcast",
@@ -702,6 +763,9 @@
             if(id === 'users') loadUsers(1);
             if(id === 'overlays') loadOverlaySettings();
             if(id === 'overlay-composer') initComposer();
+            if(id === 'settings-broadcast') {
+                 // Try to prefill lists if connected?
+            }
 
             // If Dashboard, update iframe scale
             if(id === 'dashboard') {
@@ -837,18 +901,92 @@
             document.getElementById('sum-trigger').innerText = (tts.trigger || "any").toUpperCase();
         }
 
-        // --- FEATURES ---
+        // --- FEATURES & INTEGRATIONS ---
 
-        // Integrations Tester (OBS, Streamerbot, Simabot)
+        // Integrations Tester (OBS, Streamerbot)
         async function testIntegration(service) {
             const res = await fetch(`/api/${service}/test`, { method: 'POST' });
             const data = await res.json();
             if(data.ok) {
-                alert(`${service} verbunden!`);
+                alert(`${service} verbunden! Status: ` + JSON.stringify(data.info));
             } else {
-                alert(`Test fehlgeschlagen: ${data.reason} (Mode: ${data.mode})`);
+                alert(`Test fehlgeschlagen: ${data.reason}`);
             }
         }
+
+        // OBS Functions
+        async function obsLoadScenes() {
+            const res = await fetch('/api/obs/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ type: 'getScenes' })
+            });
+            const data = await res.json();
+            if(data.ok && data.scenes) {
+                const sel = document.getElementById('obs-scenes-list');
+                sel.innerHTML = "";
+                data.scenes.forEach(s => {
+                    const opt = document.createElement("option");
+                    opt.value = s.sceneName;
+                    opt.innerText = s.sceneName;
+                    sel.appendChild(opt);
+                });
+            } else {
+                alert("Konnte Szenen nicht laden: " + (data.reason || 'Unbekannt'));
+            }
+        }
+
+        async function obsSwitchScene() {
+            const s = document.getElementById('obs-scenes-list').value;
+            if(!s) return;
+            await fetch('/api/obs/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ type: 'switchScene', data: { sceneName: s } })
+            });
+        }
+
+        async function obsToggleSource() {
+            const name = document.getElementById('obs-source-name').value;
+            if(!name) return;
+            // Simple toggle hack: assumes we want to toggle it.
+            // But we need to know current state to toggle.
+            // For now, let's just alert user needs to specify state in a real UI, or we just send 'true' to enable.
+            // Requirement says "Toggle". Let's enable it for now, or maybe prompt?
+            const enabled = confirm("Soll die Quelle '" + name + "' aktiviert werden? (Cancel=Deaktivieren)");
+            await fetch('/api/obs/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ type: 'toggleInput', data: { inputName: name, enabled: enabled } })
+            });
+        }
+
+        // Streamer.bot Functions
+        async function sbLoadActions() {
+            const res = await fetch('/api/streamerbot/actions');
+            const actions = await res.json();
+            const sel = document.getElementById('sb-actions-list');
+            sel.innerHTML = "";
+            actions.forEach(a => {
+                const opt = document.createElement("option");
+                opt.value = a.id;
+                opt.innerText = a.name;
+                sel.appendChild(opt);
+            });
+            if(actions.length === 0) alert("Keine Actions gefunden oder nicht verbunden.");
+        }
+
+        async function sbDoAction() {
+            const id = document.getElementById('sb-actions-list').value;
+            if(!id) return;
+            await fetch('/api/streamerbot/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ actionId: id })
+            });
+            alert("Action ausgeführt");
+        }
+
 
         // Danger Zone
         function openResetModal() {
@@ -958,7 +1096,10 @@
 
                 // Top Bar Update
                 document.getElementById('top-conn-user').innerText = "@" + s.uniqueId;
-                document.getElementById('live-badge').style.opacity = "1";
+                const b = document.getElementById('live-badge');
+                b.className = "live-badge active";
+                b.innerText = "● LIVE STREAM AKTIV";
+                b.style.opacity = "1";
 
                 if(s.roomInfo) {
                     document.getElementById('status-meta').innerText = `Zuschauer: ${s.roomInfo.roomUserCount || 0}`;
@@ -967,7 +1108,10 @@
                 document.getElementById('status-text').innerText = "Offline";
                 document.getElementById('status-dot').style.background = "#666";
                 document.getElementById('top-conn-user').innerText = "@Nicht Verbunden";
-                document.getElementById('live-badge').style.opacity = "0";
+                const b = document.getElementById('live-badge');
+                b.className = "live-badge inactive";
+                b.innerText = "OFFLINE";
+                b.style.opacity = "1";
             }
         }
         setInterval(checkStatus, 3000);
@@ -1338,19 +1482,21 @@
 
                  if(isGift) {
                      d.innerHTML = `
-                        <img src="${data.giftIconUrl || 'https://via.placeholder.com/24'}">
-                        <div>
-                            <div style="font-weight:600;">${data.from || 'User'}</div>
-                            <div style="color:var(--muted); font-size:0.75rem;">sendet ${data.count}x ${data.giftName}</div>
+                        <div class="log-icon" style="border:1px solid var(--primary);"><img src="${data.giftIconUrl || 'https://via.placeholder.com/24'}" style="width:20px; height:20px;"></div>
+                        <div class="log-content">
+                            <div class="log-title">${data.from || 'User'}</div>
+                            <div class="log-desc">sendet ${data.count}x ${data.giftName}</div>
                         </div>
+                        <div class="log-time">${new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})}</div>
                      `;
                  } else {
                      d.innerHTML = `
-                        <div style="width:24px; height:24px; background:var(--primary); border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:0.7rem;">🔔</div>
-                        <div>
-                            <div style="font-weight:600;">${data.title || 'Event'}</div>
-                            <div style="color:var(--muted); font-size:0.75rem;">${data.text}</div>
+                        <div class="log-icon">🔔</div>
+                        <div class="log-content">
+                            <div class="log-title">${data.title || 'Event'}</div>
+                            <div class="log-desc">${data.text}</div>
                         </div>
+                        <div class="log-time">${new Date().toLocaleTimeString('de-DE', {hour:'2-digit', minute:'2-digit'})}</div>
                      `;
                  }
                  list.prepend(d);
@@ -1358,11 +1504,13 @@
                  // Chat Panel
                  const list = document.getElementById('chat-list');
                  const d = document.createElement('div');
-                 d.style.display="flex"; d.style.gap="8px"; d.style.fontSize="0.85rem";
+                 d.className = "chat-bubble";
                  d.innerHTML = `
-                    <img src="${data.profilePictureUrl || ''}" style="width:20px; height:20px; border-radius:50%; background:#333;">
-                    <span style="font-weight:700; color:${data.isSubscriber ? 'var(--warning)' : 'var(--text)'};">${data.nickname}:</span>
-                    <span style="color:#ddd;">${data.text}</span>
+                    <img class="chat-avatar" src="${data.profilePictureUrl || ''}">
+                    <div>
+                        <span class="chat-name" style="color:${data.isSubscriber ? 'var(--warning)' : 'var(--text)'};">${data.nickname}:</span>
+                        <span class="chat-text">${data.text}</span>
+                    </div>
                  `;
                  list.prepend(d);
             } else if (data.kind === 'dashboard-update') {
