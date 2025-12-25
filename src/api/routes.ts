@@ -12,9 +12,9 @@ export function createApiRouter(
   connectorState: () => any,
   stats: UserStatsStore,
   onConnect: (uniqueId: string) => void,
-  getGiftCatalog: () => any[], // New param
-  broadcastOverlay: (cmd: any) => void, // New param for live updates
-  sendChat?: (text: string) => Promise<{ok: boolean, mode: string, reason?: string}> // New param for sending chat
+  getGiftCatalog: () => any[],
+  broadcastOverlay: (cmd: any) => void,
+  sendChat?: (text: string) => Promise<{ok: boolean, mode: string, reason?: string}>
 ) {
   const r = Router();
 
@@ -31,7 +31,25 @@ export function createApiRouter(
 
   // 1. Settings (Config)
   r.get("/settings", (req, res) => {
-    res.json(configStore.getCore());
+    // SECURITY: Clone and redact sensitive fields
+    const core = JSON.parse(JSON.stringify(configStore.getCore()));
+
+    // Redact TikTok SessionId
+    if (core.tiktok?.session) {
+      core.tiktok.session.sessionId = ""; // Redacted
+    }
+
+    // Redact OBS Password
+    if (core.obs) {
+      core.obs.password = ""; // Redacted
+    }
+
+    // Redact Streamer.bot token if exists
+    if (core.streamerbot) {
+       // Assuming token field might exist in future
+    }
+
+    res.json(core);
   });
 
   r.post("/settings", (req, res) => {
@@ -70,8 +88,6 @@ export function createApiRouter(
 
   // 3. Reset (Punkte löschen)
   r.post("/reset-stats", (req, res) => {
-      // NOTE: Protection logic (header check) can be added here if needed,
-      // but current task removed Supervisor requirement.
       stats.reset();
       res.json({ ok: true });
   });
@@ -95,7 +111,6 @@ export function createApiRouter(
           const result = await sendChat(text.trim());
           res.json(result);
       } catch (e: any) {
-          // Pass through known errors (NO_SESSIONID, RATE_LIMIT)
           const reason = e.message;
           res.json({ ok: false, mode: "live", reason });
       }
@@ -111,7 +126,6 @@ export function createApiRouter(
       const conf = configStore.getCore();
       const s = conf.tiktok?.session || {};
 
-      // Sanitized response
       res.json({
           mode: s.mode || "none",
           hasSessionId: !!s.sessionId && s.sessionId.length > 0,
@@ -129,7 +143,7 @@ export function createApiRouter(
 
       conf.tiktok.session.mode = mode;
       if (sessionId !== undefined) {
-          conf.tiktok.session.sessionId = sessionId; // Saved RAW in config (backend only)
+          conf.tiktok.session.sessionId = sessionId;
       }
       conf.tiktok.session.updatedAt = Date.now();
 
@@ -148,17 +162,31 @@ export function createApiRouter(
       res.json({ ok: true });
   });
 
-  // 6. Gifts Catalog (NEW)
+  // 6. Gifts Catalog
   r.get("/gifts", (req, res) => {
       const catalog = getGiftCatalog();
       if (catalog && catalog.length > 0) {
           res.json(catalog);
       } else {
-          // Fallback
+          // Fallback logic
           try {
-              const fallback = require("../../fixtures/gifts_fallback.json");
+              // Ensure we are loading from the right place relative to dist/src/api
+              // But standard require resolves from current file.
+              // In dev: src/api/routes.ts -> ../../fixtures/gifts_fallback.json
+              // In dist: dist/src/api/routes.js -> ../../../fixtures/gifts_fallback.json
+
+              // We can use process.cwd() to be safe, or just standard require if structure is preserved.
+              // Since tsc preserves structure under dist/, let's check.
+              // dist/src/api -> dist/fixtures ?? NO, fixtures is root.
+              // So in dist: require('../../../fixtures/gifts_fallback.json')
+
+              // To support both TS-node and compiled code, we can use process.cwd()
+              const path = require('path');
+              const fallbackPath = path.join(process.cwd(), 'fixtures', 'gifts_fallback.json');
+              const fallback = require(fallbackPath);
               res.json(fallback);
           } catch(e) {
+              console.error("Failed to load fallback gifts", e);
               res.json([]);
           }
       }
@@ -174,21 +202,48 @@ export function createApiRouter(
     const { sceneId } = req.body;
     if (!sceneId) return res.status(400).json({ error: "Missing sceneId" });
 
-    // Config Update
     const conf = configStore.getCore();
     if(!conf.overlay) conf.overlay = {};
 
-    // Simple check if scene exists
     const exists = conf.overlay.scenes.find((s: any) => s.id === sceneId);
     if (!exists) return res.status(404).json({ error: "Scene not found" });
 
     conf.overlay.activeSceneId = sceneId;
     configStore.setCore(conf);
 
-    // Broadcast change so overlay updates immediately
     broadcastOverlay({ kind: 'scene', sceneId });
 
     res.json({ ok: true });
+  });
+
+  // --- STUB ENDPOINTS FOR INTEGRATIONS (Epics 6, 7, 8) ---
+
+  // OBS
+  r.post("/obs/test", (req, res) => {
+     // Stub
+     res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  });
+
+  r.post("/obs/action", (req, res) => {
+     res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  });
+
+  // Streamer.bot
+  r.post("/streamerbot/test", (req, res) => {
+      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  });
+
+  r.post("/streamerbot/action", (req, res) => {
+      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  });
+
+  // Simabot
+  r.post("/simabot/test", (req, res) => {
+      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
+  });
+
+  r.post("/simabot/action", (req, res) => {
+      res.json({ ok: false, mode: "stub", reason: "NOT_IMPLEMENTED" });
   });
 
   // --- STATUS & ADDONS ---
@@ -196,12 +251,16 @@ export function createApiRouter(
   r.get("/status", (req, res) => {
     const coreConfig = configStore.getCore();
     const cState = connectorState();
+
+    // Explicit overlay URL construction
+    const host = req.get('host');
+    const proto = req.protocol;
+
     res.json({
       uptime: process.uptime(),
       version: "1.0.0",
-      overlay: { url: `${req.protocol}://${req.get('host')}/overlay/main` },
+      overlay: { url: `${proto}://${host}/overlay/main` },
       addonsLoaded: addonHost.getAddonsList().length,
-      // Expanded Connector State
       connected: cState.connected,
       uniqueId: cState.uniqueId,
       roomInfo: cState.roomInfo,

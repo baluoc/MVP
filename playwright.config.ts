@@ -16,6 +16,13 @@ export default defineConfig({
     baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
   },
+  webServer: {
+    command: 'npm run start:test',
+    port: 5175,
+    reuseExistingServer: true,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  },
   projects: [
     {
       name: 'chromium',

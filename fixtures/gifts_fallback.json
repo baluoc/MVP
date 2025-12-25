@@ -1,6 +1,42 @@
 [
-  { "id": "1", "name": "Rose", "cost": 1, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/rose_v2.png~tplv-obj.png" },
-  { "id": "2", "name": "TikTok", "cost": 1, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/tiktok_v2.png~tplv-obj.png" },
-  { "id": "3", "name": "Finger Heart", "cost": 5, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/finger_heart_v2.png~tplv-obj.png" },
-  { "id": "4", "name": "Panda", "cost": 5, "iconUrl": "https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift-resource/panda_v2.png~tplv-obj.png" }
+  {
+      "id": 5655,
+      "name": "Rose",
+      "diamondCost": 1,
+      "icon": {
+          "url_list": ["https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift/88c6e256b71f92c300304323c015b602~tplv-obj.png"]
+      }
+  },
+  {
+      "id": 5234,
+      "name": "Panda",
+      "diamondCost": 5,
+      "icon": {
+          "url_list": ["https://p19-webcast.tiktokcdn.com/img/maliva/webcast-gift/32f2541743f5119777555139268f85f1~tplv-obj.png"]
+      }
+  },
+  {
+      "id": 5660,
+      "name": "Finger Heart",
+      "diamondCost": 5,
+      "icon": {
+          "url_list": ["https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift/25b1698a9d16a51b538cd9162985392e~tplv-obj.png"]
+      }
+  },
+  {
+      "id": 5585,
+      "name": "Hand Heart",
+      "diamondCost": 100,
+      "icon": {
+          "url_list": ["https://p19-webcast.tiktokcdn.com/img/maliva/webcast-gift/e4f85e4a8210339d22c92330a6e0980f.png~tplv-obj.png"]
+      }
+  },
+  {
+      "id": 6064,
+      "name": "Love Bang",
+      "diamondCost": 299,
+      "icon": {
+          "url_list": ["https://p16-webcast.tiktokcdn.com/img/maliva/webcast-gift/8a85f31956ca010c7102a0a256a5c37d~tplv-obj.png"]
+      }
+  }
 ]

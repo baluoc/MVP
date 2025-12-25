@@ -221,6 +221,7 @@
                         <div class="form-row"><label>Punkte pro Share</label> <input type="number" data-bind="points.share"></div>
                         <div class="form-row"><label>Punkte pro Chat</label> <input type="number" data-bind="points.chat"></div>
                         <div class="form-row"><label>Sub Bonus (%)</label> <input type="number" data-bind="points.subBonus"></div>
+                        <div class="form-row"><label>Zielwert (Goal)</label> <input type="number" data-bind="points.goalTarget"></div>
                     </div>
                 </div>
                 <div class="card">
@@ -236,6 +237,7 @@
         <!-- SETTINGS: BROADCAST -->
         <div id="view-settings-broadcast" class="view" data-testid="view-settings-broadcast">
              <div class="settings-grid">
+                <!-- OBS -->
                 <div class="card">
                     <div class="card-header"><span class="card-title">OBS WebSocket</span></div>
                     <div class="card-body">
@@ -243,8 +245,9 @@
                         <div class="form-row"><label>Port</label> <input type="number" data-bind="obs.port"></div>
                         <div class="form-row"><label>Passwort</label> <input type="password" data-bind="obs.password"></div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary">Verbindung testen</button></div>
+                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('obs')">Verbindung testen</button></div>
                 </div>
+                <!-- Streamer.bot -->
                 <div class="card">
                     <div class="card-header"><span class="card-title">Streamer.bot</span></div>
                     <div class="card-body">
@@ -252,7 +255,18 @@
                         <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
                         <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary">Verbindung testen</button></div>
+                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('streamerbot')">Verbindung testen</button></div>
+                </div>
+                <!-- Simabot -->
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Simabot Integration</span></div>
+                    <div class="card-body">
+                        <div class="check-group"><input type="checkbox" data-bind="simabot.enabled"> <span>Aktivieren</span></div>
+                        <hr style="border:0; border-top:1px solid var(--border); margin:10px 0;">
+                        <div class="form-row"><label>Endpoint URL</label> <input type="text" data-bind="simabot.endpoint"></div>
+                        <div class="form-row"><label>Token</label> <input type="password" data-bind="simabot.token"></div>
+                    </div>
+                    <div class="card-footer"><button class="btn-secondary" onclick="testIntegration('simabot')">Verbindung testen</button></div>
                 </div>
              </div>
         </div>
@@ -728,6 +742,17 @@
 
         // --- FEATURES ---
 
+        // Integrations Tester (OBS, Streamerbot, Simabot)
+        async function testIntegration(service) {
+            const res = await fetch(`/api/${service}/test`, { method: 'POST' });
+            const data = await res.json();
+            if(data.ok) {
+                alert(`${service} verbunden!`);
+            } else {
+                alert(`Test fehlgeschlagen: ${data.reason} (Mode: ${data.mode})`);
+            }
+        }
+
         // Danger Zone
         function openResetModal() {
             document.getElementById('reset-confirm-input').value = "";
@@ -1070,8 +1095,6 @@
              if(!dragTarget) return;
              // Calculate delta with scale factor
              // We need to know current scale of stage-wrapper
-             const wrapper = document.getElementById('stage-wrapper');
-             // Extract scale from transform matrix or style
              // Simplification: we calculated scale in resizeComposerStage
              const container = document.getElementById('stage-container');
              const scale = Math.min((container.clientWidth - 40) / 1080, (container.clientHeight - 40) / 1920);

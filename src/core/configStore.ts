@@ -23,9 +23,22 @@ export const DEFAULT_CONFIG = {
     multiplier: 1.5
   },
 
-  // Integrationen
-  obs: { ip: "127.0.0.1", port: 4455, password: "" },
-  streamerbot: { address: "127.0.0.1", port: 8080, endpoint: "/" },
+  // Integrationen (Epic 6, 7, 8)
+  obs: {
+    ip: "127.0.0.1",
+    port: 4455,
+    password: ""
+  },
+  streamerbot: {
+    address: "127.0.0.1",
+    port: 8080,
+    endpoint: "/"
+  },
+  simabot: {
+    enabled: false,
+    endpoint: "",
+    token: ""
+  },
 
   // Chat
   chat: {
