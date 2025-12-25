@@ -40,25 +40,18 @@
              padding-bottom: 20px;
         }
 
-        /* Preview Stage - HEX PATTERN */
+        /* Preview Stage - WIREFRAME / HEX PATTERN */
         .stage-container-preview {
             width: 100%;
             aspect-ratio: 9/16;
-            background-color: #000;
+            background-color: #050505;
             background-image:
-                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
-                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
-                linear-gradient(30deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
-                linear-gradient(150deg, #111 12%, transparent 12.5%, transparent 87%, #111 87.5%, #111),
-                linear-gradient(60deg, #1a1a1a 25%, transparent 25.5%, transparent 75%, #1a1a1a 75%, #1a1a1a),
-                linear-gradient(60deg, #1a1a1a 25%, transparent 25.5%, transparent 75%, #1a1a1a 75%, #1a1a1a);
-            background-size: 40px 70px;
-            background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
-
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px, 30px 30px;
             border: 8px solid #222; /* Phone Frame */
             border-radius: 24px;
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
-
+            box-shadow: inset 0 0 40px rgba(0,0,0,0.9), 0 10px 30px rgba(0,0,0,0.5);
             overflow: hidden;
             position: relative;
             display: flex;
@@ -76,31 +69,38 @@
             position: absolute;
             top: 20px;
             left: 50%; transform: translateX(-50%);
-            background: rgba(0,0,0,0.6);
-            color: #ccc;
+            background: var(--primary);
+            color: white;
             font-size: 0.65rem;
             padding: 2px 8px;
-            border-radius: 12px;
+            border-radius: 4px;
             text-transform: uppercase;
-            font-weight: 600;
+            font-weight: 700;
             letter-spacing: 0.5px;
-            border: 1px solid rgba(255,255,255,0.1);
             z-index: 10;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
         }
         .stage-overlay-label.bottom {
             top: auto; bottom: 20px;
+            background: rgba(0,0,0,0.8);
+            color: #888;
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
+        /* Mock Bubble - Fixed Bottom Style */
         .mock-bubble {
             position: absolute;
-            top: 200px; left: 50px;
-            background: rgba(255,255,255,0.1);
-            padding: 10px; border-radius: 8px;
-            color: white; font-size: 0.8rem;
+            bottom: 60px; left: 20px; right: 20px;
+            background: rgba(0,0,0,0.85);
+            padding: 12px; border-radius: 12px;
+            color: white; font-size: 0.9rem;
             backdrop-filter: blur(4px);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.15);
             pointer-events: none;
+            display: flex; flex-direction: column; gap: 4px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        .mock-bubble strong { color: var(--warning); font-weight: 700; }
 
         /* Pulsing Live Badge */
         @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0.4); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 80, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 80, 0); } }
@@ -287,8 +287,8 @@
                         <div class="stage-overlay-label bottom">LIVE FEED (1080x1920)</div>
                         <!-- Mock Overlay Bubble -->
                         <div class="mock-bubble" id="mock-preview-bubble">
-                            <strong>@user123</strong><br>
-                            Das ist eine Vorschau des Overlays.
+                            <strong>@user123</strong>
+                            <span>Das ist eine Vorschau des Overlays.</span>
                         </div>
                     </div>
 
@@ -404,6 +404,20 @@
                                 <button class="btn-secondary" onclick="obsToggleSource()">Toggle</button>
                             </div>
                         </div>
+
+                        <!-- NEW OBS CONTROLS -->
+                         <div style="margin-top:15px; border-top:1px solid var(--border); padding-top:10px;">
+                            <label>Audio & Stream</label>
+                            <div style="display:flex; gap:5px; margin-bottom:5px;">
+                                <input type="text" id="obs-audio-source" placeholder="Audio Quelle">
+                                <button class="btn-secondary" onclick="obsToggleMute()">Mute/Unmute</button>
+                            </div>
+                            <div style="display:flex; gap:5px;">
+                                <button class="btn-primary" onclick="obsStream(true)">Stream Start</button>
+                                <button class="btn-danger" onclick="obsStream(false)">Stream Stop</button>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 
@@ -774,6 +788,15 @@
                 console.warn("No nav item found for view:", id);
             }
 
+            // Guard: Assert single active nav
+            const actives = document.querySelectorAll('.nav-item.active');
+            if(actives.length > 1) {
+                console.warn("FIX: Multiple active navs found. Cleaning up...");
+                actives.forEach(el => {
+                    if(el !== activeNav) el.classList.remove('active');
+                });
+            }
+
             currentView = id;
             // Strict German Titles
             const t = VIEW_TITLES[id] || id.toUpperCase();
@@ -789,9 +812,12 @@
                  // Try to prefill lists if connected?
             }
 
-            // If Dashboard, update iframe scale
+            // If Dashboard, update iframe scale and render mock data if needed
             if(id === 'dashboard') {
                 setTimeout(resizePreview, 100);
+                if (!isConnected) {
+                    checkMockData();
+                }
             }
         }
 
@@ -971,10 +997,6 @@
         async function obsToggleSource() {
             const name = document.getElementById('obs-source-name').value;
             if(!name) return;
-            // Simple toggle hack: assumes we want to toggle it.
-            // But we need to know current state to toggle.
-            // For now, let's just alert user needs to specify state in a real UI, or we just send 'true' to enable.
-            // Requirement says "Toggle". Let's enable it for now, or maybe prompt?
             const enabled = confirm("Soll die Quelle '" + name + "' aktiviert werden? (Cancel=Deaktivieren)");
             await fetch('/api/obs/action', {
                 method: 'POST',
@@ -982,6 +1004,28 @@
                 body: JSON.stringify({ type: 'toggleInput', data: { inputName: name, enabled: enabled } })
             });
         }
+
+        async function obsToggleMute() {
+            const name = document.getElementById('obs-audio-source').value;
+            if(!name) return;
+            await fetch('/api/obs/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ type: 'toggleMute', data: { inputName: name } })
+            });
+            alert("Mute toggled for " + name);
+        }
+
+        async function obsStream(start) {
+             const type = start ? 'startStream' : 'stopStream';
+             await fetch('/api/obs/action', {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ type: type })
+            });
+            alert(start ? "Stream gestartet" : "Stream gestoppt");
+        }
+
 
         // Streamer.bot Functions
         async function sbLoadActions() {
@@ -1134,9 +1178,13 @@
                 document.getElementById('status-dot').style.background = "#666";
                 document.getElementById('top-conn-user').innerText = "@Nicht Verbunden";
                 const b = document.getElementById('live-badge');
-                b.className = "live-badge inactive";
-                b.innerText = "OFFLINE";
-                b.style.opacity = "1";
+                b.className = "live-badge active";
+
+                // DEMO MODE VISUALS
+                // User wants "LIVE STREAM AKTIV" look even in Demo/Offline if we want to show it populated.
+                // We use a slight distinction: "LIVE STREAM (DEMO)" but with red pulse
+                b.innerText = "● LIVE STREAM (DEMO)";
+                b.style.opacity = "0.7";
 
                 // Show mock data if viewing dashboard and list is empty
                 if (currentView === 'dashboard') checkMockData();
@@ -1146,7 +1194,6 @@
 
         // --- Mock Data Logic ---
         function checkMockData() {
-            if (isConnected) return;
             const chatList = document.getElementById('chat-list');
             const eventList = document.getElementById('event-list');
 

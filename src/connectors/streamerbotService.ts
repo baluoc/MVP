@@ -80,8 +80,6 @@ export class StreamerBotService extends EventEmitter {
 
                      // Auth Handling
                      // Check if message indicates auth required (e.g. from initial info or error)
-                     // Standard Streamer.bot sends "info" on connect?
-                     // Or specific event?
                      // Based on docs, SB sends `{"info": "Streamer.bot WebSocket Server", "version": "...", "source": "ws", "authenticationRequired": true, "salt": "...", "challenge": "..."}` on connect.
 
                      if (msg.info && msg.authenticationRequired) {
@@ -112,8 +110,6 @@ export class StreamerBotService extends EventEmitter {
                      }
 
                      // Standard Init (if no auth required, we might not get the info block in older versions, or just proceed)
-                     // If we get an event or response and we haven't initialized, maybe do it?
-                     // Ideally we trigger GetActions/Events only after Auth or if Auth not required.
                      // Simple heuristic: If we receive "info" and auth NOT required, trigger init.
                      if (msg.info && !msg.authenticationRequired) {
                          this.getActions();
@@ -127,7 +123,7 @@ export class StreamerBotService extends EventEmitter {
                          }
                          if (msg.events) {
                              this.events = msg.events;
-                             // Auto Subscribe to key events once we know they exist
+                             // Auto Subscribe to ALL events once we know they exist
                              this.subscribeToDefaults();
                          }
                      }
@@ -182,13 +178,9 @@ export class StreamerBotService extends EventEmitter {
         // Iterate over available categories in `this.events`
         // `this.events` structure from GetEvents: { "General": ["Custom", ...], "Twitch": [...] }
         for (const category of Object.keys(this.events)) {
-            // Subscribe to everything for robustness in this MVP context?
-            // Or filter? "General" is core.
-            if (category === 'General') {
-                subs[category] = this.events[category];
-                hasSubs = true;
-            }
-            // Add others as needed
+            // Updated: Subscribe to EVERYTHING for core integration robust usage
+            subs[category] = this.events[category];
+            hasSubs = true;
         }
 
         if (hasSubs) {
@@ -197,7 +189,7 @@ export class StreamerBotService extends EventEmitter {
                 events: subs,
                 id: 'auto-sub'
             });
-            console.log("[Streamer.bot] Auto-subscribed to defaults", Object.keys(subs));
+            console.log("[Streamer.bot] Auto-subscribed to all available categories:", Object.keys(subs));
         }
     }
 
