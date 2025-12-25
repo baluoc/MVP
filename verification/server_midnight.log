@@ -1,0 +1,656 @@
+
+> mvp@1.0.0 dev
+> ts-node-dev --respawn --transpile-only src/index.ts --mock
+
+[INFO] 23:49:43 ts-node-dev ver. 2.0.0 (using ts-node ver. 10.9.2, typescript ver. 5.9.3)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[11:49:45 PM] mock:system  { msg: 'mock started' }
+[11:49:47 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:49:49 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:49:51 PM] mock:gift chat_katze {
+  giftName: 'Galaxy',
+  count: 3,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:49:53 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:49:54 PM] mock:like chat_katze { likeDelta: 6 }
+[11:49:56 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:49:58 PM] mock:like new_fan_99 { likeDelta: 3 }
+[11:50:00 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:50:02 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:50:04 PM] mock:gift new_fan_99 {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:50:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:50:08 PM] mock:gift new_fan_99 {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:50:09 PM] mock:like agent_one { likeDelta: 9 }
+[11:50:11 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:50:13 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:50:15 PM] mock:like chat_katze { likeDelta: 6 }
+[11:50:17 PM] mock:like chat_katze { likeDelta: 7 }
+[11:50:19 PM] mock:like chat_katze { likeDelta: 1 }
+[11:50:21 PM] mock:follow gift_goblin {}
+[11:50:23 PM] mock:gift chat_katze {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:50:24 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:50:26 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:50:28 PM] mock:like chat_katze { likeDelta: 10 }
+[11:50:30 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:50:32 PM] mock:like agent_one { likeDelta: 3 }
+[11:50:34 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:50:36 PM] mock:gift agent_one {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:50:38 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:50:39 PM] mock:like new_fan_99 { likeDelta: 9 }
+[11:50:41 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:50:43 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:50:45 PM] mock:like agent_one { likeDelta: 2 }
+[11:50:47 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:50:49 PM] mock:follow gift_goblin {}
+[11:50:51 PM] mock:like gift_goblin { likeDelta: 6 }
+[11:50:53 PM] mock:like gift_goblin { likeDelta: 3 }
+[11:50:54 PM] mock:like gift_goblin { likeDelta: 10 }
+[11:50:56 PM] mock:like agent_one { likeDelta: 8 }
+[11:50:58 PM] mock:like chat_katze { likeDelta: 8 }
+[11:51:00 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:51:02 PM] mock:gift chat_katze {
+  giftName: 'Lion',
+  count: 3,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:51:04 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:51:06 PM] mock:gift gift_goblin {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:51:08 PM] mock:like gift_goblin { likeDelta: 7 }
+[11:51:09 PM] mock:gift new_fan_99 {
+  giftName: 'Galaxy',
+  count: 3,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:51:11 PM] mock:like chat_katze { likeDelta: 10 }
+[11:51:13 PM] mock:gift new_fan_99 {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:51:15 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:51:17 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:51:19 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:51:21 PM] mock:like agent_one { likeDelta: 5 }
+[11:51:23 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:51:24 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:51:26 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:51:28 PM] mock:like chat_katze { likeDelta: 2 }
+[11:51:30 PM] mock:follow new_fan_99 {}
+[11:51:32 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:51:34 PM] mock:share new_fan_99 {}
+[11:51:36 PM] mock:like chat_katze { likeDelta: 2 }
+[11:51:38 PM] mock:gift gift_goblin {
+  giftName: 'Rose',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:51:39 PM] mock:like chat_katze { likeDelta: 2 }
+[11:51:41 PM] mock:like agent_one { likeDelta: 6 }
+[11:51:43 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:51:45 PM] mock:follow agent_one {}
+[11:51:47 PM] mock:gift agent_one {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:51:49 PM] mock:like agent_one { likeDelta: 9 }
+[11:51:51 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:51:53 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:51:54 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:51:56 PM] mock:gift new_fan_99 {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:51:58 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:52:00 PM] mock:like chat_katze { likeDelta: 9 }
+[11:52:02 PM] mock:like new_fan_99 { likeDelta: 10 }
+[11:52:04 PM] mock:like new_fan_99 { likeDelta: 4 }
+[11:52:06 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:52:08 PM] mock:gift new_fan_99 {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:52:09 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:52:11 PM] mock:gift agent_one {
+  giftName: 'Galaxy',
+  count: 2,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:52:13 PM] mock:gift new_fan_99 {
+  giftName: 'Lion',
+  count: 3,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:52:15 PM] mock:like gift_goblin { likeDelta: 6 }
+[11:52:17 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:52:19 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:52:21 PM] mock:like new_fan_99 { likeDelta: 10 }
+[11:52:23 PM] mock:like new_fan_99 { likeDelta: 5 }
+[11:52:24 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:52:26 PM] mock:like gift_goblin { likeDelta: 9 }
+[11:52:28 PM] mock:like chat_katze { likeDelta: 9 }
+[11:52:30 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:52:32 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:52:34 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:52:36 PM] mock:like gift_goblin { likeDelta: 3 }
+[11:52:38 PM] mock:follow new_fan_99 {}
+[11:52:39 PM] mock:gift gift_goblin {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:52:41 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:52:43 PM] mock:gift gift_goblin {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:52:45 PM] mock:like chat_katze { likeDelta: 4 }
+[11:52:47 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:52:49 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:52:51 PM] mock:like agent_one { likeDelta: 1 }
+[11:52:53 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:52:54 PM] mock:gift gift_goblin {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:52:56 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:52:58 PM] mock:like new_fan_99 { likeDelta: 9 }
+[11:53:00 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:53:02 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:53:04 PM] mock:gift new_fan_99 {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:53:06 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:53:08 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:53:09 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:53:11 PM] mock:share agent_one {}
+[11:53:13 PM] mock:like chat_katze { likeDelta: 8 }
+[11:53:15 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:53:17 PM] mock:follow chat_katze {}
+[11:53:19 PM] mock:gift chat_katze {
+  giftName: 'Galaxy',
+  count: 3,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:53:21 PM] mock:like gift_goblin { likeDelta: 4 }
+[11:53:23 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:53:25 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:53:26 PM] mock:gift agent_one {
+  giftName: 'Galaxy',
+  count: 3,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:53:28 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:53:30 PM] mock:gift agent_one {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:53:32 PM] mock:follow new_fan_99 {}
+[11:53:34 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:53:36 PM] mock:follow chat_katze {}
+[11:53:38 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:53:40 PM] mock:like gift_goblin { likeDelta: 3 }
+[11:53:41 PM] mock:like gift_goblin { likeDelta: 4 }
+[11:53:43 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 3,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:53:45 PM] mock:like agent_one { likeDelta: 1 }
+[11:53:47 PM] mock:gift gift_goblin {
+  giftName: 'Galaxy',
+  count: 2,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:53:49 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:53:51 PM] mock:like new_fan_99 { likeDelta: 8 }
+[11:53:53 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:53:55 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:53:56 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:53:58 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:54:00 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:54:02 PM] mock:share chat_katze {}
+[11:54:04 PM] mock:like chat_katze { likeDelta: 1 }
+[11:54:06 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:54:08 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:54:10 PM] mock:gift agent_one {
+  giftName: 'Rose',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:54:11 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:54:13 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:54:15 PM] mock:gift chat_katze {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:54:17 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:54:19 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:54:21 PM] mock:share agent_one {}
+[11:54:23 PM] mock:gift agent_one {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:54:25 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:54:26 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:54:28 PM] mock:gift agent_one {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:54:30 PM] mock:gift new_fan_99 {
+  giftName: 'Rose',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:54:32 PM] mock:follow gift_goblin {}
+[11:54:34 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:54:36 PM] mock:gift new_fan_99 {
+  giftName: 'Rose',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:54:38 PM] mock:gift agent_one {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:54:40 PM] mock:follow agent_one {}
+[11:54:41 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:54:43 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:54:45 PM] mock:like gift_goblin { likeDelta: 4 }
+[11:54:47 PM] mock:gift chat_katze {
+  giftName: 'TikTok',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:54:49 PM] mock:gift chat_katze {
+  giftName: 'Galaxy',
+  count: 2,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:54:51 PM] mock:like agent_one { likeDelta: 7 }
+[11:54:53 PM] mock:follow chat_katze {}
+[11:54:55 PM] mock:like gift_goblin { likeDelta: 5 }
+[11:54:56 PM] mock:like agent_one { likeDelta: 4 }
+[11:54:58 PM] mock:gift agent_one {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:55:00 PM] mock:like agent_one { likeDelta: 6 }
+[11:55:02 PM] mock:like gift_goblin { likeDelta: 8 }
+[11:55:04 PM] mock:gift agent_one {
+  giftName: 'Lion',
+  count: 2,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:55:06 PM] mock:gift chat_katze {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:55:08 PM] mock:gift agent_one {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:55:10 PM] mock:like chat_katze { likeDelta: 4 }
+[11:55:11 PM] mock:gift chat_katze {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:55:13 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 1,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:55:15 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:55:17 PM] mock:share agent_one {}
+[11:55:19 PM] mock:like chat_katze { likeDelta: 4 }
+[11:55:21 PM] mock:share chat_katze {}
+[11:55:23 PM] mock:gift new_fan_99 {
+  giftName: 'Rose',
+  count: 2,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:55:25 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:55:26 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:55:28 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:55:30 PM] mock:gift new_fan_99 {
+  giftName: 'Lion',
+  count: 1,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:55:32 PM] mock:like agent_one { likeDelta: 5 }
+[11:55:34 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:55:36 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:55:38 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:55:40 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:55:41 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:55:43 PM] mock:gift agent_one {
+  giftName: 'Rose',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/rose_0920.png~tplv-obj.png'
+}
+[11:55:45 PM] mock:chat new_fan_99 { text: 'Hallo aus dem Mock' }
+[11:55:47 PM] mock:gift gift_goblin {
+  giftName: 'Galaxy',
+  count: 1,
+  diamondCost: 1000,
+  giftIconUrl: 'https://p19-webcast.tiktokcdn.com/img/maliva/webcast-va/galaxy_gift_720.png~tplv-obj.png'
+}
+[11:55:49 PM] mock:like gift_goblin { likeDelta: 6 }
+[INFO] 23:55:50 Restarting: /app/src/core/configStore.ts has been modified
+[Stats] Loaded 4 users.
+[AddonHost] Failed to scan demo-gift-toast: TypeError: this.configStore.isAddonEnabled is not a function
+    at AddonHost.scanAddon (/app/src/addons/host.ts:65:40)
+    at AddonHost.loadAll (/app/src/addons/host.ts:41:20)
+    at main (/app/src/index.ts:113:19)
+    at Object.<anonymous> (/app/src/index.ts:124:1)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1706:14)
+    at Module._compile (/app/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-9643453061786038.js:69:33)
+    at node:internal/modules/cjs/loader:1839:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-9643453061786038.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-9643453061786038.js:71:20)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[11:55:52 PM] mock:system  { msg: 'mock started' }
+[11:55:55 PM] mock:like gift_goblin { likeDelta: 2 }
+[11:55:57 PM] mock:like agent_one { likeDelta: 4 }
+[11:55:59 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:56:01 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:56:03 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[INFO] 23:56:04 Restarting: /app/src/stats/store.ts has been modified
+[AddonHost] Failed to scan demo-gift-toast: TypeError: this.configStore.isAddonEnabled is not a function
+    at AddonHost.scanAddon (/app/src/addons/host.ts:65:40)
+    at AddonHost.loadAll (/app/src/addons/host.ts:41:20)
+    at main (/app/src/index.ts:113:19)
+    at Object.<anonymous> (/app/src/index.ts:124:1)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1706:14)
+    at Module._compile (/app/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-9643453061786038.js:69:33)
+    at node:internal/modules/cjs/loader:1839:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-9643453061786038.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-9643453061786038.js:71:20)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[11:56:05 PM] mock:system  { msg: 'mock started' }
+[11:56:07 PM] mock:like agent_one { likeDelta: 3 }
+[11:56:09 PM] mock:like gift_goblin { likeDelta: 3 }
+[11:56:10 PM] mock:gift gift_goblin {
+  giftName: 'TikTok',
+  count: 3,
+  diamondCost: 1,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/tiktok_1012.png~tplv-obj.png'
+}
+[11:56:12 PM] mock:share new_fan_99 {}
+[11:56:14 PM] mock:gift gift_goblin {
+  giftName: 'Lion',
+  count: 3,
+  diamondCost: 29999,
+  giftIconUrl: 'https://p16-webcast.tiktokcdn.com/img/maliva/webcast-va/lion_1012.png~tplv-obj.png'
+}
+[11:56:16 PM] mock:chat agent_one { text: 'Hallo aus dem Mock' }
+[11:56:18 PM] mock:like agent_one { likeDelta: 8 }
+[11:56:19 PM] mock:like chat_katze { likeDelta: 9 }
+[INFO] 23:56:21 Restarting: /app/src/api/routes.ts has been modified
+[AddonHost] Failed to scan demo-gift-toast: TypeError: this.configStore.isAddonEnabled is not a function
+    at AddonHost.scanAddon (/app/src/addons/host.ts:65:40)
+    at AddonHost.loadAll (/app/src/addons/host.ts:41:20)
+    at main (/app/src/index.ts:113:19)
+    at Object.<anonymous> (/app/src/index.ts:124:1)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1706:14)
+    at Module._compile (/app/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-9643453061786038.js:69:33)
+    at node:internal/modules/cjs/loader:1839:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-9643453061786038.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-9643453061786038.js:71:20)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[11:56:21 PM] mock:system  { msg: 'mock started' }
+[11:56:24 PM] mock:chat gift_goblin { text: 'Hallo aus dem Mock' }
+[11:56:27 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[11:56:29 PM] mock:chat chat_katze { text: 'Hallo aus dem Mock' }
+[INFO] 23:56:30 Restarting: /app/src/index.ts has been modified
+[AddonHost] Failed to scan demo-gift-toast: TypeError: this.configStore.isAddonEnabled is not a function
+    at AddonHost.scanAddon (/app/src/addons/host.ts:65:40)
+    at AddonHost.loadAll (/app/src/addons/host.ts:41:20)
+    at main (/app/src/index.ts:71:19)
+    at Object.<anonymous> (/app/src/index.ts:82:1)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1706:14)
+    at Module._compile (/app/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-9643453061786038.js:69:33)
+    at node:internal/modules/cjs/loader:1839:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-9643453061786038.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-9643453061786038.js:71:20)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[Event] system von Unknown
+[Event] chat von New Fan
+[Event] chat von New Fan
+[Event] gift von Gift Goblin
+[INFO] 23:56:36 Restarting: /app/src/core/eventToOverlay.ts has been modified
+[AddonHost] Failed to scan demo-gift-toast: TypeError: this.configStore.isAddonEnabled is not a function
+    at AddonHost.scanAddon (/app/src/addons/host.ts:65:40)
+    at AddonHost.loadAll (/app/src/addons/host.ts:41:20)
+    at main (/app/src/index.ts:71:19)
+    at Object.<anonymous> (/app/src/index.ts:82:1)
+    at Module.<anonymous> (node:internal/modules/cjs/loader:1706:14)
+    at Module._compile (/app/node_modules/source-map-support/source-map-support.js:568:25)
+    at Module.m._compile (/tmp/ts-node-dev-hook-9643453061786038.js:69:33)
+    at node:internal/modules/cjs/loader:1839:10
+    at require.extensions..jsx.require.extensions..js (/tmp/ts-node-dev-hook-9643453061786038.js:114:20)
+    at require.extensions.<computed> (/tmp/ts-node-dev-hook-9643453061786038.js:71:20)
+[overlay] http://127.0.0.1:5175/overlay/main
+[Mock] Started. Generating events...
+[Event] system von Unknown
+[Event] gift von Gift Goblin
+[Event] gift von Gift Goblin
+[Event] like von Gift Goblin
+[Event] share von Agent One
+[Event] like von Chat Katze
+[Event] gift von Agent One
+[Event] gift von Agent One
+[Event] like von New Fan
+[Event] share von New Fan
+[Event] gift von New Fan
+[Event] like von New Fan
+[Event] like von Chat Katze
+[Event] chat von Gift Goblin
+[Event] gift von Chat Katze
+[Event] follow von Chat Katze
+[Event] chat von Chat Katze
+[Event] follow von Gift Goblin
+[Event] like von Agent One
+[Event] chat von Chat Katze
+[Event] gift von Chat Katze
+[Event] like von New Fan
+[Event] gift von Gift Goblin
+[Event] share von New Fan
+[Event] gift von Agent One
