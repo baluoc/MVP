@@ -14,6 +14,8 @@ export class OBSService extends EventEmitter {
     private reconnectInterval: NodeJS.Timeout | null = null;
     private currentScene: string = "";
     private explicitDisconnect: boolean = false;
+    private isStreaming: boolean = false;
+    private isRecording: boolean = false;
 
     constructor() {
         super();
@@ -39,6 +41,16 @@ export class OBSService extends EventEmitter {
         this.obs.on('CurrentProgramSceneChanged', (data) => {
             this.currentScene = data.sceneName;
             this.emit('sceneChanged', this.currentScene);
+        });
+
+        this.obs.on('StreamStateChanged', (data) => {
+            this.isStreaming = data.outputActive;
+            this.emit('streamStateChanged', this.isStreaming);
+        });
+
+        this.obs.on('RecordStateChanged', (data) => {
+            this.isRecording = data.outputActive;
+            this.emit('recordStateChanged', this.isRecording);
         });
     }
 
@@ -86,6 +98,13 @@ export class OBSService extends EventEmitter {
         try {
              const res = await this.obs.call('GetCurrentProgramScene');
              this.currentScene = res.currentProgramSceneName;
+
+             const streamStatus = await this.obs.call('GetStreamStatus');
+             this.isStreaming = streamStatus.outputActive;
+
+             const recordStatus = await this.obs.call('GetRecordStatus');
+             this.isRecording = recordStatus.outputActive;
+
         } catch(e) {}
     }
 
@@ -112,13 +131,6 @@ export class OBSService extends EventEmitter {
 
     public async toggleInput(inputName: string, enabled: boolean) {
         if (!this.isConnected) throw new Error("Not connected");
-        // v5 uses SetSceneItemEnabled, but we need sceneItemIds usually.
-        // However, user requirement says "Input/Source enable/disable".
-        // Inputs are sources. In v5, enabling/disabling a source is usually done via SetSceneItemEnabled on a scene.
-        // But if we want to change global input settings? No, usually it's scene item visibility.
-        // Let's assume user means SceneItem visibility in current scene for simplicity, OR 'SetInputMute' for audio?
-        // Let's implement 'SetSceneItemEnabled' but we need the id.
-        // Complex in v5: We first need the scene item id for the input in the current scene.
 
         try {
             const scene = await this.obs.call('GetCurrentProgramScene');
@@ -126,15 +138,32 @@ export class OBSService extends EventEmitter {
             const item = items.sceneItems.find((i: any) => i.sourceName === inputName);
 
             if (item) {
-                // Fix: Ensure sceneItemId is a number. TS error was about complex union type.
                 const itemId = item.sceneItemId as number;
                 await this.obs.call('SetSceneItemEnabled', {
                     sceneName: scene.currentProgramSceneName,
                     sceneItemId: itemId,
                     sceneItemEnabled: enabled
                 });
+            } else {
+                 console.warn(`[OBS] Source '${inputName}' not found in current scene.`);
             }
         } catch(e) { console.error("[OBS] Toggle Input failed", e); throw e; }
+    }
+
+    public async toggleMute(inputName: string) {
+        if (!this.isConnected) throw new Error("Not connected");
+        try {
+            await this.obs.call('ToggleInputMute', { inputName });
+        } catch(e) { console.error("[OBS] Toggle Mute failed", e); throw e; }
+    }
+
+    public async setStreamState(streaming: boolean) {
+        if (!this.isConnected) throw new Error("Not connected");
+        if (streaming) {
+            await this.obs.call('StartStream');
+        } else {
+            await this.obs.call('StopStream');
+        }
     }
 
     public async setInputSettings(inputName: string, settings: any) {
@@ -150,7 +179,9 @@ export class OBSService extends EventEmitter {
     public getStatus() {
         return {
             connected: this.isConnected,
-            currentScene: this.currentScene
+            currentScene: this.currentScene,
+            streaming: this.isStreaming,
+            recording: this.isRecording
         };
     }
 }

@@ -250,6 +250,12 @@ export function createApiRouter(
               return;
           } else if (type === 'toggleInput') {
               await obsService.toggleInput(data.inputName, data.enabled);
+          } else if (type === 'toggleMute') {
+              await obsService.toggleMute(data.inputName);
+          } else if (type === 'startStream') {
+              await obsService.setStreamState(true);
+          } else if (type === 'stopStream') {
+              await obsService.setStreamState(false);
           } else if (type === 'setInputSettings') {
               await obsService.setInputSettings(data.inputName, data.settings);
           } else {
