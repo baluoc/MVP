@@ -18,6 +18,8 @@ export class TikTokService {
   private lastError: string | null = null;
   private roomInfo: any = null;
   private reconnectTimer: NodeJS.Timeout | null = null;
+  private currentOptions: any = {}; // Persist options for reconnect
+  private lastChatSentAt: number = 0; // Rate Limiter state
   private bus: EventBus;
   private giftCache = new Map<string, GiftItem>();
 
@@ -25,15 +27,22 @@ export class TikTokService {
     this.bus = bus;
   }
 
-  async connect(uniqueId: string) {
+  async connect(uniqueId: string, options: any = {}) {
     // 1. Cleanup existing connection
     this.disconnect();
 
     this.activeUniqueId = uniqueId;
+    this.currentOptions = options; // Store for reconnect
     console.log(`[TikTokService] Connecting to @${uniqueId}...`);
 
     try {
-      this.conn = new WebcastPushConnection(uniqueId);
+      const connOptions = {
+        processInitialData: true,
+        enableExtendedGiftInfo: true,
+        ...options // Inject sessionId and other options
+      };
+
+      this.conn = new WebcastPushConnection(uniqueId, connOptions);
 
       // Store reference to check against race conditions (if disconnect called during await)
       const currentConn = this.conn;
@@ -157,10 +166,38 @@ export class TikTokService {
     this.scheduleReconnect(10000);
   }
 
+  async sendChat(text: string): Promise<{ ok: boolean; mode: string; reason?: string }> {
+      if (!this.isConnected || !this.conn) {
+          throw new Error("NOT_CONNECTED");
+      }
+
+      // Check for sessionId presence in current connection options or instance
+      // Note: WebcastPushConnection stores options in public `options` prop usually
+      const hasSession = !!this.conn.options?.sessionId;
+      if (!hasSession) {
+          throw new Error("NO_SESSIONID");
+      }
+
+      // Rate Limit (Global 2s)
+      const now = Date.now();
+      if (now - this.lastChatSentAt < 2000) {
+          throw new Error("RATE_LIMIT: Wait 2s");
+      }
+
+      try {
+          // Attempt send
+          const res = await this.conn.sendMessage(text);
+          this.lastChatSentAt = Date.now();
+          return { ok: true, mode: "live" };
+      } catch (e: any) {
+           throw new Error("SEND_FAILED: " + (e.message || String(e)));
+      }
+  }
+
   private scheduleReconnect(delay = 5000) {
     if (this.reconnectTimer) clearTimeout(this.reconnectTimer);
     this.reconnectTimer = setTimeout(() => {
-      if (this.activeUniqueId) this.connect(this.activeUniqueId);
+      if (this.activeUniqueId) this.connect(this.activeUniqueId, this.currentOptions);
     }, delay);
   }
 

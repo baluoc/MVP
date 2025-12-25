@@ -53,7 +53,7 @@ Datenfluss: `TikTokService` (Connector) → `normalize` → `EventBus` → `User
 | **Events (Chat/Gift/etc)** | `tiktok-live-connector` (Live) oder `mock.ts` (Mock) | ✅ Live Ready |
 | **User Avatars** | Echte URLs vom Connector | ✅ Live Ready |
 | **Geschenke Icons** | Echte URLs vom Connector (Cached) | ✅ Live Ready |
-| **Chat Senden** | API Endpoint `/api/chat` | ❌ Mock only |
+| **Chat Senden** | `/api/chat/send` (Live) | ✅ Live Ready + Rate Limit (2s) |
 | **Views / Zuschauer** | `roomUser` Event | ✅ Live Ready |
 
 ---
@@ -148,7 +148,6 @@ Automatisierte Screenshots aller Views liegen in `jules_review/verification/`:
 *   **Frontend UI:** Deutsche Lokalisierung vollständig, Navigation stabil, Layouts gefixt.
 
 ### Was ist Stub/Mock?
-*   **Chat Senden:** Nur Mock-Response.
 *   **Integrationen (OBS/Streamer.bot):** Konfiguration UI existiert, aber Backend-Logik fehlt.
 *   **Command Parsing:** `!score`, `!send` werden erkannt (Regex/Trigger), aber Logik (z.B. Transfer) fehlt noch im Core.
 
@@ -156,9 +155,14 @@ Automatisierte Screenshots aller Views liegen in `jules_review/verification/`:
 *   **Sub-Bonus:** Config existiert, aber Logik im `UserStatsStore` fehlt (im Test als GAP identifiziert).
 *   **Command Handler:** Zentrale Command-Registry fehlt noch, Commands sind aktuell "Hardcoded" oder nicht existent.
 
+### Session/Cookie: Stand, Risiken, Next steps
+*   **Stand:** `sessionId` wird in Config verschlüsselt (Base64 oder Plain currently Plain text in local file) gespeichert. API gibt sie nie heraus. Connector nutzt sie für `sendMessage`.
+*   **Risiken:** `sessionId` verfällt schnell. TikTok kann Accounts flaggen bei Spam.
+*   **Next Steps:** Webview-Login implementieren, um Session automatisch zu erneuern.
+
 ### Next 5 Tasks
 1.  **Sub-Bonus Implementierung:** `UserStatsStore` muss `isSubscriber` auswerten.
-2.  **Command System Core:** Zentrale `CommandRegistry` und Parser implementieren (damit `!send`, `!score` echt funktionieren).
-3.  **Chat Connector:** Schreib-Zugriff (Send Message) real implementieren (via `tiktok-live-connector` send method).
-4.  **OBS/Streamer.bot Client:** WebSocket Clients im Backend implementieren (basierend auf Config).
-5.  **Overlay Widgets:** "Goal Bar" und "Leaderboard" Widgets im Frontend implementieren (aktuell nur Placeholder in Registry).
+2.  **Command System Core:** Zentrale `CommandRegistry` und Parser implementieren.
+3.  **OBS/Streamer.bot Client:** WebSocket Clients im Backend implementieren.
+4.  **Overlay Widgets:** "Goal Bar" und "Leaderboard" Widgets im Frontend implementieren.
+5.  **Webview Login:** Echten Login Flow bauen (statt Copy-Paste).

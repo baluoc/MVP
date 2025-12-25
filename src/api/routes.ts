@@ -13,7 +13,8 @@ export function createApiRouter(
   stats: UserStatsStore,
   onConnect: (uniqueId: string) => void,
   getGiftCatalog: () => any[], // New param
-  broadcastOverlay: (cmd: any) => void // New param for live updates
+  broadcastOverlay: (cmd: any) => void, // New param for live updates
+  sendChat?: (text: string) => Promise<{ok: boolean, mode: string, reason?: string}> // New param for sending chat
 ) {
   const r = Router();
 
@@ -75,14 +76,79 @@ export function createApiRouter(
       res.json({ ok: true });
   });
 
-  // 4. Chat (Mock-Funktion für 'Senden')
-  r.post("/chat", (req, res) => {
+  // 4. Chat Senden (Live)
+  r.post("/chat/send", async (req, res) => {
+      // NOTE: This route was renamed from /chat to match specification in Plan
+      // But keeping /chat as alias might be useful, but specification says /api/chat/send
+      // Express router mounted at /api, so this is POST /api/api/chat/send ??
+      // Wait, in index.ts: overlay.app.use("/api", createApiRouter(...));
+      // So r.post("/chat/send") becomes /api/chat/send.
+
       const { text } = req.body;
-      console.log("[Chat] WÜRDE SENDEN (Mock):", text);
+      if (!text || typeof text !== 'string') return res.status(400).json({ ok: false, reason: "Text missing" });
+      if (text.length > 300) return res.status(400).json({ ok: false, reason: "Text too long" });
+
+      if (!sendChat) {
+          return res.json({ ok: false, mode: "stub", reason: "SendChat not hooked" });
+      }
+
+      try {
+          const result = await sendChat(text.trim());
+          res.json(result);
+      } catch (e: any) {
+          res.json({ ok: false, mode: "live", reason: e.message || "Unknown error" });
+      }
+  });
+
+  // Legacy mock alias (removed or updated?) - Let's keep /chat for now as alias but log warning
+  r.post("/chat", (req, res) => {
+      console.warn("[Deprecation] POST /api/chat is deprecated. Use /api/chat/send");
       res.json({ ok: true, mocked: true });
   });
 
-  // 5. Gifts Catalog (NEW)
+  // 5. TikTok Session Management
+  r.get("/tiktok/session", (req, res) => {
+      const conf = configStore.getCore();
+      const s = conf.tiktok?.session || {};
+
+      // Sanitized response
+      res.json({
+          mode: s.mode || "none",
+          hasSessionId: !!s.sessionId && s.sessionId.length > 0,
+          updatedAt: s.updatedAt || 0
+      });
+  });
+
+  r.post("/tiktok/session", (req, res) => {
+      const { mode, sessionId } = req.body;
+      if (!mode) return res.status(400).json({ error: "Missing mode" });
+
+      const conf = configStore.getCore();
+      if (!conf.tiktok) conf.tiktok = {};
+      if (!conf.tiktok.session) conf.tiktok.session = {};
+
+      conf.tiktok.session.mode = mode;
+      if (sessionId !== undefined) {
+          conf.tiktok.session.sessionId = sessionId; // Saved RAW in config (backend only)
+      }
+      conf.tiktok.session.updatedAt = Date.now();
+
+      configStore.setCore(conf);
+      res.json({ ok: true });
+  });
+
+  r.post("/tiktok/session/clear", (req, res) => {
+      const conf = configStore.getCore();
+      if (conf.tiktok?.session) {
+          conf.tiktok.session.sessionId = "";
+          conf.tiktok.session.mode = "none";
+          conf.tiktok.session.updatedAt = Date.now();
+          configStore.setCore(conf);
+      }
+      res.json({ ok: true });
+  });
+
+  // 6. Gifts Catalog (NEW)
   r.get("/gifts", (req, res) => {
       res.json(getGiftCatalog());
   });

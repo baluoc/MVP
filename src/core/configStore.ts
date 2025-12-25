@@ -30,7 +30,17 @@ export const DEFAULT_CONFIG = {
   chat: {
     enableSend: false,
     enableZoom: false,
-    sessionCookie: ""
+    sessionCookie: "" // legacy, prefer tiktok.session
+  },
+
+  // TikTok (Session / Auth)
+  tiktok: {
+    uniqueId: "",
+    session: {
+      mode: "none", // "none" | "manual" | "webview"
+      sessionId: "",
+      updatedAt: 0
+    }
   },
 
   // Commands

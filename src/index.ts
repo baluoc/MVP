@@ -57,7 +57,15 @@ async function main() {
       if (hasArg("--mock")) {
           startMock(bus);
       } else {
-          tiktokService.connect(u);
+          // Fetch Session ID from Config
+          const conf = configStore.getCore();
+          const session = conf.tiktok?.session;
+          const options: any = {};
+          if (session && session.mode === 'manual' && session.sessionId) {
+              options.sessionId = session.sessionId;
+              console.log("[System] Connecting with Session ID");
+          }
+          tiktokService.connect(u, options);
       }
   };
 
@@ -70,7 +78,8 @@ async function main() {
       stats,
       connectSystem,
       getGiftCatalog,
-      overlay.broadcast // Pass broadcast function
+      overlay.broadcast, // Pass broadcast function
+      (text) => tiktokService.sendChat(text) // Pass sendChat
   ));
 
   // Bus Logic
