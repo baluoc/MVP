@@ -45,7 +45,13 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
 
   // 1. Well-known Discovery
   app.get('/.well-known/oauth-authorization-server', (req, res) => {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    // Prefer configured MCP URL, fallback to request host
+    const conf = configStore?.getCore();
+    const configuredUrl = conf?.mcp?.url;
+
+    // If configuredUrl is set, ensure no trailing slash for consistency
+    const baseUrl = configuredUrl ? configuredUrl.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
+
     res.json({
       issuer: baseUrl,
       authorization_endpoint: `${baseUrl}/authorize`,

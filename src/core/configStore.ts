@@ -121,6 +121,7 @@ export const DEFAULT_CONFIG = {
 
   // MCP Configuration
   mcp: {
+    url: "https://mcp.overhill-circle.de",
     auth: {
       clientId: "",
       clientSecret: ""

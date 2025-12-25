@@ -721,6 +721,7 @@
                      <p class="description">OAuth 2.0 Integration & Credentials</p>
 
                      <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; margin-bottom:10px;">
+                         <div class="form-row"><label>Public URL</label> <input type="text" id="mcp-public-url" readonly></div>
                          <div class="form-row"><label>Client ID</label> <input type="text" id="mcp-client-id" readonly></div>
                          <div class="form-row"><label>Client Secret</label>
                              <div style="display:flex; gap:5px; width:100%;">
@@ -990,10 +991,18 @@
         }
 
         async function loadCredentials() {
+            // Get credentials
             const res = await fetch('/api/auth/credentials');
             const data = await res.json();
             document.getElementById('mcp-client-id').value = data.clientId || "";
             document.getElementById('mcp-client-secret').value = data.clientSecret || "";
+
+            // Get Discovery info for URL
+            const discRes = await fetch('/.well-known/oauth-authorization-server');
+            if (discRes.ok) {
+                const disc = await discRes.json();
+                document.getElementById('mcp-public-url').value = disc.issuer || "";
+            }
         }
 
         async function generateCredentials() {
