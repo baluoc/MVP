@@ -147,27 +147,42 @@
         <!-- DASHBOARD -->
         <div id="view-dashboard" class="view active" data-testid="view-dashboard">
             <div class="settings-grid" style="grid-template-columns: 350px 1fr 300px; height: calc(100vh - 130px);">
-                <!-- Live Preview -->
-                <div class="card" data-testid="card-live-preview">
-                    <div class="card-header"><span class="card-title">Live Vorschau</span></div>
-                    <div style="flex:1; background:#000; position:relative; display:flex; justify-content:center; align-items:center;">
-                        <div id="toast-overlay" style="position:absolute; bottom:100px; left:20px; right:20px; background:rgba(0,0,0,0.85); padding:10px; border-radius:8px; border:1px solid var(--primary); display:none; flex-direction:row; align-items:center; gap:10px;">
-                            <img id="toast-img" src="" style="width:40px; height:40px; border-radius:50%;">
-                            <div>
-                                <div id="toast-title" style="color:var(--primary); font-weight:bold; font-size:0.9rem;">User</div>
-                                <div id="toast-msg" style="color:white; font-size:0.8rem;">Text</div>
+                <!-- Left Column -->
+                <div style="display:flex; flex-direction:column; gap:20px; overflow:hidden;">
+                    <!-- Live Metrics -->
+                    <div class="card" style="height:auto; min-height:150px;">
+                        <div class="card-header"><span class="card-title">Live Metrics</span></div>
+                        <div class="card-body">
+                            <div style="font-size:2rem; font-weight:bold;" id="metric-viewers">0</div>
+                            <div style="font-size:0.8rem; color:var(--muted); text-transform:uppercase;">Zuschauer</div>
+                            <div style="margin-top:15px; font-size:1.5rem; font-weight:bold;" id="metric-mvp">-</div>
+                            <div style="font-size:0.8rem; color:var(--muted); text-transform:uppercase;">MVP (Punkte)</div>
+                        </div>
+                    </div>
+
+                    <!-- Live Preview -->
+                    <div class="card" data-testid="card-live-preview" style="flex:1;">
+                        <div class="card-header"><span class="card-title">Live Vorschau</span></div>
+                        <div style="flex:1; background:#000; position:relative; display:flex; justify-content:center; align-items:center;">
+                            <div id="toast-overlay" style="position:absolute; bottom:100px; left:20px; right:20px; background:rgba(0,0,0,0.85); padding:10px; border-radius:8px; border:1px solid var(--primary); display:none; flex-direction:row; align-items:center; gap:10px;">
+                                <img id="toast-img" src="" style="width:40px; height:40px; border-radius:50%;">
+                                <div>
+                                    <div id="toast-title" style="color:var(--primary); font-weight:bold; font-size:0.9rem;">User</div>
+                                    <div id="toast-msg" style="color:white; font-size:0.8rem;">Text</div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Chat -->
                 <div class="card" data-testid="card-chat-stream">
-                    <div class="card-header"><span class="card-title">Chat Stream</span></div>
+                    <div class="card-header"><span class="card-title">Chat-Stream</span></div>
                     <div id="chat-list" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column-reverse; gap:10px;"></div>
                 </div>
                 <!-- Events -->
                 <div class="card" data-testid="card-events">
-                    <div class="card-header"><span class="card-title">Events</span></div>
+                    <div class="card-header"><span class="card-title">Ereignis-Protokoll</span></div>
                     <div id="event-list" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
             </div>
@@ -177,11 +192,11 @@
         <div id="view-settings-system" class="view" data-testid="view-settings-system">
             <div class="settings-grid">
                 <div class="card">
-                    <div class="card-header"><span class="card-title">System Status</span></div>
+                    <div class="card-header"><span class="card-title">Systemstatus</span></div>
                     <div class="card-body">
                         <div class="form-row"><label>Laufzeit</label> <span id="sys-uptime">0s</span></div>
                         <div class="form-row"><label>Geladene Addons</label> <span id="sys-addons">0</span></div>
-                        <div class="form-row"><label>App Version</label> <span>1.0.0</span></div>
+                        <div class="form-row"><label>App-Version</label> <span>1.0.0</span></div>
                     </div>
                 </div>
                 <div class="card" style="border-color: var(--danger);">
@@ -752,7 +767,7 @@
                  linkBtn.className = "btn-icon";
                  linkBtn.style.fontSize = "0.7rem";
                  linkBtn.innerText = "🔗";
-                 linkBtn.title = "Copy Scene Lock Link";
+                 linkBtn.title = "Link zur Szene kopieren";
                  linkBtn.onclick = () => {
                      const url = `${location.protocol}//${location.host}/overlay/main?scene=${s.id}`;
                      navigator.clipboard.writeText(url);
@@ -1024,6 +1039,13 @@
                  d.innerText = `${data.title || 'Event'}: ${data.text || ''}`;
                  d.style.padding = "5px"; d.style.borderBottom = "1px solid #333";
                  list.prepend(d);
+            } else if (data.kind === 'dashboard-update') {
+                 if(document.getElementById('metric-viewers'))
+                     document.getElementById('metric-viewers').innerText = data.stats?.viewers || 0;
+                 if(document.getElementById('metric-mvp')) {
+                     const top = data.leaderboard?.[0];
+                     document.getElementById('metric-mvp').innerText = top ? `${top.nickname} (${top.points})` : "-";
+                 }
             }
         };
 

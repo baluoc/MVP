@@ -35,8 +35,9 @@ export function normalizeGift(data: any): AppEvent {
     user: normalizeUser(data),
     payload: {
       giftName: data.giftName,
-      count: data.repeatCount ?? 1
-      // dedupe logic happens in store, but we pass raw for it
+      giftIconUrl: data.giftIconUrl || data.gift?.icon_url,
+      count: data.repeatCount ?? 1,
+      diamondCost: data.diamondCount // Cost per gift unit
     },
     raw: data,
   };

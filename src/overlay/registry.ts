@@ -21,13 +21,13 @@ export const CORE_WIDGETS: WidgetDefinition[] = [
   },
   {
     type: "leaderboard",
-    name: "Leaderboard",
+    name: "Bestenliste",
     defaultSize: { w: 400, h: 400 },
     category: "Core"
   },
   {
     type: "goal",
-    name: "Goal Bar",
+    name: "Zielbalken",
     defaultSize: { w: 800, h: 100 },
     category: "Core"
   }
