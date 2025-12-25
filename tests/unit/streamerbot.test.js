@@ -17,12 +17,13 @@ class MockWebSocket extends EventEmitter {
         this.emit('close');
     }
 }
-global.WebSocket = MockWebSocket;
+MockWebSocket.OPEN = 1;
 
 const { StreamerBotService } = require('../../dist/src/connectors/streamerbotService');
 
 test('StreamerBotService - DoAction Payload', async (t) => {
-    const sb = new StreamerBotService();
+    // Inject MockWebSocket via constructor
+    const sb = new StreamerBotService(MockWebSocket);
 
     // Prevent auto-reconnect from keeping process alive if test fails
     t.after(() => sb.disconnect());

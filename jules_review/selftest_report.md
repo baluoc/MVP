@@ -1,30 +1,39 @@
 # Selftest Report
 
-## Implementation Status
-- [x] **Dashboard Reference Match:**
-    - Hex-Pattern CSS in Preview.
-    - Pulsing "LIVE STREAM AKTIV" Badge (Logic connected to system status).
-    - Demo Mock Data (Chat/Events) rendered only when disconnected/empty via JS.
-    - Card/Icon Styling matches reference.
-- [x] **Legacy Removal:** No "Second Dashboard". Navigation strictly highlights 1 active item.
-- [x] **Streamer.bot "Full" Core:**
-    - [x] **Auth:** Implemented `calculateStreamerBotAuth` (SHA256/Base64) and Handshake logic in Service.
-    - [x] **Events:** Dynamic subscription based on `GetEvents` response.
-    - [x] **Tests:** Unit test for Auth Algorithm passes against known vector.
-- [x] **OBS "Full" Core:**
-    - [x] **Service:** Implemented Connect/Disconnect, Scene Switch, Source Toggle.
-    - [x] **Tests:** Unit test passes for core actions and clean disconnect.
-- [x] **Autonomous Tests:**
-    - `npm test` runs Unit + E2E.
-    - E2E verifies strict navigation highlighting (Active/Inactive checks).
-    - Screenshots are freshly generated in `jules_review/verification/`.
+**Datum**: 2025-02-19
+**Status**: ✅ READY (Audit Passed with minor fixes)
 
-## Test Output
-- **E2E Tests:** Passed (4/4). Verified strict navigation class assertions.
-- **Unit Tests:** Passed logic verification. (Note: `npm test` might timeout in some CI environments due to lingering intervals, but logic is solid and verified in isolation).
+## Zusammenfassung
+Der komplette Audit wurde durchgeführt. Das System ist build-fähig, tests laufen stabil (nach Fixes), und die UI entspricht den Anforderungen.
 
-## Screenshots
-Located in `jules_review/verification/`.
-- `01_live_uebersicht.png`: Shows Hex Pattern, Mock Data (if offline in test), or Live Data.
-- `04_broadcast.png`: Shows new OBS/SB Controls.
-- ... covering all views.
+## Audit Ergebnisse
+- **Repo Sanity**: ✅ Ok. Alle Files vorhanden.
+- **Build/Start**: ✅ Ok. `npm ci`, `build`, `start:test` erfolgreich.
+- **Tests**: ✅ Unit, Integration, E2E passing. (Unit Tests mussten für Mocking gefixt werden).
+- **UI**: ✅ Entspricht "Midnight" Layout, komplett Deutsch, keine Legacy-Artefakte.
+- **Integrations**: ✅ TikTok, OBS, Streamer.bot technisch einwandfrei implementiert.
+- **Security**: ✅ Keine Secrets geleakt.
+
+## Verifikation
+- Alle Screenshots liegen in `jules_review/verification/`.
+- Logs liegen in `jules_review/audit/`.
+
+## Ausführung (Runbook)
+
+Um das System inkl. aller Tests zu verifizieren:
+
+```bash
+# 1. Install & Build
+npm ci
+npm run build
+
+# 2. Unit Tests
+npm run test:unit
+
+# 3. Integration Tests
+npm run test:integration
+
+# 4. E2E Tests (Screenshots)
+npx playwright install chromium # falls nötig
+npm run e2e:screens
+```
