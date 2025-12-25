@@ -40,23 +40,6 @@
         .card-footer { padding: 10px 15px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 10px; font-size: 0.8rem; }
         .card-chips { display: flex; gap: 5px; }
 
-        /* Card Overlay (Disabled State) */
-        .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 17, 26, 0.85); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(2px); border-radius: 11px; opacity: 0; pointer-events: none; transition: 0.3s; }
-        .card-overlay.active { opacity: 1; pointer-events: all; }
-        .overlay-msg { background: var(--panel); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateY(10px); }
-        .card.disabled .card-overlay { opacity: 1; pointer-events: all; }
-
-        /* Badges & Chips */
-        .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; }
-        .chip { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
-        .chip.active { background: rgba(74, 222, 128, 0.1); color: var(--success); border-color: rgba(74, 222, 128, 0.2); }
-
-        /* Details / Accordion */
-        details { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.1); }
-        details summary { padding: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between; }
-        details[open] summary { border-bottom: 1px solid var(--border); }
-        .details-content { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
-
         /* Form Elements */
         label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: 4px; display: block; }
         .form-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
@@ -72,20 +55,18 @@
         .check-group { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
         .check-group input { accent-color: var(--primary); }
 
-        /* Logs & Table */
-        .log-console { background: #000; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; height: 180px; overflow-y: auto; color: #ccc; border: 1px solid var(--border); }
-        .log-entry { border-bottom: 1px solid #111; padding: 2px 0; display: flex; gap: 10px; }
-
-        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
-        th { text-align: left; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); padding: 5px; font-size: 0.75rem; text-transform: uppercase; }
-        td { padding: 8px 5px; border-bottom: 1px solid #222; }
-
         /* Button */
         .btn-primary { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .btn-danger { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .btn-icon { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 4px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-icon:hover { color: var(--text); border-color: var(--text); }
+
+        /* Details / Accordion */
+        details { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.1); }
+        details summary { padding: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between; }
+        details[open] summary { border-bottom: 1px solid var(--border); }
+        .details-content { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
 
         /* Header Summary Bar */
         .summary-bar { display: flex; gap: 15px; align-items: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; background: var(--panel); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border); }
@@ -101,6 +82,20 @@
         .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
         .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
         .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.1); }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { text-align: left; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); padding: 5px; font-size: 0.75rem; text-transform: uppercase; }
+        td { padding: 8px 5px; border-bottom: 1px solid #222; }
+
+        /* COMPOSER */
+        .stage-container { background: #000; width: 100%; height: 500px; position: relative; overflow: hidden; border: 1px solid var(--border); border-radius: 8px; display: flex; justify-content: center; align-items: center; }
+        .stage-wrapper { transform-origin: center; box-shadow: 0 0 20px rgba(0,0,0,0.5); }
+        .stage { width: 1080px; height: 1920px; background: #111; position: relative; overflow: hidden; }
+        .stage-widget { position: absolute; border: 2px solid rgba(255,255,255,0.2); box-sizing: border-box; cursor: grab; background: rgba(255,0,80,0.1); color: white; display: flex; justify-content: center; align-items: center; user-select: none; }
+        .stage-widget:hover, .stage-widget.selected { border-color: var(--primary); z-index: 10; }
+        .stage-widget .handle { width: 10px; height: 10px; background: white; position: absolute; bottom: -5px; right: -5px; cursor: nwse-resize; display: none; }
+        .stage-widget.selected .handle { display: block; }
     </style>
 </head>
 <body>
@@ -108,25 +103,29 @@
     <div class="sidebar">
         <div class="brand"><span>TK</span> EVENT SERVER</div>
 
-        <div class="nav-item active" onclick="showView('dashboard')">📊 Dashboard</div>
+        <div class="nav-item active" onclick="showView('dashboard')" data-testid="nav-dashboard">📊 Dashboard</div>
 
-        <div class="nav-group">Settings</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-system')">System</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-points')">Points & Levels</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-broadcast')">Broadcast</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-chat')">Chat</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-commands')">Commands</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-tts')">TTS</div>
-        <div class="nav-item nav-sub" onclick="showView('settings-gifts')">Gifts / Assets</div>
+        <div class="nav-group">Einstellungen</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-system')" data-testid="nav-system">System</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-points')" data-testid="nav-points">Punkte & Level</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-broadcast')" data-testid="nav-broadcast">Broadcast</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-chat')" data-testid="nav-chat">Chat</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-commands')" data-testid="nav-commands">Befehle</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-tts')" data-testid="nav-tts">TTS</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-gifts')" data-testid="nav-gifts">Geschenke / Assets</div>
 
-        <div class="nav-group">Database</div>
-        <div class="nav-item nav-sub" onclick="showView('users')">User DB</div>
+        <div class="nav-group">Overlay</div>
+        <div class="nav-item nav-sub" onclick="showView('overlays')" data-testid="nav-overlays">Overlays</div>
+        <div class="nav-item nav-sub" onclick="showView('overlay-composer')" data-testid="nav-composer">Overlay-Composer</div>
+
+        <div class="nav-group">Datenbank</div>
+        <div class="nav-item nav-sub" onclick="showView('users')" data-testid="nav-users">User DB</div>
 
         <div style="margin-top: auto; padding-top:20px; border-top:1px solid var(--border);">
-            <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 5px;">CONNECTION</div>
+            <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 5px;">VERBINDUNG</div>
             <div style="display:flex; align-items:center; gap:8px;">
                 <div id="status-dot" style="width: 8px; height: 8px; background: #666; border-radius: 50%;"></div>
-                <span id="status-text" style="font-size: 0.85rem; color: #999;">Offline</span>
+                <span id="status-text" style="font-size: 0.85rem; color: #999;" data-testid="status-text">Offline</span>
             </div>
             <div id="status-meta" style="font-size: 0.7rem; color: var(--muted); margin-top: 4px;"></div>
         </div>
@@ -135,21 +134,21 @@
     <div class="main">
         <!-- Top Bar -->
         <div style="height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--bg);">
-            <div style="font-weight: 600; font-size: 0.9rem;" id="page-title">Dashboard</div>
+            <div style="font-weight: 600; font-size: 0.9rem;" id="page-title" data-testid="page-title">Dashboard</div>
             <div style="display:flex; gap:10px; align-items: center;">
-                <button class="btn-primary" id="btn-save" onclick="saveSettings()" style="display:none;">Save Changes</button>
+                <button class="btn-primary" id="btn-save" onclick="saveSettings()" style="display:none;" data-testid="btn-save">Änderungen speichern</button>
                 <div style="width:1px; height:20px; background:var(--border); margin:0 5px;"></div>
-                <input type="text" id="conn-user" placeholder="@TikTokUser" value="" style="width: 140px; background: #000;">
-                <button class="btn-primary" onclick="connectSystem()">Connect</button>
+                <input type="text" id="conn-user" placeholder="@TikTokUser" value="" style="width: 140px; background: #000;" data-testid="input-connect-user">
+                <button class="btn-primary" onclick="connectSystem()" data-testid="btn-connect">Verbinden</button>
             </div>
         </div>
 
         <!-- DASHBOARD -->
-        <div id="view-dashboard" class="view active">
+        <div id="view-dashboard" class="view active" data-testid="view-dashboard">
             <div class="settings-grid" style="grid-template-columns: 350px 1fr 300px; height: calc(100vh - 130px);">
                 <!-- Live Preview -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Live Preview</span></div>
+                    <div class="card-header"><span class="card-title">Live Vorschau</span></div>
                     <div style="flex:1; background:#000; position:relative; display:flex; justify-content:center; align-items:center;">
                         <div id="toast-overlay" style="position:absolute; bottom:100px; left:20px; right:20px; background:rgba(0,0,0,0.85); padding:10px; border-radius:8px; border:1px solid var(--primary); display:none; flex-direction:row; align-items:center; gap:10px;">
                             <img id="toast-img" src="" style="width:40px; height:40px; border-radius:50%;">
@@ -174,141 +173,141 @@
         </div>
 
         <!-- SETTINGS: SYSTEM -->
-        <div id="view-settings-system" class="view">
+        <div id="view-settings-system" class="view" data-testid="view-settings-system">
             <div class="settings-grid">
                 <div class="card">
                     <div class="card-header"><span class="card-title">System Status</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>Uptime</label> <span id="sys-uptime">0s</span></div>
-                        <div class="form-row"><label>Addons Loaded</label> <span id="sys-addons">0</span></div>
+                        <div class="form-row"><label>Laufzeit</label> <span id="sys-uptime">0s</span></div>
+                        <div class="form-row"><label>Geladene Addons</label> <span id="sys-addons">0</span></div>
                         <div class="form-row"><label>App Version</label> <span>1.0.0</span></div>
                     </div>
                 </div>
                 <div class="card" style="border-color: var(--danger);">
-                    <div class="card-header"><span class="card-title" style="color:var(--danger);">Danger Zone</span></div>
+                    <div class="card-header"><span class="card-title" style="color:var(--danger);">Gefahrenzone</span></div>
                     <div class="card-body">
-                        <p style="font-size:0.8rem; color:var(--muted);">Reset all collected points and user data.</p>
-                        <button class="btn-danger" onclick="openResetModal()">Reset All Stats</button>
+                        <p style="font-size:0.8rem; color:var(--muted);">Alle gesammelten Punkte und Benutzerdaten zurücksetzen.</p>
+                        <button class="btn-danger" onclick="openResetModal()" data-testid="btn-reset-stats">Alle Statistiken zurücksetzen</button>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- SETTINGS: POINTS & LEVELS -->
-        <div id="view-settings-points" class="view">
+        <div id="view-settings-points" class="view" data-testid="view-settings-points">
             <div class="settings-grid">
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Points System</span></div>
+                    <div class="card-header"><span class="card-title">Punktesystem</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>Currency Name</label> <input type="text" data-bind="points.name"></div>
+                        <div class="form-row"><label>Währungsname</label> <input type="text" data-bind="points.name" data-testid="input-points-name"></div>
                         <hr style="border:0; border-top:1px solid var(--border);">
-                        <div class="form-row"><label>Points per Coin</label> <input type="number" data-bind="points.coin"></div>
-                        <div class="form-row"><label>Points per Share</label> <input type="number" data-bind="points.share"></div>
-                        <div class="form-row"><label>Points per Chat</label> <input type="number" data-bind="points.chat"></div>
+                        <div class="form-row"><label>Punkte pro Coin</label> <input type="number" data-bind="points.coin"></div>
+                        <div class="form-row"><label>Punkte pro Share</label> <input type="number" data-bind="points.share"></div>
+                        <div class="form-row"><label>Punkte pro Chat</label> <input type="number" data-bind="points.chat"></div>
                         <div class="form-row"><label>Sub Bonus (%)</label> <input type="number" data-bind="points.subBonus"></div>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Levels</span></div>
+                    <div class="card-header"><span class="card-title">Level</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>Base Points</label> <input type="number" data-bind="levels.points"></div>
-                        <div class="form-row"><label>Multiplier</label> <input type="number" step="0.1" data-bind="levels.multiplier"></div>
+                        <div class="form-row"><label>Basis Punkte</label> <input type="number" data-bind="levels.points"></div>
+                        <div class="form-row"><label>Multiplikator</label> <input type="number" step="0.1" data-bind="levels.multiplier"></div>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- SETTINGS: BROADCAST -->
-        <div id="view-settings-broadcast" class="view">
+        <div id="view-settings-broadcast" class="view" data-testid="view-settings-broadcast">
              <div class="settings-grid">
                 <div class="card">
                     <div class="card-header"><span class="card-title">OBS WebSocket</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>IP Address</label> <input type="text" data-bind="obs.ip"></div>
+                        <div class="form-row"><label>IP Adresse</label> <input type="text" data-bind="obs.ip"></div>
                         <div class="form-row"><label>Port</label> <input type="number" data-bind="obs.port"></div>
-                        <div class="form-row"><label>Password</label> <input type="password" data-bind="obs.password"></div>
+                        <div class="form-row"><label>Passwort</label> <input type="password" data-bind="obs.password"></div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary">Test Connection</button></div>
+                    <div class="card-footer"><button class="btn-secondary">Verbindung testen</button></div>
                 </div>
                 <div class="card">
                     <div class="card-header"><span class="card-title">Streamer.bot</span></div>
                     <div class="card-body">
-                        <div class="form-row"><label>Address</label> <input type="text" data-bind="streamerbot.address"></div>
+                        <div class="form-row"><label>Adresse</label> <input type="text" data-bind="streamerbot.address"></div>
                         <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
                         <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
                     </div>
-                    <div class="card-footer"><button class="btn-secondary">Test Connection</button></div>
+                    <div class="card-footer"><button class="btn-secondary">Verbindung testen</button></div>
                 </div>
              </div>
         </div>
 
         <!-- SETTINGS: CHAT -->
-        <div id="view-settings-chat" class="view">
+        <div id="view-settings-chat" class="view" data-testid="view-settings-chat">
              <div class="settings-grid">
                 <div class="card">
                     <div class="card-header"><span class="card-title">Chat Integration</span></div>
                     <div class="card-body">
                         <div class="check-group">
-                            <input type="checkbox" data-bind="chat.enableSend"> <strong>Enable Sending Chat</strong>
+                            <input type="checkbox" data-bind="chat.enableSend" data-testid="check-chat-send"> <strong>Chat Senden aktivieren</strong>
                         </div>
                         <div class="check-group">
-                            <input type="checkbox" data-bind="chat.enableZoom"> <span>Enable Zoom Chat</span>
+                            <input type="checkbox" data-bind="chat.enableZoom"> <span>Zoom Chat aktivieren</span>
                         </div>
                         <hr style="border:0; border-top:1px solid var(--border);">
-                        <div class="form-row"><label>Session ID / Cookie</label> <input type="password" data-bind="chat.sessionCookie" placeholder="Required for sending"></div>
+                        <div class="form-row"><label>Session ID / Cookie</label> <input type="password" data-bind="chat.sessionCookie" placeholder="Erforderlich zum Senden"></div>
                     </div>
                 </div>
              </div>
         </div>
 
         <!-- SETTINGS: COMMANDS -->
-        <div id="view-settings-commands" class="view">
+        <div id="view-settings-commands" class="view" data-testid="view-settings-commands">
              <div class="settings-grid">
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Built-in Commands</span></div>
+                    <div class="card-header"><span class="card-title">Integrierte Befehle</span></div>
                     <div class="card-body">
                         <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.help.enabled"> <span>!help</span></div>
                         <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.score.enabled"> <span>!score</span></div>
-                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.send.enabled"> <span>!send (Points transfer)</span></div>
-                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.spin.enabled"> <span>!spin (Wheel)</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.send.enabled"> <span>!send (Punkte transfer)</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.spin.enabled"> <span>!spin (Glücksrad)</span></div>
                     </div>
                 </div>
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Command Listings</span></div>
+                    <div class="card-header"><span class="card-title">Befehlslisten</span></div>
                     <div class="card-body">
                         <div class="check-group"><input type="checkbox" data-bind="commands.listing.commands.enabled"> <span>!commands (Global)</span></div>
-                        <div class="check-group"><input type="checkbox" data-bind="commands.listing.subcommands.enabled"> <span>!subcommands (Subscriber)</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.listing.subcommands.enabled"> <span>!subcommands (Abonnenten)</span></div>
                     </div>
                 </div>
              </div>
         </div>
 
         <!-- SETTINGS: TTS -->
-        <div id="view-settings-tts" class="view">
+        <div id="view-settings-tts" class="view" data-testid="view-settings-tts">
             <!-- Summary Bar -->
             <div class="summary-bar">
-                <div class="sum-item"><span class="sum-label">TTS Engine</span><span class="sum-val" id="sum-tts">Off</span></div>
+                <div class="sum-item"><span class="sum-label">TTS Engine</span><span class="sum-val" id="sum-tts">Aus</span></div>
                 <div style="width:1px; height:20px; background:var(--border);"></div>
-                <div class="sum-item"><span class="sum-label">Trigger</span><span class="sum-val" id="sum-trigger">Any</span></div>
+                <div class="sum-item"><span class="sum-label">Auslöser</span><span class="sum-val" id="sum-trigger">Jeder</span></div>
             </div>
 
             <div class="settings-grid">
                 <!-- General Settings -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">General</span></div>
+                    <div class="card-header"><span class="card-title">Allgemein</span></div>
                     <div class="card-body">
                         <div class="check-group" style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; border:1px solid var(--border);">
-                            <input type="checkbox" data-bind="tts.enabled" id="tts-enabled"> <span style="font-weight:600;">Enable TTS System</span>
+                            <input type="checkbox" data-bind="tts.enabled" id="tts-enabled" data-testid="check-tts-enabled"> <span style="font-weight:600;">TTS System aktivieren</span>
                         </div>
-                        <div class="form-row"><label>Language</label><select data-bind="tts.language"><option value="de-DE">Deutsch (DE)</option><option value="en-US">English (US)</option></select></div>
-                        <div class="form-row"><label>Voice</label><select data-bind="tts.voice"><option value="default">System Default</option></select></div>
-                        <div class="form-row"><label>Volume</label><input type="range" data-bind="tts.volume" min="0" max="1" step="0.1"></div>
+                        <div class="form-row"><label>Sprache</label><select data-bind="tts.language"><option value="de-DE">Deutsch (DE)</option><option value="en-US">English (US)</option></select></div>
+                        <div class="form-row"><label>Stimme</label><select data-bind="tts.voice"><option value="default">System Standard</option></select></div>
+                        <div class="form-row"><label>Lautstärke</label><input type="range" data-bind="tts.volume" min="0" max="1" step="0.1"></div>
                         <details style="margin-top:10px;">
-                            <summary>Fine Tuning</summary>
+                            <summary>Feinabstimmung</summary>
                             <div class="details-content">
-                                <div class="form-row"><label>Speed</label><input type="range" data-bind="tts.speed" min="0.5" max="2" step="0.1"></div>
-                                <div class="form-row"><label>Pitch</label><input type="range" data-bind="tts.pitch" min="0.5" max="2" step="0.1"></div>
-                                <div class="check-group"><input type="checkbox" data-bind="tts.randomVoice"> <span>Random Voice per User</span></div>
+                                <div class="form-row"><label>Geschwindigkeit</label><input type="range" data-bind="tts.speed" min="0.5" max="2" step="0.1"></div>
+                                <div class="form-row"><label>Tonhöhe</label><input type="range" data-bind="tts.pitch" min="0.5" max="2" step="0.1"></div>
+                                <div class="check-group"><input type="checkbox" data-bind="tts.randomVoice"> <span>Zufällige Stimme pro User</span></div>
                             </div>
                         </details>
                     </div>
@@ -316,23 +315,23 @@
 
                 <!-- Permissions -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Permissions & Trigger</span></div>
+                    <div class="card-header"><span class="card-title">Berechtigungen & Auslöser</span></div>
                     <div class="card-body">
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.all"> <strong>All Users</strong></div>
-                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.follower"> <span>Followers</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.all"> <strong>Alle User</strong></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.follower"> <span>Follower</span></div>
                             <div class="check-group"><input type="checkbox" data-bind="tts.allowed.sub"> <span>Subs</span></div>
                             <div class="check-group"><input type="checkbox" data-bind="tts.allowed.mod"> <span>Mods</span></div>
                             <div class="check-group"><input type="checkbox" data-bind="tts.allowed.team"> <span>Team</span></div>
-                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.topGifters"> <span>Top Gifters</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.topGifters"> <span>Top Gifter</span></div>
                         </div>
                         <hr style="border:0; border-top:1px solid var(--border); width:100%; margin:15px 0;">
-                        <label>Trigger Method</label>
+                        <label>Auslöser Methode</label>
                         <select data-bind="tts.trigger">
-                            <option value="any">Any Comment</option>
-                            <option value="dot">Starts with dot (.)</option>
-                            <option value="slash">Starts with slash (/)</option>
-                            <option value="command">Specific Command</option>
+                            <option value="any">Jeder Kommentar</option>
+                            <option value="dot">Startet mit Punkt (.)</option>
+                            <option value="slash">Startet mit Slash (/)</option>
+                            <option value="command">Bestimmter Befehl</option>
                         </select>
                         <input type="text" data-bind="tts.command" placeholder="!tts" style="margin-top:5px;">
                     </div>
@@ -343,7 +342,7 @@
                     <div class="card-header"><span class="card-title">Tester</span></div>
                     <div class="card-body">
                         <div style="display:flex; gap:10px;">
-                            <input type="text" id="test-text" placeholder="Hello World" value="Hello World">
+                            <input type="text" id="test-text" placeholder="Hallo Welt" value="Hallo Welt">
                             <button class="btn-primary" onclick="testVoice()">▶</button>
                         </div>
                     </div>
@@ -352,26 +351,93 @@
         </div>
 
         <!-- SETTINGS: GIFTS -->
-        <div id="view-settings-gifts" class="view">
+        <div id="view-settings-gifts" class="view" data-testid="view-settings-gifts">
             <div class="card">
                 <div class="card-body" style="align-items: center; padding: 40px;">
-                    <h3>Gift Asset Management</h3>
+                    <h3>Geschenke Verwaltung</h3>
                     <p style="color:var(--muted); text-align:center; max-width:400px; margin-bottom:20px;">
-                        View cached gifts, download assets, and configure display settings.
+                        Gespeicherte Geschenke ansehen, Assets laden und Darstellung konfigurieren.
                     </p>
-                    <button class="btn-primary" onclick="openGiftBrowser()">Open Gift Browser</button>
+                    <button class="btn-primary" onclick="openGiftBrowser()" data-testid="btn-open-gift-browser">Geschenke Browser öffnen</button>
                     <div style="margin-top:20px;">
-                        <div class="check-group"><input type="checkbox" data-bind="gifts.blackWhiteDefault"> <span>Use B/W as default</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="gifts.blackWhiteDefault"> <span>S/W als Standard nutzen</span></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- VIEW: OVERLAYS -->
+        <div id="view-overlays" class="view" data-testid="view-overlays">
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">OBS Link</span></div>
+                    <div class="card-body">
+                        <p style="font-size:0.8rem; color:var(--muted);">Füge diesen Link als Browser Source in OBS ein:</p>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="obs-link" readonly value="http://localhost:5175/overlay/main">
+                            <button class="btn-secondary" onclick="navigator.clipboard.writeText(document.getElementById('obs-link').value)">Kopieren</button>
+                        </div>
+                        <div style="font-size:0.75rem; color:#4ade80; margin-top:10px;">● Folgt der aktiven Szene</div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Aktive Szene</span></div>
+                    <div class="card-body">
+                        <select id="active-scene-select" onchange="changeActiveScene(this.value)">
+                            <option value="default">Standard Szene</option>
+                        </select>
+                        <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:5px; margin-top:15px;" id="quick-scene-btns">
+                            <!-- JS populated -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: OVERLAY COMPOSER -->
+        <div id="view-overlay-composer" class="view" style="display:none; flex-direction: column; height: 100vh; overflow:hidden;" data-testid="view-overlay-composer">
+            <div style="display:flex; height:100%;">
+                <!-- Left: Scenes & Widgets -->
+                <div style="width: 250px; background: var(--panel); border-right: 1px solid var(--border); display:flex; flex-direction:column;">
+                    <div style="padding:10px; border-bottom:1px solid var(--border); font-weight:600;">Szenen</div>
+                    <div id="composer-scene-list" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:5px;"></div>
+                    <button class="btn-secondary" style="margin:10px;" onclick="addScene()">+ Neue Szene</button>
+
+                    <div style="padding:10px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); font-weight:600;">Widgets</div>
+                    <div id="composer-widget-lib" style="flex:1; overflow-y:auto; padding:10px; display:flex; flex-direction:column; gap:5px;"></div>
+                </div>
+
+                <!-- Center: Stage -->
+                <div style="flex:1; background:#000; display:flex; flex-direction:column;">
+                    <div style="padding:10px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
+                        <span id="composer-current-scene-name" style="font-weight:bold;">Scene</span>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary" onclick="saveSettings()">Speichern</button>
+                        </div>
+                    </div>
+                    <div class="stage-container" id="stage-container">
+                        <div class="stage-wrapper" id="stage-wrapper">
+                             <div class="stage" id="stage"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Properties -->
+                <div style="width: 250px; background: var(--panel); border-left: 1px solid var(--border); display:flex; flex-direction:column;">
+                     <div style="padding:10px; border-bottom:1px solid var(--border); font-weight:600;">Eigenschaften</div>
+                     <div id="composer-props" style="padding:15px; display:flex; flex-direction:column; gap:10px;">
+                         <div style="color:var(--muted); font-size:0.8rem; text-align:center;">Kein Widget ausgewählt</div>
+                     </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- USER DB -->
-        <div id="view-users" class="view">
+        <div id="view-users" class="view" data-testid="view-users">
             <div class="card">
                 <div class="card-header">
-                    <span class="card-title">User Database</span>
+                    <span class="card-title">User Datenbank</span>
                     <div class="card-chips">
                         <button class="btn-icon" onclick="loadUsers(userPage-1)">◀</button>
                         <span id="user-page-lbl" style="padding:0 10px; font-size:0.8rem;">1</span>
@@ -380,7 +446,7 @@
                 </div>
                 <div class="card-body" style="padding:0;">
                     <table id="user-table">
-                        <thead><tr><th>User</th><th>Score</th><th>Diamonds</th><th>Actions</th></tr></thead>
+                        <thead><tr><th>User</th><th>Punkte</th><th>Diamanten</th><th>Aktionen</th></tr></thead>
                         <tbody></tbody>
                     </table>
                 </div>
@@ -390,33 +456,33 @@
     </div>
 
     <!-- MODAL: RESET -->
-    <div id="modal-reset" class="modal-overlay">
+    <div id="modal-reset" class="modal-overlay" data-testid="modal-reset">
         <div class="modal" style="width:400px;">
-            <div class="modal-header" style="color:var(--danger);">⚠ Confirm Reset</div>
+            <div class="modal-header" style="color:var(--danger);">⚠ Reset Bestätigen</div>
             <div class="modal-body">
-                <p>This will delete ALL user points and statistics. This cannot be undone.</p>
-                <p>Type <strong>RESET</strong> to confirm:</p>
-                <input type="text" id="reset-confirm-input" onkeyup="checkResetBtn()">
+                <p>Dies löscht ALLE Benutzerpunkte und Statistiken. Das kann nicht rückgängig gemacht werden.</p>
+                <p>Tippe <strong>RESET</strong> zum Bestätigen:</p>
+                <input type="text" id="reset-confirm-input" onkeyup="checkResetBtn()" data-testid="input-reset-confirm">
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary" onclick="document.getElementById('modal-reset').classList.remove('active')">Cancel</button>
-                <button class="btn-danger" id="btn-do-reset" disabled onclick="doReset()">Reset Now</button>
+                <button class="btn-secondary" onclick="document.getElementById('modal-reset').classList.remove('active')">Abbrechen</button>
+                <button class="btn-danger" id="btn-do-reset" disabled onclick="doReset()" data-testid="btn-do-reset">Jetzt zurücksetzen</button>
             </div>
         </div>
     </div>
 
     <!-- MODAL: GIFTS -->
-    <div id="modal-gifts" class="modal-overlay">
+    <div id="modal-gifts" class="modal-overlay" data-testid="modal-gifts">
         <div class="modal" style="width:800px; height:80vh;">
             <div class="modal-header">
-                <span>Gift Browser</span>
+                <span>Geschenke Browser</span>
                 <button class="btn-icon" onclick="document.getElementById('modal-gifts').classList.remove('active')">✕</button>
             </div>
             <div class="modal-body">
                 <div id="gift-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px;"></div>
             </div>
             <div class="modal-footer">
-                <button class="btn-secondary">Download Selected (Stub)</button>
+                <button class="btn-secondary">Auswahl herunterladen (Stub)</button>
             </div>
         </div>
     </div>
@@ -426,12 +492,20 @@
         let currentView = 'dashboard';
         let userPage = 1;
 
+        // Composer State
+        let selectedSceneId = null;
+        let selectedWidgetId = null;
+        let availableWidgets = [];
+
         // --- CORE NAVIGATION ---
         function showView(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
-            document.getElementById('view-' + id).classList.add('active');
+            // Composer view is flex, others are block. Handle this logic.
+            const view = document.getElementById('view-' + id);
+            view.classList.add('active');
+            view.style.display = (id === 'overlay-composer') ? 'flex' : 'block';
 
             // Highlight nav
             const navs = document.querySelectorAll('.nav-item');
@@ -441,12 +515,14 @@
             });
 
             currentView = id;
-            document.getElementById('page-title').innerText = id.replace('view-', '').replace('settings-', 'Settings: ').toUpperCase();
+            document.getElementById('page-title').innerText = id.replace('view-', '').replace('settings-', 'Einstellungen: ').toUpperCase();
 
             // Context specific actions
             document.getElementById('btn-save').style.display = id.startsWith('settings') ? 'block' : 'none';
 
             if(id === 'users') loadUsers(1);
+            if(id === 'overlays') loadOverlaySettings();
+            if(id === 'overlay-composer') initComposer();
         }
 
         // --- SCRATCHPAD LOGIC ---
@@ -498,13 +574,13 @@
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(scratchConfig)
             });
-            alert("Configuration Saved!");
+            alert("Konfiguration gespeichert!");
         }
 
         function updateUIState() {
             // Visual Updates (Chips, Summaries) derived from scratchConfig
             const tts = scratchConfig.tts || {};
-            document.getElementById('sum-tts').innerText = tts.enabled ? "On" : "Off";
+            document.getElementById('sum-tts').innerText = tts.enabled ? "An" : "Aus";
             document.getElementById('sum-tts').className = tts.enabled ? "sum-val on" : "sum-val";
             document.getElementById('sum-trigger').innerText = (tts.trigger || "any").toUpperCase();
         }
@@ -526,7 +602,7 @@
         async function doReset() {
             await fetch('/api/reset-stats', { method: 'POST' });
             document.getElementById('modal-reset').classList.remove('active');
-            alert("Stats reset.");
+            alert("Statistiken zurückgesetzt.");
         }
 
         // Gifts
@@ -538,7 +614,7 @@
             grid.innerHTML = "";
 
             if(gifts.length === 0) {
-                grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; color:gray;'>No gifts cached yet. Connect to TikTok and wait for gifts!</div>";
+                grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; color:gray;'>Noch keine Geschenke im Cache. Verbinde mit TikTok und warte auf Geschenke!</div>";
                 return;
             }
 
@@ -599,7 +675,7 @@
         async function connectSystem() {
             const u = document.getElementById('conn-user').value;
             if(!u) return;
-            document.getElementById('status-text').innerText = "Connecting...";
+            document.getElementById('status-text').innerText = "Verbindet...";
             document.getElementById('status-dot').style.background = "#eab308";
             await fetch('/api/connect', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ uniqueId: u }) });
         }
@@ -614,7 +690,7 @@
                 document.getElementById('status-text').innerText = `Online: @${s.uniqueId}`;
                 document.getElementById('status-dot').style.background = "#4ade80";
                 if(s.roomInfo) {
-                    document.getElementById('status-meta').innerText = `Viewers: ${s.roomInfo.roomUserCount || 0}`;
+                    document.getElementById('status-meta').innerText = `Zuschauer: ${s.roomInfo.roomUserCount || 0}`;
                 }
             } else {
                 document.getElementById('status-text').innerText = "Offline";
@@ -633,6 +709,266 @@
              msg.pitch = scratchConfig.tts.pitch;
              window.speechSynthesis.speak(msg);
         }
+
+        // --- OVERLAY SETTINGS ---
+        function loadOverlaySettings() {
+             const sel = document.getElementById('active-scene-select');
+             sel.innerHTML = "";
+             const scenes = scratchConfig.overlay?.scenes || [];
+             scenes.forEach(s => {
+                 const opt = document.createElement("option");
+                 opt.value = s.id;
+                 opt.innerText = s.name;
+                 sel.appendChild(opt);
+             });
+             sel.value = scratchConfig.overlay?.activeSceneId;
+
+             // Quick buttons
+             const btns = document.getElementById('quick-scene-btns');
+             btns.innerHTML = "";
+             scenes.slice(0, 10).forEach((s, idx) => {
+                 const btn = document.createElement("button");
+                 btn.className = "btn-secondary";
+                 btn.innerText = (idx+1) + ". " + s.name;
+                 btn.onclick = () => changeActiveScene(s.id);
+                 btns.appendChild(btn);
+             });
+        }
+
+        async function changeActiveScene(id) {
+            scratchConfig.overlay.activeSceneId = id;
+            await fetch('/api/overlay/active-scene', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ sceneId: id })
+            });
+            document.getElementById('active-scene-select').value = id;
+        }
+
+
+        // --- OVERLAY COMPOSER ---
+        async function initComposer() {
+            // Load Widgets Registry
+            const res = await fetch('/api/overlay/widgets');
+            availableWidgets = await res.json();
+            renderComposerWidgetLib();
+
+            // Render Scene List
+            renderComposerSceneList();
+
+            // Resize Stage
+            resizeComposerStage();
+            window.addEventListener('resize', resizeComposerStage);
+
+            // Select active scene by default if none selected
+            if(!selectedSceneId && scratchConfig.overlay?.scenes?.length > 0) {
+                selectScene(scratchConfig.overlay.scenes[0].id);
+            }
+        }
+
+        function resizeComposerStage() {
+            const container = document.getElementById('stage-container');
+            const wrapper = document.getElementById('stage-wrapper');
+            const scale = Math.min((container.clientWidth - 40) / 1080, (container.clientHeight - 40) / 1920);
+            wrapper.style.transform = `scale(${scale})`;
+            wrapper.style.width = "1080px";
+            wrapper.style.height = "1920px";
+        }
+
+        function renderComposerSceneList() {
+            const list = document.getElementById('composer-scene-list');
+            list.innerHTML = "";
+            const scenes = scratchConfig.overlay?.scenes || [];
+            scenes.forEach(s => {
+                 const div = document.createElement("div");
+                 div.style.padding = "8px";
+                 div.style.background = (s.id === selectedSceneId) ? "rgba(255,0,80,0.2)" : "transparent";
+                 div.style.border = "1px solid var(--border)";
+                 div.style.borderRadius = "4px";
+                 div.style.cursor = "pointer";
+                 div.innerText = s.name;
+                 div.onclick = () => selectScene(s.id);
+                 list.appendChild(div);
+            });
+        }
+
+        function renderComposerWidgetLib() {
+            const list = document.getElementById('composer-widget-lib');
+            list.innerHTML = "";
+            availableWidgets.forEach(w => {
+                const div = document.createElement("div");
+                div.className = "chip";
+                div.style.padding = "10px";
+                div.style.cursor = "pointer";
+                div.innerText = "+ " + w.name;
+                div.onclick = () => addWidgetToScene(w);
+                list.appendChild(div);
+            });
+        }
+
+        function selectScene(id) {
+            selectedSceneId = id;
+            document.getElementById('composer-current-scene-name').innerText = scratchConfig.overlay.scenes.find(s=>s.id===id)?.name || "Scene";
+            renderComposerSceneList();
+            renderStage();
+            renderProps();
+        }
+
+        function addScene() {
+             if(!scratchConfig.overlay.scenes) scratchConfig.overlay.scenes = [];
+             const id = "scene_" + Date.now();
+             scratchConfig.overlay.scenes.push({
+                 id: id,
+                 name: "Neue Szene",
+                 width: 1080,
+                 height: 1920,
+                 widgets: []
+             });
+             selectScene(id);
+        }
+
+        function addWidgetToScene(def) {
+            if(!selectedSceneId) return;
+            const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+            const wId = "w_" + Date.now();
+            scene.widgets.push({
+                id: wId,
+                type: def.type,
+                x: 100, y: 100,
+                w: def.defaultSize.w,
+                h: def.defaultSize.h,
+                visible: true,
+                scale: 1,
+                props: def.defaultProps || {}
+            });
+            renderStage();
+        }
+
+        function renderStage() {
+            const stage = document.getElementById('stage');
+            stage.innerHTML = "";
+            if(!selectedSceneId) return;
+            const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+
+            scene.widgets.forEach(w => {
+                const el = document.createElement("div");
+                el.className = "stage-widget " + (selectedWidgetId === w.id ? "selected" : "");
+                el.style.left = w.x + "px";
+                el.style.top = w.y + "px";
+                el.style.width = w.w + "px";
+                el.style.height = w.h + "px";
+                el.innerText = w.type;
+                el.onmousedown = (e) => startDrag(e, w.id);
+
+                const handle = document.createElement("div");
+                handle.className = "handle";
+                el.appendChild(handle);
+
+                stage.appendChild(el);
+            });
+        }
+
+        // --- DRAG LOGIC (Simplified) ---
+        let dragTarget = null;
+        let dragStart = {x:0, y:0};
+        let dragOrig = {x:0, y:0};
+
+        function startDrag(e, wId) {
+            e.stopPropagation();
+            selectedWidgetId = wId;
+            renderStage();
+            renderProps();
+
+            dragTarget = wId;
+            dragStart = { x: e.clientX, y: e.clientY };
+            const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+            const w = scene.widgets.find(x => x.id === wId);
+            dragOrig = { x: w.x, y: w.y };
+
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', stopDrag);
+        }
+
+        function onDrag(e) {
+             if(!dragTarget) return;
+             // Calculate delta with scale factor
+             // We need to know current scale of stage-wrapper
+             const wrapper = document.getElementById('stage-wrapper');
+             // Extract scale from transform matrix or style
+             // Simplification: we calculated scale in resizeComposerStage
+             const container = document.getElementById('stage-container');
+             const scale = Math.min((container.clientWidth - 40) / 1080, (container.clientHeight - 40) / 1920);
+
+             const dx = (e.clientX - dragStart.x) / scale;
+             const dy = (e.clientY - dragStart.y) / scale;
+
+             const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+             const w = scene.widgets.find(x => x.id === dragTarget);
+
+             w.x = Math.round(dragOrig.x + dx);
+             w.y = Math.round(dragOrig.y + dy);
+             renderStage();
+             renderProps(); // Update inputs live
+        }
+
+        function stopDrag() {
+            dragTarget = null;
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', stopDrag);
+        }
+
+        function renderProps() {
+             const div = document.getElementById('composer-props');
+             div.innerHTML = "";
+
+             if(!selectedSceneId) return;
+
+             // Scene Props
+             const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+
+             div.innerHTML += `<label>Szene Name</label><input type="text" value="${scene.name}" onchange="updateSceneName(this.value)">`;
+             div.innerHTML += `<hr style="width:100%; border:0; border-bottom:1px solid #333;">`;
+
+             if(!selectedWidgetId) {
+                 div.innerHTML += `<div style="color:var(--muted); font-size:0.8rem;">Wähle ein Widget aus</div>`;
+                 return;
+             }
+
+             const w = scene.widgets.find(x => x.id === selectedWidgetId);
+             if(!w) return;
+
+             div.innerHTML += `
+                <div class="form-row"><label>Type</label> <span>${w.type}</span></div>
+                <div class="form-row"><label>X</label> <input type="number" value="${w.x}" onchange="updateWidgetProp('x', this.value)"></div>
+                <div class="form-row"><label>Y</label> <input type="number" value="${w.y}" onchange="updateWidgetProp('y', this.value)"></div>
+                <div class="form-row"><label>W</label> <input type="number" value="${w.w}" onchange="updateWidgetProp('w', this.value)"></div>
+                <div class="form-row"><label>H</label> <input type="number" value="${w.h}" onchange="updateWidgetProp('h', this.value)"></div>
+                <div class="check-group"><input type="checkbox" ${w.visible?'checked':''} onchange="updateWidgetProp('visible', this.checked)"> <span>Sichtbar</span></div>
+                <button class="btn-danger" style="margin-top:20px; width:100%;" onclick="deleteWidget()">Widget löschen</button>
+             `;
+        }
+
+        function updateSceneName(val) {
+             const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+             scene.name = val;
+             renderComposerSceneList();
+        }
+
+        function updateWidgetProp(prop, val) {
+             const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+             const w = scene.widgets.find(x => x.id === selectedWidgetId);
+             w[prop] = (prop==='visible') ? val : Number(val);
+             renderStage();
+        }
+
+        function deleteWidget() {
+             const scene = scratchConfig.overlay.scenes.find(s=>s.id===selectedSceneId);
+             scene.widgets = scene.widgets.filter(x => x.id !== selectedWidgetId);
+             selectedWidgetId = null;
+             renderStage();
+             renderProps();
+        }
+
 
         // --- BOOTSTRAP ---
         initSettings();

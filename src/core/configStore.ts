@@ -100,12 +100,22 @@ export const DEFAULT_CONFIG = {
     specialUsers: [] // [{ name: "agent_one", voice: "...", speed: 1.2 }]
   },
 
-  // Overlay Widgets
-  widgets: [
-    { id: "chat", type: "chat", x: 20, y: 20, visible: true, scale: 1 },
-    { id: "alert", type: "alert", x: 100, y: 100, visible: true, scale: 1 },
-    { id: "leaderboard", type: "leaderboard", x: 20, y: 500, visible: true, scale: 0.8 }
-  ]
+  // Overlay System
+  overlay: {
+    activeSceneId: "default",
+    scenes: [
+      {
+        id: "default",
+        name: "Standard Szene",
+        width: 1080,
+        height: 1920,
+        widgets: [
+          { id: "w1", type: "chat", x: 20, y: 800, w: 500, h: 800, visible: true, scale: 1, props: {} },
+          { id: "w2", type: "alert", x: 100, y: 100, w: 800, h: 400, visible: true, scale: 1, props: {} }
+        ]
+      }
+    ]
+  }
 };
 
 // Generic Deep Merge
