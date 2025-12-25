@@ -15,6 +15,7 @@ test('automated screenshots of all views', async ({ page }) => {
   // 1. Dashboard
   await page.goto('/');
   await expect(page.getByTestId('view-dashboard')).toBeVisible();
+  await expect(page.getByTestId('page-title')).toHaveText('Dashboard'); // German Title Check
   // Wait for metrics to be present (even if 0)
   await expect(page.locator('#metric-viewers')).toBeVisible();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard.png') });
@@ -22,13 +23,19 @@ test('automated screenshots of all views', async ({ page }) => {
   // 2. System Settings
   await page.getByTestId('nav-system').click();
   await expect(page.getByTestId('view-settings-system')).toBeVisible();
+  await expect(page.getByTestId('page-title')).toHaveText(/Einstellungen: System/); // German Title Check
   await expect(page.getByTestId('view-dashboard')).toBeHidden(); // Negative Assertion
+  // Strict Nav Check
+  await expect(page.getByTestId('nav-system')).toHaveClass(/active/);
+  await expect(page.getByTestId('nav-dashboard')).not.toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_system.png') });
 
   // 3. Points & Level
   await page.getByTestId('nav-points').click();
   await expect(page.getByTestId('view-settings-points')).toBeVisible();
   await expect(page.getByTestId('view-settings-system')).toBeHidden(); // Negative Assertion
+  await expect(page.getByTestId('nav-points')).toHaveClass(/active/);
+  await expect(page.getByTestId('nav-system')).not.toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_points.png') });
 
   // 4. Broadcast
@@ -72,6 +79,18 @@ test('automated screenshots of all views', async ({ page }) => {
   // 9. Overlays
   await page.getByTestId('nav-overlays').click();
   await expect(page.getByTestId('view-overlays')).toBeVisible();
+  await expect(page.getByTestId('page-title')).toHaveText('Overlays');
+
+  // Nav check
+  await expect(page.getByTestId('nav-overlays')).toHaveClass(/active/);
+
+  // Robustness check: Scenes dropdown should be populated and not undefined
+  const sceneSelect = page.locator('#active-scene-select');
+  // toHaveCountGreaterThan is not a standard matcher, using count verification
+  const count = await sceneSelect.locator('option').count();
+  expect(count).toBeGreaterThan(0);
+  await expect(sceneSelect).not.toContainText('undefined');
+
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '09_overlays.png') });
 
   // 10. Overlay Composer

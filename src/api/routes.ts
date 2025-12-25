@@ -79,7 +79,7 @@ export function createApiRouter(
   // 4. Chat Senden (Live)
   r.post("/chat/send", async (req, res) => {
       const conf = configStore.getCore();
-      if (conf.chat?.enableSend === false) {
+      if (conf.chat?.enableSend !== true) {
           return res.status(403).json({ ok: false, reason: 'DISABLED' });
       }
 
@@ -186,20 +186,20 @@ export function createApiRouter(
     configStore.setCore(conf);
 
     // Broadcast change so overlay updates immediately
-    broadcastOverlay({ kind: 'scene-change', sceneId });
+    broadcastOverlay({ kind: 'scene', sceneId });
 
     res.json({ ok: true });
   });
 
   // --- STATUS & ADDONS ---
 
-  r.get("/status", (_req, res) => {
+  r.get("/status", (req, res) => {
     const coreConfig = configStore.getCore();
     const cState = connectorState();
     res.json({
       uptime: process.uptime(),
       version: "1.0.0",
-      overlay: { url: `ws://localhost:${coreConfig.port || 5175}/overlay/ws` },
+      overlay: { url: `${req.protocol}://${req.get('host')}/overlay/main` },
       addonsLoaded: addonHost.getAddonsList().length,
       // Expanded Connector State
       connected: cState.connected,

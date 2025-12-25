@@ -11,15 +11,12 @@ export interface OverlayServer {
 }
 
 // We need access to config for initial state
-export function createOverlayServer(port: number): OverlayServer {
+export function createOverlayServer(port: number, configStore: ConfigStore): OverlayServer {
   const app = express();
   app.use(express.json()); // Enable JSON body parsing
 
   const server = http.createServer(app);
   const wss = new WebSocketServer({ server, path: "/overlay/ws" });
-
-  // Quick config read (fresh on connect)
-  const configStore = new ConfigStore();
 
   wss.on('connection', (ws) => {
       // Send initial scene state

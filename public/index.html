@@ -548,12 +548,25 @@
         let selectedWidgetId = null;
         let availableWidgets = [];
 
+        const VIEW_TITLES = {
+            "dashboard": "Dashboard",
+            "settings-system": "Einstellungen: System",
+            "settings-points": "Einstellungen: Punkte & Level",
+            "settings-broadcast": "Einstellungen: Broadcast",
+            "settings-chat": "Einstellungen: Chat",
+            "settings-commands": "Einstellungen: Befehle",
+            "settings-tts": "Einstellungen: TTS",
+            "settings-gifts": "Einstellungen: Geschenke",
+            "overlays": "Overlays",
+            "overlay-composer": "Overlay-Composer",
+            "users": "User DB"
+        };
+
         // --- CORE NAVIGATION ---
         function showView(id) {
             // 1. Reset all Views and Navs
             document.querySelectorAll('.view').forEach(el => {
                 el.classList.remove('active');
-                // CLEANUP: Ensure no inline display overrides CSS
                 el.style.display = '';
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
@@ -562,17 +575,20 @@
             const view = document.getElementById('view-' + id);
             if (view) {
                 view.classList.add('active');
-                // No style.display setting here! CSS handles block/flex
             }
 
-            // 3. Highlight Target Nav (Robust via data-view)
+            // 3. Highlight Target Nav (Strict Match)
             const activeNav = document.querySelector(`.nav-item[data-view='${id}']`);
             if (activeNav) {
                 activeNav.classList.add('active');
+            } else {
+                console.warn("No nav item found for view:", id);
             }
 
             currentView = id;
-            document.getElementById('page-title').innerText = id.replace('view-', '').replace('settings-', 'Einstellungen: ').toUpperCase();
+            // Strict German Titles
+            const t = VIEW_TITLES[id] || id.toUpperCase();
+            document.getElementById('page-title').innerText = t;
 
             // Context specific actions
             document.getElementById('btn-save').style.display = id.startsWith('settings') ? 'block' : 'none';
@@ -837,15 +853,26 @@
 
         // --- OVERLAY SETTINGS ---
         function loadOverlaySettings() {
+             if (!scratchConfig || !scratchConfig.overlay) {
+                 // Not loaded yet? Should not happen with new bootstrap
+                 return;
+             }
              const sel = document.getElementById('active-scene-select');
              sel.innerHTML = "";
              const scenes = scratchConfig.overlay?.scenes || [];
-             scenes.forEach(s => {
+
+             if (scenes.length === 0) {
                  const opt = document.createElement("option");
-                 opt.value = s.id;
-                 opt.innerText = s.name;
+                 opt.innerText = "Keine Szenen vorhanden";
                  sel.appendChild(opt);
-             });
+             } else {
+                 scenes.forEach(s => {
+                     const opt = document.createElement("option");
+                     opt.value = s.id;
+                     opt.innerText = s.name || s.id || "(Unbenannt)";
+                     sel.appendChild(opt);
+                 });
+             }
              sel.value = scratchConfig.overlay?.activeSceneId;
 
              // Quick buttons
@@ -859,7 +886,7 @@
 
                  const btn = document.createElement("button");
                  btn.className = "btn-secondary";
-                 btn.innerText = (idx+1) + ". " + s.name;
+                 btn.innerText = (idx+1) + ". " + (s.name || "(Unbenannt)");
                  btn.onclick = () => changeActiveScene(s.id);
 
                  const linkWrap = document.createElement("div");
@@ -1121,12 +1148,16 @@
 
 
         // --- BOOTSTRAP ---
-        initSettings();
-        loadSession(); // Load session status
-        showView('dashboard');
+        async function bootstrap() {
+            await initSettings();
+            await loadSession(); // Load session status
+            showView('dashboard');
+        }
+        bootstrap();
 
         // --- WS MOCK OVERLAY (Events & Toast) ---
-        const ws = new WebSocket(`ws://${location.host}/overlay/ws`);
+        const wsProto = location.protocol === 'https:' ? 'wss' : 'ws';
+        const ws = new WebSocket(`${wsProto}://${location.host}/overlay/ws`);
         ws.onmessage = (msg) => {
             const data = JSON.parse(msg.data);
             if(data.kind === 'speak') {

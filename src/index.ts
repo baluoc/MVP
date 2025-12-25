@@ -10,6 +10,7 @@ import { AddonHost } from "./addons/host";
 import { ConfigStore } from "./core/configStore";
 import { RingBuffer } from "./core/ringbuffer";
 import { createApiRouter } from "./api/routes";
+import { parseCommand, buildCommandResponse } from "./core/commands";
 
 function getArg(name: string) {
   const i = process.argv.indexOf(name);
@@ -25,7 +26,7 @@ async function main() {
   const port = coreConfig.port || 5175;
 
   // Server Setup
-  const overlay = createOverlayServer(port);
+  const overlay = createOverlayServer(port, configStore);
   overlay.app.use(express.static("public"));
   overlay.app.use(express.json());
 
@@ -90,6 +91,32 @@ async function main() {
     const conf = configStore.getCore();
     stats.ingest(ev, conf.points);
 
+    // COMMAND Logic
+    if (ev.type === "chat" && conf.chat?.enableSend === true) {
+        // Check Conditions: SessionId present? Connected? Commands Enabled?
+        const hasSession = conf.tiktok?.session?.sessionId && conf.tiktok.session.sessionId.length > 0;
+        // Connected check is implicitly true if we receive events from TikTokService,
+        // but explicit check matches spec better if we had access to state here easily.
+        // Since we are in the bus subscription, receiving an event implies connection or mock.
+
+        if (hasSession && (conf.commands?.enabled !== false)) {
+            const txt = ev.payload.text || "";
+            const cmdResult = parseCommand(txt, conf);
+
+            if (cmdResult) {
+                // stats.findUser works by uniqueId
+                const userObj = stats.findUser(ev.user?.uniqueId);
+
+                if (userObj) {
+                    const reply = buildCommandResponse(cmdResult.cmdKey, { user: ev.user!, stats: userObj }, conf);
+                    if (reply) {
+                        tiktokService.sendChat(reply).catch(err => console.error("[Command] Reply failed", err));
+                    }
+                }
+            }
+        }
+    }
+
     // TTS Logic Trigger
     if (conf.tts && conf.tts.enabled) {
         let shouldSpeak = false;
@@ -111,7 +138,7 @@ async function main() {
 
             if (shouldSpeak) {
                 // Template
-                const tmpl = conf.tts.template || "{nickname} says {comment}";
+                const tmpl = conf.tts.template || "{nickname} sagt {comment}"; // German Default
                 textToSpeak = tmpl
                     .replace("{nickname}", ev.user?.nickname || "User")
                     .replace("{username}", ev.user?.uniqueId || "")
@@ -137,10 +164,14 @@ async function main() {
 
   // Dashboard Heartbeat
   setInterval(() => {
+    const currentConf = configStore.getCore();
+    const totalPoints = stats.getAll().reduce((sum, u) => sum + (u.points || 0), 0);
     overlay.broadcast({
       kind: "dashboard-update",
       stats: { viewers: tiktokService.getState().roomInfo?.roomUserCount || 0 },
-      leaderboard: stats.getLeaderboard()
+      leaderboard: stats.getLeaderboard(),
+      goalCurrent: totalPoints,
+      goalTarget: currentConf.points?.goalTarget || 1000
     });
   }, 2000);
 
