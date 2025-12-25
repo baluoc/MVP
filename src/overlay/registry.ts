@@ -9,13 +9,13 @@ export interface WidgetDefinition {
 export const CORE_WIDGETS: WidgetDefinition[] = [
   {
     type: "chat",
-    name: "Chat Stream",
+    name: "Chat-Stream",
     defaultSize: { w: 400, h: 600 },
     category: "Core"
   },
   {
     type: "alert",
-    name: "Alert Box",
+    name: "Alarmbox",
     defaultSize: { w: 600, h: 300 },
     category: "Core"
   },

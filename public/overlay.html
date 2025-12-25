@@ -56,12 +56,24 @@
       window.onresize = resize;
       resize();
 
+      // URL Params for Scene Locking
+      const params = new URLSearchParams(window.location.search);
+      const lockedSceneId = params.get('scene');
+      // "follow" param can be used for explicit behavior but default is follow unless lockedSceneId is set.
+
       async function loadConfig() {
           try {
             const res = await fetch('/api/settings');
             const data = await res.json();
             config = data.overlay || {};
-            activeSceneId = config.activeSceneId || "default";
+
+            // Priority: URL Param > Config Active Scene
+            if (lockedSceneId) {
+                activeSceneId = lockedSceneId;
+            } else {
+                activeSceneId = config.activeSceneId || "default";
+            }
+
             renderScene();
           } catch(e) { console.error("Config load failed", e); }
       }
@@ -97,6 +109,9 @@
              window.speechSynthesis.speak(u);
           }
           else if (cmd.kind === "scene-change") {
+              // Ignore scene-change if locked via URL param
+              if (lockedSceneId) return;
+
               activeSceneId = cmd.sceneId;
               // Ideally re-fetch full config if we suspect config changed, but here we just switch ID from cached config
               // If config changed, we might need to reload config too.
@@ -137,7 +152,7 @@
               div.innerHTML = `
                 <img src="${cmd.giftIconUrl || 'https://via.placeholder.com/100'}" />
                 <div class="user">${cmd.from}</div>
-                <div class="gift">sent ${cmd.count}x ${cmd.giftName}</div>
+                <div class="gift">sendet ${cmd.count}x ${cmd.giftName}</div>
               `;
                if(!alertWidget) {
                    div.style.position = "absolute";
