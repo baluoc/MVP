@@ -25,7 +25,7 @@ async function main() {
   const port = coreConfig.port || 5175;
 
   // Server Setup
-  const overlay = createOverlayServer(port);
+  const overlay = createOverlayServer(port, configStore);
   overlay.app.use(express.static("public"));
   overlay.app.use(express.json());
 
@@ -137,10 +137,14 @@ async function main() {
 
   // Dashboard Heartbeat
   setInterval(() => {
+    const currentConf = configStore.getCore();
+    const totalPoints = stats.getAll().reduce((sum, u) => sum + (u.points || 0), 0);
     overlay.broadcast({
       kind: "dashboard-update",
       stats: { viewers: tiktokService.getState().roomInfo?.roomUserCount || 0 },
-      leaderboard: stats.getLeaderboard()
+      leaderboard: stats.getLeaderboard(),
+      goalCurrent: totalPoints,
+      goalTarget: currentConf.points?.goalTarget || 1000
     });
   }, 2000);
 

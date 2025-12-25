@@ -79,7 +79,7 @@ export function createApiRouter(
   // 4. Chat Senden (Live)
   r.post("/chat/send", async (req, res) => {
       const conf = configStore.getCore();
-      if (conf.chat?.enableSend === false) {
+      if (conf.chat?.enableSend !== true) {
           return res.status(403).json({ ok: false, reason: 'DISABLED' });
       }
 
@@ -186,7 +186,7 @@ export function createApiRouter(
     configStore.setCore(conf);
 
     // Broadcast change so overlay updates immediately
-    broadcastOverlay({ kind: 'scene-change', sceneId });
+    broadcastOverlay({ kind: 'scene', sceneId });
 
     res.json({ ok: true });
   });

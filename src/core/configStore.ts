@@ -13,7 +13,8 @@ export const DEFAULT_CONFIG = {
     coin: 10,
     share: 50,
     chat: 5,
-    subBonus: 10
+    subBonus: 10,
+    goalTarget: 1000
   },
 
   // Level System

@@ -34,7 +34,7 @@ export type AppEvent = {
 export type OverlayCommand =
   | { kind: "toast"; title: string; text: string; userImage?: string; ms?: number }
   | { kind: "gift"; from: string; userImage?: string; giftName: string; giftIconUrl?: string; count: number; ms?: number }
-  | { kind: "dashboard-update"; stats: any; leaderboard: any }
+  | { kind: "dashboard-update"; stats: any; leaderboard: any; goalCurrent?: number; goalTarget?: number }
   | { kind: "speak"; text: string }
   | { kind: "scene"; sceneId: string }
   | { kind: "scene_state"; activeSceneId: string; locked?: boolean };

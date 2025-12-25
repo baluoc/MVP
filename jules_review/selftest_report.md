@@ -9,11 +9,11 @@ Die Konfiguration wird über `src/core/configStore.ts` geladen und persistiert i
 | Config-Bereich | Default-Werte (Auszug) | UI vorhanden? | Backend nutzt es? | Status |
 | :--- | :--- | :---: | :---: | :--- |
 | **tts** | `enabled: false`, `trigger: "any"`, `language: "de-DE"`, `voice: "default"`, `allowed: {all: true}` | ✅ (TTS Tab) | ✅ (index.ts) | Stabil (Basic) |
-| **points** | `coin: 10`, `share: 50`, `chat: 5`, `subBonus: 10` | ✅ (Punkte Tab) | ✅ (UserStatsStore) | Stabil (Gap: SubBonus) |
+| **points** | `coin: 10`, `share: 50`, `chat: 5`, `subBonus: 10`, `goalTarget: 1000` | ✅ (Punkte Tab) | ✅ (UserStatsStore) | Stabil (SubBonus im Store implementiert) |
 | **levels** | `points: 100`, `multiplier: 1.5` | ✅ (Punkte Tab) | ❌ (Logic Stub) | **Stub** (Nur Config) |
 | **obs** | `ip: "127.0.0.1"`, `port: 4455` | ✅ (Broadcast Tab) | ❌ (Addon Host Stub) | **Stub** |
 | **streamerbot** | `address: "127.0.0.1"`, `port: 8080` | ✅ (Broadcast Tab) | ❌ (Addon Host Stub) | **Stub** |
-| **chat** | `enableSend: false`, `sessionCookie: ""` | ✅ (Chat Tab) | ⚠️ (API Mocked) | Mock |
+| **chat** | `enableSend: false`, `sessionCookie: ""` | ✅ (Chat Tab) | ✅ (API Live via TikTokService) | Live (mit Gate) |
 | **commands** | `!help`, `!score`, `!send`, `!spin` | ✅ (Befehle Tab) | ❌ (Command Parser Missing) | **Stub** |
 | **gifts** | `blackWhiteDefault: false` | ✅ (Geschenke Tab) | ❌ (Logic missing) | **Stub** |
 | **overlay** | `activeSceneId: "default"`, `scenes: [...]` | ✅ (Composer/Overlay) | ✅ (Overlay Server) | Stabil |
@@ -27,7 +27,7 @@ Die Konfiguration wird über `src/core/configStore.ts` geladen und persistiert i
 | `/api/users` | GET | `?page,limit` → `{users:[]}` | ✅ Echt | User DB |
 | `/api/users/:id/adjust`| POST | `{delta}` → `{user}` | ✅ Echt | User DB |
 | `/api/reset-stats` | POST | - → `{ok}` | ✅ Echt | System |
-| `/api/chat` | POST | `{text}` → `{mocked:true}` | ⚠️ Mock | Chat |
+| `/api/chat/send` | POST | `{text}` → `{ok, mode, reason}` | ✅ Echt (Live) | Chat (mit Enable-Gate) |
 | `/api/gifts` | GET | - → `GiftItem[]` | ✅ Echt (Cache)| Geschenke |
 | `/api/overlay/widgets` | GET | - → `WidgetDefinition[]` | ✅ Echt | Composer |
 | `/api/overlay/active-scene`| POST | `{sceneId}` → `{ok}` | ✅ Echt | Overlay |
@@ -75,7 +75,6 @@ TAP version 13
     ok 2 - should perform a deep merge on tts settings without losing nested keys
     ok 3 - should handle array replacement correctly (arrays are replaced, not merged)
 ok 1 - ConfigStore Logic
-#       [GAP] Sub Bonus logic seems missing
 # Subtest: Core Logic Audit
     # Subtest: 1. Normalization Layer
         ok 1 - should normalize chat events correctly
@@ -84,7 +83,7 @@ ok 1 - ConfigStore Logic
         ok 1 - should award points for chat
         ok 2 - should award points for share
         ok 3 - should award points for gifts (coins * multiplier)
-        ok 4 - should apply sub bonus if implemented
+        ok 4 - should apply sub bonus
     # Subtest: 3. Overlay Scene Logic
         ok 1 - should update active scene in config without side effects
 ok 2 - Core Logic Audit
@@ -144,15 +143,15 @@ Automatisierte Screenshots aller Views liegen in `jules_review/verification/`:
 *   **Core Event Pipeline:** Stabil und getestet (inkl. Fix für Gift Costs).
 *   **User Stats / Persistence:** Funktioniert, Punkteberechnung korrekt.
 *   **Config Management:** Robust (Deep Merge verified).
-*   **Overlay System:** Szenen-Switching, Widget-Registry und Composer-Grundlagen funktionieren.
-*   **Frontend UI:** Deutsche Lokalisierung vollständig, Navigation stabil, Layouts gefixt.
+*   **Overlay System:** Szenen-Switching, Widget-Registry und Composer-Grundlagen funktionieren. Runtime rendert jetzt auch Leaderboard & Goal.
+*   **Frontend UI:** Deutsche Lokalisierung vollständig (Mapping), Navigation stabil, Layouts gefixt, Bootstrap-Race behoben.
+*   **Overlay Scenes:** Live-Updates ohne Neustart möglich, Runtime lauscht auf `scene` Events.
 
 ### Was ist Stub/Mock?
 *   **Integrationen (OBS/Streamer.bot):** Konfiguration UI existiert, aber Backend-Logik fehlt.
 *   **Command Parsing:** `!score`, `!send` werden erkannt (Regex/Trigger), aber Logik (z.B. Transfer) fehlt noch im Core.
 
 ### Lücken (Blocker für Add-ons)
-*   **Sub-Bonus:** Config existiert, aber Logik im `UserStatsStore` fehlt (im Test als GAP identifiziert).
 *   **Command Handler:** Zentrale Command-Registry fehlt noch, Commands sind aktuell "Hardcoded" oder nicht existent.
 
 ### Session/Cookie: Stand, Risiken, Next steps
