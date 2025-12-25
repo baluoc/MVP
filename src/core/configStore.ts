@@ -123,6 +123,7 @@ export const DEFAULT_CONFIG = {
   mcp: {
     publicBaseUrl: "https://mcp.overhill-circle.de", // Was "url" - user requested "publicBaseUrl"
     path: "/mcp",
+    adminToken: "", // Secure admin token for /mcp-admin
     auth: {
       clientId: "",
       clientSecret: ""

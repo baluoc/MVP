@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Addon Host</title>
+    <link href="../css/app.css" rel="stylesheet">
+    <script>
+        const params = new URLSearchParams(location.search);
+        const addonId = params.get('id');
+
+        async function loadAddon() {
+            if(!addonId) {
+                document.body.innerHTML = "<div class='main' style='padding:20px'>No Addon ID specified</div>";
+                return;
+            }
+            document.title = `Addon: ${addonId}`;
+
+            // Load registry to find metadata?
+            // For now, try to load index.html from addon dir
+            const container = document.getElementById('addon-content');
+            try {
+                // Check if addon exists in registry first?
+                const regRes = await fetch('/addons/registry.json');
+                const registry = await regRes.json();
+                const meta = registry.find(a => a.id === addonId);
+
+                if(meta) {
+                    document.getElementById('addon-title').innerText = meta.name;
+                }
+
+                // Load HTML fragment or IFrame?
+                // Simplest integration: Iframe to isolate styles/scripts, OR fetch html and inject.
+                // Requirement: "Addon Host Page... lädt Addon-Fragmente"
+                // Let's use Iframe for MVP to ensure security/isolation, pointing to /addons/<id>/index.html
+                // But wait, "public/addons/<id>" is where we copied UI.
+
+                const iframe = document.createElement('iframe');
+                iframe.src = `/addons/${addonId}/index.html`;
+                iframe.style.width = "100%";
+                iframe.style.height = "100%";
+                iframe.style.border = "none";
+                container.appendChild(iframe);
+
+            } catch(e) {
+                container.innerHTML = `<div style="color:red">Error loading addon: ${e.message}</div>`;
+            }
+        }
+    </script>
+</head>
+<body onload="loadAddon()" style="display:flex; flex-direction:column; height:100vh;">
+    <div style="height:50px; border-bottom:1px solid #333; display:flex; align-items:center; padding:0 20px; background:#1a1d29;">
+        <a href="/" style="color:#fff; text-decoration:none; font-weight:bold; margin-right:20px;">&larr; Zurück</a>
+        <span id="addon-title" style="font-weight:600;">Lade Addon...</span>
+    </div>
+    <div id="addon-content" style="flex:1; background:#0f111a; position:relative;"></div>
+</body>
+</html>

@@ -12,6 +12,7 @@ import { RingBuffer } from "./core/ringbuffer";
 import { createApiRouter } from "./api/routes";
 import { parseCommand, buildCommandResponse } from "./core/commands";
 import { setupOAuth, verifyAuth } from "./auth/oauth";
+import { verifyAdmin } from "./auth/admin";
 import { mcpAdminRouter, mcpProxyHandler } from "./api/mcp";
 
 function getArg(name: string) {

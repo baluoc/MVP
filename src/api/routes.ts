@@ -7,6 +7,7 @@ import { obsService } from "../connectors/obsService";
 import { streamerBotService } from "../connectors/streamerbotService";
 import { getWidgetRegistry } from "../overlay/registry";
 import { mcpAdminRouter, mcpProxyHandler } from "./mcp";
+import { verifyAdmin } from "../auth/admin";
 
 export function createApiRouter(
   addonHost: AddonHost,
@@ -322,7 +323,8 @@ export function createApiRouter(
 
   // --- MCP MANAGEMENT & PROXY ---
   // Mount the Admin API at /mcp (which makes it /api/mcp)
-  r.use("/mcp", mcpAdminRouter);
+  // Protected by Admin Token
+  r.use("/mcp", verifyAdmin(configStore), mcpAdminRouter);
 
   // Legacy support: Proxy is also available under /api/mcp for internal usage if needed?
   // The old code did `r.use("/mcp", (req, res) => ...)` which caught everything not matched above.
