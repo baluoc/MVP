@@ -16,9 +16,15 @@ export class UserStatsStore {
   private map = new Map<string, UserStats>();
   private giftDedupeMap = new Map<string, number>();
 
+  private saveInterval: NodeJS.Timeout;
+
   constructor() {
     this.load();
-    setInterval(() => this.save(), 30000); // AutoSave alle 30s
+    this.saveInterval = setInterval(() => this.save(), 30000); // AutoSave alle 30s
+  }
+
+  dispose() {
+      if(this.saveInterval) clearInterval(this.saveInterval);
   }
 
   // --- NEU: Paginierung für die Tabelle ---

@@ -1,0 +1,31 @@
+[
+  {
+    "type": "chat",
+    "uniqueId": "user1",
+    "nickname": "Alice",
+    "comment": "Hello World",
+    "profilePictureUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Alice"
+  },
+  {
+    "type": "share",
+    "uniqueId": "user2",
+    "nickname": "Bob",
+    "profilePictureUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Bob"
+  },
+  {
+    "type": "gift",
+    "uniqueId": "user1",
+    "nickname": "Alice",
+    "giftId": 555,
+    "giftName": "Rose",
+    "diamondCount": 1,
+    "repeatCount": 5
+  },
+  {
+    "type": "chat",
+    "uniqueId": "user3",
+    "nickname": "Charlie",
+    "comment": "!score",
+    "profilePictureUrl": "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie"
+  }
+]
