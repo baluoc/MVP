@@ -9,8 +9,10 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/src/index.js",
     "smoke": "ts-node-dev --transpile-only scripts/ws-smoke.ts",
-    "e2e": "npx playwright test",
-    "e2e:screens": "npx playwright test --update-snapshots"
+    "test:unit": "npm run build && node --test tests/unit/config.test.js",
+    "test:e2e": "npx playwright test",
+    "test": "npm run test:unit && npm run test:e2e",
+    "screens": "npx playwright test"
   },
   "repository": {
     "type": "git",
