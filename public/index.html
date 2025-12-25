@@ -10,16 +10,19 @@
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
         /* Layout & Scrollbars */
-        .sidebar { width: 240px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .sidebar { width: 240px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; overflow-y: auto; }
         .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
         ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         /* Navigation */
         .brand { font-size: 1.2rem; font-weight: 800; margin-bottom: 30px; color: var(--text); display: flex; align-items: center; gap: 8px; }
         .brand span { color: var(--primary); background: rgba(255,0,80,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
-        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; color: var(--muted); transition: 0.2s; display: flex; align-items: center; gap: 12px; font-weight: 500; }
+
+        .nav-group { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 15px; margin-bottom: 5px; font-weight: 700; }
+        .nav-item { padding: 10px 12px; margin-bottom: 2px; border-radius: 6px; cursor: pointer; color: var(--muted); transition: 0.2s; display: flex; align-items: center; gap: 10px; font-weight: 500; font-size: 0.9rem; }
         .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--text); }
-        .nav-item.active { background: rgba(255, 0, 80, 0.1); color: var(--primary); border-left: 3px solid var(--primary); }
+        .nav-item.active { background: rgba(255, 0, 80, 0.1); color: var(--primary); }
+        .nav-sub { padding-left: 34px; font-size: 0.85rem; }
 
         /* Views */
         .view { display: none; padding: 25px; height: 100%; overflow-y: auto; box-sizing: border-box; }
@@ -41,20 +44,16 @@
         .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 17, 26, 0.85); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(2px); border-radius: 11px; opacity: 0; pointer-events: none; transition: 0.3s; }
         .card-overlay.active { opacity: 1; pointer-events: all; }
         .overlay-msg { background: var(--panel); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateY(10px); }
-        .card.disabled .card-overlay { opacity: 1; pointer-events: all; } /* Fallback */
+        .card.disabled .card-overlay { opacity: 1; pointer-events: all; }
 
         /* Badges & Chips */
         .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; }
         .chip { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
         .chip.active { background: rgba(74, 222, 128, 0.1); color: var(--success); border-color: rgba(74, 222, 128, 0.2); }
-        .badge.green { background: rgba(74, 222, 128, 0.15); color: var(--success); border: 1px solid rgba(74, 222, 128, 0.3); }
-        .badge.gray { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
-        .badge.red { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
         /* Details / Accordion */
         details { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.1); }
         details summary { padding: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between; }
-        details summary:hover { background: rgba(255,255,255,0.05); }
         details[open] summary { border-bottom: 1px solid var(--border); }
         .details-content { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
 
@@ -63,7 +62,7 @@
         .form-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
         .form-row label { margin-bottom: 0; }
 
-        input[type="text"], input[type="number"], select {
+        input[type="text"], input[type="number"], input[type="password"], select {
             background: var(--bg); border: 1px solid var(--border); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; width: 100%; box-sizing: border-box; transition: 0.2s;
         }
         input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
@@ -72,13 +71,6 @@
         /* Custom Toggle */
         .check-group { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
         .check-group input { accent-color: var(--primary); }
-
-        /* Tooltip */
-        .with-tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--muted); }
-        .with-tooltip:hover::after {
-            content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
-            background: #000; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; border: 1px solid var(--border); z-index: 100; margin-bottom: 5px;
-        }
 
         /* Logs & Table */
         .log-console { background: #000; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; height: 180px; overflow-y: auto; color: #ccc; border: 1px solid var(--border); }
@@ -90,6 +82,8 @@
 
         /* Button */
         .btn-primary { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .btn-danger { background: var(--danger); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid var(--border); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
         .btn-icon { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 4px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-icon:hover { color: var(--text); border-color: var(--text); }
 
@@ -99,6 +93,14 @@
         .sum-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
         .sum-val { color: var(--text); font-weight: 600; }
         .sum-val.on { color: var(--success); }
+
+        /* Modals */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; backdrop-filter: blur(3px); }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; width: 600px; max-width: 90vw; max-height: 80vh; display: flex; flex-direction: column; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        .modal-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -107,8 +109,18 @@
         <div class="brand"><span>TK</span> EVENT SERVER</div>
 
         <div class="nav-item active" onclick="showView('dashboard')">📊 Dashboard</div>
-        <div class="nav-item" onclick="showView('settings')">⚙️ Settings</div>
-        <div class="nav-item" onclick="showView('users')">👥 User DB</div>
+
+        <div class="nav-group">Settings</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-system')">System</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-points')">Points & Levels</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-broadcast')">Broadcast</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-chat')">Chat</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-commands')">Commands</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-tts')">TTS</div>
+        <div class="nav-item nav-sub" onclick="showView('settings-gifts')">Gifts / Assets</div>
+
+        <div class="nav-group">Database</div>
+        <div class="nav-item nav-sub" onclick="showView('users')">User DB</div>
 
         <div style="margin-top: auto; padding-top:20px; border-top:1px solid var(--border);">
             <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 5px;">CONNECTION</div>
@@ -116,29 +128,29 @@
                 <div id="status-dot" style="width: 8px; height: 8px; background: #666; border-radius: 50%;"></div>
                 <span id="status-text" style="font-size: 0.85rem; color: #999;">Offline</span>
             </div>
+            <div id="status-meta" style="font-size: 0.7rem; color: var(--muted); margin-top: 4px;"></div>
         </div>
     </div>
 
     <div class="main">
         <!-- Top Bar -->
         <div style="height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--bg);">
-            <div style="font-weight: 600; font-size: 0.9rem;">System Control</div>
+            <div style="font-weight: 600; font-size: 0.9rem;" id="page-title">Dashboard</div>
             <div style="display:flex; gap:10px; align-items: center;">
-                <input type="text" id="conn-user" placeholder="@TikTokUser" value="agent_one" style="width: 140px; background: #000;">
-                <button class="btn-primary" onclick="connectSystem()">Verbinden</button>
+                <button class="btn-primary" id="btn-save" onclick="saveSettings()" style="display:none;">Save Changes</button>
+                <div style="width:1px; height:20px; background:var(--border); margin:0 5px;"></div>
+                <input type="text" id="conn-user" placeholder="@TikTokUser" value="" style="width: 140px; background: #000;">
+                <button class="btn-primary" onclick="connectSystem()">Connect</button>
             </div>
         </div>
 
+        <!-- DASHBOARD -->
         <div id="view-dashboard" class="view active">
             <div class="settings-grid" style="grid-template-columns: 350px 1fr 300px; height: calc(100vh - 130px);">
                 <!-- Live Preview -->
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Live Preview</span>
-                        <div class="card-chips"><span class="chip">1080x1920</span></div>
-                    </div>
+                    <div class="card-header"><span class="card-title">Live Preview</span></div>
                     <div style="flex:1; background:#000; position:relative; display:flex; justify-content:center; align-items:center;">
-                        <span style="color:#333; font-size:0.8rem;">Overlay Frame</span>
                         <div id="toast-overlay" style="position:absolute; bottom:100px; left:20px; right:20px; background:rgba(0,0,0,0.85); padding:10px; border-radius:8px; border:1px solid var(--primary); display:none; flex-direction:row; align-items:center; gap:10px;">
                             <img id="toast-img" src="" style="width:40px; height:40px; border-radius:50%;">
                             <div>
@@ -148,20 +160,11 @@
                         </div>
                     </div>
                 </div>
-
                 <!-- Chat -->
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Chat Stream</span>
-                        <div class="card-chips"><span class="chip active">LIVE</span></div>
-                    </div>
+                    <div class="card-header"><span class="card-title">Chat Stream</span></div>
                     <div id="chat-list" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column-reverse; gap:10px;"></div>
-                    <div style="padding:10px; border-top:1px solid var(--border); display:flex; gap:10px;">
-                        <input id="chat-mock-input" type="text" placeholder="Simulate Chat...">
-                        <button class="btn-primary" onclick="sendMockChat()">Send</button>
-                    </div>
                 </div>
-
                 <!-- Events -->
                 <div class="card">
                     <div class="card-header"><span class="card-title">Events</span></div>
@@ -170,353 +173,429 @@
             </div>
         </div>
 
-        <div id="view-settings" class="view">
+        <!-- SETTINGS: SYSTEM -->
+        <div id="view-settings-system" class="view">
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">System Status</span></div>
+                    <div class="card-body">
+                        <div class="form-row"><label>Uptime</label> <span id="sys-uptime">0s</span></div>
+                        <div class="form-row"><label>Addons Loaded</label> <span id="sys-addons">0</span></div>
+                        <div class="form-row"><label>App Version</label> <span>1.0.0</span></div>
+                    </div>
+                </div>
+                <div class="card" style="border-color: var(--danger);">
+                    <div class="card-header"><span class="card-title" style="color:var(--danger);">Danger Zone</span></div>
+                    <div class="card-body">
+                        <p style="font-size:0.8rem; color:var(--muted);">Reset all collected points and user data.</p>
+                        <button class="btn-danger" onclick="openResetModal()">Reset All Stats</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
+        <!-- SETTINGS: POINTS & LEVELS -->
+        <div id="view-settings-points" class="view">
+            <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Points System</span></div>
+                    <div class="card-body">
+                        <div class="form-row"><label>Currency Name</label> <input type="text" data-bind="points.name"></div>
+                        <hr style="border:0; border-top:1px solid var(--border);">
+                        <div class="form-row"><label>Points per Coin</label> <input type="number" data-bind="points.coin"></div>
+                        <div class="form-row"><label>Points per Share</label> <input type="number" data-bind="points.share"></div>
+                        <div class="form-row"><label>Points per Chat</label> <input type="number" data-bind="points.chat"></div>
+                        <div class="form-row"><label>Sub Bonus (%)</label> <input type="number" data-bind="points.subBonus"></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Levels</span></div>
+                    <div class="card-body">
+                        <div class="form-row"><label>Base Points</label> <input type="number" data-bind="levels.points"></div>
+                        <div class="form-row"><label>Multiplier</label> <input type="number" step="0.1" data-bind="levels.multiplier"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SETTINGS: BROADCAST -->
+        <div id="view-settings-broadcast" class="view">
+             <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">OBS WebSocket</span></div>
+                    <div class="card-body">
+                        <div class="form-row"><label>IP Address</label> <input type="text" data-bind="obs.ip"></div>
+                        <div class="form-row"><label>Port</label> <input type="number" data-bind="obs.port"></div>
+                        <div class="form-row"><label>Password</label> <input type="password" data-bind="obs.password"></div>
+                    </div>
+                    <div class="card-footer"><button class="btn-secondary">Test Connection</button></div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Streamer.bot</span></div>
+                    <div class="card-body">
+                        <div class="form-row"><label>Address</label> <input type="text" data-bind="streamerbot.address"></div>
+                        <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
+                        <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
+                    </div>
+                    <div class="card-footer"><button class="btn-secondary">Test Connection</button></div>
+                </div>
+             </div>
+        </div>
+
+        <!-- SETTINGS: CHAT -->
+        <div id="view-settings-chat" class="view">
+             <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Chat Integration</span></div>
+                    <div class="card-body">
+                        <div class="check-group">
+                            <input type="checkbox" data-bind="chat.enableSend"> <strong>Enable Sending Chat</strong>
+                        </div>
+                        <div class="check-group">
+                            <input type="checkbox" data-bind="chat.enableZoom"> <span>Enable Zoom Chat</span>
+                        </div>
+                        <hr style="border:0; border-top:1px solid var(--border);">
+                        <div class="form-row"><label>Session ID / Cookie</label> <input type="password" data-bind="chat.sessionCookie" placeholder="Required for sending"></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <!-- SETTINGS: COMMANDS -->
+        <div id="view-settings-commands" class="view">
+             <div class="settings-grid">
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Built-in Commands</span></div>
+                    <div class="card-body">
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.help.enabled"> <span>!help</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.score.enabled"> <span>!score</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.send.enabled"> <span>!send (Points transfer)</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.builtIn.spin.enabled"> <span>!spin (Wheel)</span></div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Command Listings</span></div>
+                    <div class="card-body">
+                        <div class="check-group"><input type="checkbox" data-bind="commands.listing.commands.enabled"> <span>!commands (Global)</span></div>
+                        <div class="check-group"><input type="checkbox" data-bind="commands.listing.subcommands.enabled"> <span>!subcommands (Subscriber)</span></div>
+                    </div>
+                </div>
+             </div>
+        </div>
+
+        <!-- SETTINGS: TTS -->
+        <div id="view-settings-tts" class="view">
             <!-- Summary Bar -->
             <div class="summary-bar">
                 <div class="sum-item"><span class="sum-label">TTS Engine</span><span class="sum-val" id="sum-tts">Off</span></div>
                 <div style="width:1px; height:20px; background:var(--border);"></div>
                 <div class="sum-item"><span class="sum-label">Trigger</span><span class="sum-val" id="sum-trigger">Any</span></div>
-                <div style="width:1px; height:20px; background:var(--border);"></div>
-                <div class="sum-item"><span class="sum-label">Cost</span><span class="sum-val" id="sum-cost">Free</span></div>
-                <div style="width:1px; height:20px; background:var(--border);"></div>
-                <div class="sum-item"><span class="sum-label">Voice</span><span class="sum-val" id="sum-voice">Default</span></div>
-
-                <div style="margin-left:auto;">
-                    <button class="btn-primary" onclick="saveSettings()">Save Config</button>
-                </div>
             </div>
 
             <div class="settings-grid">
-
                 <!-- General Settings -->
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">General Settings</span>
-                        <div class="card-chips">
-                            <span class="chip" id="chip-lang">DE</span>
-                            <span class="chip" id="chip-status">OFF</span>
-                        </div>
-                    </div>
+                    <div class="card-header"><span class="card-title">General</span></div>
                     <div class="card-body">
-                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Basic TTS configuration & master switch.</div>
-
-                        <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid var(--border);">
-                            <div class="check-group">
-                                <input type="checkbox" id="tts-enabled" onchange="updateUIState()">
-                                <span style="font-weight:600; color:white;">Enable TTS System</span>
-                            </div>
+                        <div class="check-group" style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; border:1px solid var(--border);">
+                            <input type="checkbox" data-bind="tts.enabled" id="tts-enabled"> <span style="font-weight:600;">Enable TTS System</span>
                         </div>
-
-                        <div class="form-row"><label>Language</label><select id="tts-lang" style="width:60%"><option value="de-DE">Deutsch (DE)</option><option value="en-US">English (US)</option></select></div>
-                        <div class="form-row"><label>Voice</label><select id="tts-voice" style="width:60%"><option value="default">System Default</option></select></div>
-                        <div class="form-row"><label>Volume</label><input type="range" id="tts-vol" min="0" max="1" step="0.1" style="width:60%"></div>
-
+                        <div class="form-row"><label>Language</label><select data-bind="tts.language"><option value="de-DE">Deutsch (DE)</option><option value="en-US">English (US)</option></select></div>
+                        <div class="form-row"><label>Voice</label><select data-bind="tts.voice"><option value="default">System Default</option></select></div>
+                        <div class="form-row"><label>Volume</label><input type="range" data-bind="tts.volume" min="0" max="1" step="0.1"></div>
                         <details style="margin-top:10px;">
-                            <summary>Fine Tuning (Speed/Pitch)</summary>
+                            <summary>Fine Tuning</summary>
                             <div class="details-content">
-                                <div class="form-row"><label>Speed</label><input type="range" id="tts-speed" min="0.5" max="2" step="0.1" style="width:60%"></div>
-                                <div class="form-row"><label>Pitch</label><input type="range" id="tts-pitch" min="0.5" max="2" step="0.1" style="width:60%"></div>
-                                <div class="check-group"><input type="checkbox" id="tts-random"> <span>Random Voice per User</span></div>
+                                <div class="form-row"><label>Speed</label><input type="range" data-bind="tts.speed" min="0.5" max="2" step="0.1"></div>
+                                <div class="form-row"><label>Pitch</label><input type="range" data-bind="tts.pitch" min="0.5" max="2" step="0.1"></div>
+                                <div class="check-group"><input type="checkbox" data-bind="tts.randomVoice"> <span>Random Voice per User</span></div>
                             </div>
                         </details>
                     </div>
                 </div>
 
-                <!-- Allowed Users -->
-                <div class="card" id="card-permissions">
-                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
-                    <div class="card-header">
-                        <span class="card-title">Permissions</span>
-                        <div class="card-chips"><span class="chip" id="chip-roles">ALL</span></div>
-                    </div>
+                <!-- Permissions -->
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Permissions & Trigger</span></div>
                     <div class="card-body">
-                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Who is allowed to trigger TTS?</div>
-
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                            <div class="check-group"><input type="checkbox" id="allow-all" onchange="updateUIState()"> <strong>All Users</strong></div>
-                            <div class="check-group"><input type="checkbox" id="allow-follow"> <span>Followers</span></div>
-                            <div class="check-group"><input type="checkbox" id="allow-sub"> <span>Subs</span></div>
-                            <div class="check-group"><input type="checkbox" id="allow-mod"> <span>Mods</span></div>
-                            <div class="check-group"><input type="checkbox" id="allow-team"> <span>Team</span></div>
-                            <div class="check-group"><input type="checkbox" id="allow-top"> <span>Top Gifters</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.all"> <strong>All Users</strong></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.follower"> <span>Followers</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.sub"> <span>Subs</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.mod"> <span>Mods</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.team"> <span>Team</span></div>
+                            <div class="check-group"><input type="checkbox" data-bind="tts.allowed.topGifters"> <span>Top Gifters</span></div>
                         </div>
-
                         <hr style="border:0; border-top:1px solid var(--border); width:100%; margin:15px 0;">
-
                         <label>Trigger Method</label>
-                        <select id="trigger-method" onchange="updateUIState()">
+                        <select data-bind="tts.trigger">
                             <option value="any">Any Comment</option>
                             <option value="dot">Starts with dot (.)</option>
                             <option value="slash">Starts with slash (/)</option>
-                            <option value="command">Specific Command (!tts)</option>
+                            <option value="command">Specific Command</option>
                         </select>
-                        <div style="margin-top:8px;">
-                            <input type="text" id="tts-command" placeholder="!tts" disabled>
-                            <div id="hint-command" style="font-size:0.7rem; color:var(--muted); margin-top:2px; display:none;">Only active when Trigger = Command</div>
-                        </div>
+                        <input type="text" data-bind="tts.command" placeholder="!tts" style="margin-top:5px;">
                     </div>
                 </div>
 
-                <!-- Spam Protection -->
-                <div class="card" id="card-protection">
-                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
-                    <div class="card-header">
-                        <span class="card-title">Protection & Cost</span>
-                        <div class="card-chips"><span class="chip" id="chip-pricing">FREE</span></div>
-                    </div>
-                    <div class="card-body">
-                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Prevent spam and manage pricing.</div>
-
-                        <div class="form-row"><label class="with-tooltip" data-tooltip="Seconds between messages">Cooldown (s)</label><input type="number" id="spam-cool" value="0" style="width:60px;"></div>
-                        <div class="form-row"><label>Max Length</label><input type="number" id="spam-len" value="300" style="width:60px;"></div>
-
-                        <div style="margin: 15px 0; border:1px solid var(--border); border-radius:6px; padding:10px;">
-                            <div class="check-group" style="margin-bottom:8px;">
-                                <input type="radio" name="cost" value="free" checked onchange="updateUIState()"> <span>Free for everyone</span>
-                            </div>
-                            <div class="check-group">
-                                <input type="radio" name="cost" value="cost" onchange="updateUIState()"> <span>Charge Points</span>
-                            </div>
-                            <div style="margin-left:24px; margin-top:5px;">
-                                <input type="number" id="tts-cost" placeholder="5" disabled style="width:80px;">
-                                <span style="font-size:0.75rem; color:var(--muted);">pts per msg</span>
-                            </div>
-                        </div>
-
-                        <details>
-                            <summary>Advanced Filtering</summary>
-                            <div class="details-content">
-                                <div class="check-group"><input type="checkbox" id="filter-spam" checked> <span>Block Letter Spam (aaaaa)</span></div>
-                                <div class="check-group"><input type="checkbox" id="filter-mentions"> <span>Block @Mentions</span></div>
-                            </div>
-                        </details>
-                    </div>
-                </div>
-
-                <!-- Special Users Table -->
-                <div class="card" id="card-special">
-                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
-                    <div class="card-header">
-                        <span class="card-title">Special Users</span>
-                        <div class="card-chips">
-                            <button class="btn-icon" title="Add User">+</button>
-                            <button class="btn-icon" title="Import">⬇</button>
-                        </div>
-                    </div>
-                    <div class="card-body" style="padding:0;">
-                        <div style="padding:10px; border-bottom:1px solid var(--border);">
-                            <input type="text" placeholder="🔍 Search User..." style="padding:4px 8px;">
-                        </div>
-                        <div style="overflow-y:auto; max-height:200px;">
-                            <table>
-                                <thead><tr><th>User</th><th>Voice</th><th>Actions</th></tr></thead>
-                                <tbody>
-                                    <tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">No overrides defined</td></tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Logs & Test -->
+                <!-- Tester -->
                 <div class="card">
-                    <div class="card-header">
-                        <span class="card-title">Tester & Logs</span>
-                        <div class="card-chips">
-                             <button class="btn-icon" onclick="document.getElementById('tts-logs').innerHTML=''" title="Clear">🗑</button>
-                        </div>
-                    </div>
+                    <div class="card-header"><span class="card-title">Tester</span></div>
                     <div class="card-body">
-                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                        <div style="display:flex; gap:10px;">
                             <input type="text" id="test-text" placeholder="Hello World" value="Hello World">
                             <button class="btn-primary" onclick="testVoice()">▶</button>
                         </div>
-                        <div id="tts-logs" class="log-console">
-                            <div class="log-entry"><span style="color:#666;">[Sys]</span> Ready.</div>
-                        </div>
                     </div>
                 </div>
-
             </div>
         </div>
 
-        <div id="view-users" class="view">
-            <h2>User Database</h2>
+        <!-- SETTINGS: GIFTS -->
+        <div id="view-settings-gifts" class="view">
             <div class="card">
-                <div class="card-body">
-                    <p style="color:var(--muted);">User management table placeholder.</p>
+                <div class="card-body" style="align-items: center; padding: 40px;">
+                    <h3>Gift Asset Management</h3>
+                    <p style="color:var(--muted); text-align:center; max-width:400px; margin-bottom:20px;">
+                        View cached gifts, download assets, and configure display settings.
+                    </p>
+                    <button class="btn-primary" onclick="openGiftBrowser()">Open Gift Browser</button>
+                    <div style="margin-top:20px;">
+                        <div class="check-group"><input type="checkbox" data-bind="gifts.blackWhiteDefault"> <span>Use B/W as default</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER DB -->
+        <div id="view-users" class="view">
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">User Database</span>
+                    <div class="card-chips">
+                        <button class="btn-icon" onclick="loadUsers(userPage-1)">◀</button>
+                        <span id="user-page-lbl" style="padding:0 10px; font-size:0.8rem;">1</span>
+                        <button class="btn-icon" onclick="loadUsers(userPage+1)">▶</button>
+                    </div>
+                </div>
+                <div class="card-body" style="padding:0;">
+                    <table id="user-table">
+                        <thead><tr><th>User</th><th>Score</th><th>Diamonds</th><th>Actions</th></tr></thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
         </div>
 
     </div>
 
+    <!-- MODAL: RESET -->
+    <div id="modal-reset" class="modal-overlay">
+        <div class="modal" style="width:400px;">
+            <div class="modal-header" style="color:var(--danger);">⚠ Confirm Reset</div>
+            <div class="modal-body">
+                <p>This will delete ALL user points and statistics. This cannot be undone.</p>
+                <p>Type <strong>RESET</strong> to confirm:</p>
+                <input type="text" id="reset-confirm-input" onkeyup="checkResetBtn()">
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="document.getElementById('modal-reset').classList.remove('active')">Cancel</button>
+                <button class="btn-danger" id="btn-do-reset" disabled onclick="doReset()">Reset Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GIFTS -->
+    <div id="modal-gifts" class="modal-overlay">
+        <div class="modal" style="width:800px; height:80vh;">
+            <div class="modal-header">
+                <span>Gift Browser</span>
+                <button class="btn-icon" onclick="document.getElementById('modal-gifts').classList.remove('active')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div id="gift-grid" style="display:grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap:10px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary">Download Selected (Stub)</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // --- UI & LOGIC ---
+        let scratchConfig = {};
+        let currentView = 'dashboard';
+        let userPage = 1;
+
+        // --- CORE NAVIGATION ---
         function showView(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
             document.getElementById('view-' + id).classList.add('active');
 
             // Highlight nav
             const navs = document.querySelectorAll('.nav-item');
-            if(id === 'dashboard') navs[0].classList.add('active');
-            if(id === 'settings') navs[1].classList.add('active');
-            if(id === 'users') navs[2].classList.add('active');
+            // Simple match logic for nav highlighting
+            navs.forEach(n => {
+                if(n.onclick.toString().includes(`'${id}'`)) n.classList.add('active');
+            });
 
-            if(id === 'settings') loadSettings();
+            currentView = id;
+            document.getElementById('page-title').innerText = id.replace('view-', '').replace('settings-', 'Settings: ').toUpperCase();
+
+            // Context specific actions
+            document.getElementById('btn-save').style.display = id.startsWith('settings') ? 'block' : 'none';
+
+            if(id === 'users') loadUsers(1);
         }
 
-        function updateUIState() {
-            // 1. Master Switch (Overlay Logic)
-            const enabled = document.getElementById('tts-enabled').checked;
-            const overlays = document.querySelectorAll('.card-overlay');
-            const statusChip = document.getElementById('chip-status');
-            const sumTTS = document.getElementById('sum-tts');
-
-            if(enabled) {
-                overlays.forEach(el => el.classList.remove('active'));
-                statusChip.innerText = "ACTIVE"; statusChip.className = "chip active";
-                sumTTS.innerText = "On"; sumTTS.className = "sum-val on";
-            } else {
-                overlays.forEach(el => el.classList.add('active'));
-                statusChip.innerText = "OFF"; statusChip.className = "chip";
-                sumTTS.innerText = "Off"; sumTTS.className = "sum-val";
+        // --- SCRATCHPAD LOGIC ---
+        // Deep set helper
+        function setPath(obj, path, val) {
+            const keys = path.split('.');
+            let last = keys.pop();
+            let target = obj;
+            for(let k of keys) {
+                if(!target[k]) target[k] = {};
+                target = target[k];
             }
-
-            // 2. Trigger Dependency
-            const method = document.getElementById('trigger-method').value;
-            const cmdInput = document.getElementById('tts-command');
-            const cmdHint = document.getElementById('hint-command');
-
-            if(method === 'command') {
-                cmdInput.disabled = false;
-                cmdHint.style.display = 'none';
-            } else {
-                cmdInput.disabled = true;
-                cmdHint.style.display = 'block';
-            }
-            document.getElementById('sum-trigger').innerText = method.toUpperCase();
-
-            // 3. Cost Dependency
-            const costMode = document.querySelector('input[name="cost"]:checked').value;
-            const costInput = document.getElementById('tts-cost');
-            const pricingChip = document.getElementById('chip-pricing');
-
-            if(costMode === 'free') {
-                costInput.disabled = true;
-                pricingChip.innerText = "FREE"; pricingChip.className = "chip active";
-                document.getElementById('sum-cost').innerText = "Free";
-            } else {
-                costInput.disabled = false;
-                pricingChip.innerText = "PAID"; pricingChip.className = "chip";
-                document.getElementById('sum-cost').innerText = (costInput.value || 5) + " pts";
-            }
-
-            // 4. Lang Chip
-            document.getElementById('chip-lang').innerText = document.getElementById('tts-lang').value.split('-')[0].toUpperCase();
+            target[last] = val;
         }
 
-        // --- MOCK CHAT & EVENTS ---
-        const chatList = document.getElementById('chat-list');
-        const eventList = document.getElementById('event-list');
-
-        function addChat(data) {
-            const div = document.createElement('div');
-            const img = data.userImage || `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.title}`;
-            div.innerHTML = `
-                <div style="display:flex; gap:10px; align-items:flex-start;">
-                    <img src="${img}" style="width:28px; height:28px; border-radius:50%; border:1px solid var(--border);">
-                    <div>
-                        <div style="font-size:0.75rem; font-weight:700; color:var(--primary);">${data.title.replace('Chat ', '')}</div>
-                        <div style="font-size:0.85rem; color:#ddd;">${data.text}</div>
-                    </div>
-                </div>
-            `;
-            chatList.prepend(div);
-            if(document.getElementById('tts-enabled').checked) {
-                logTTS(`${data.title}: ${data.text}`);
-            }
+        // Deep get helper
+        function getPath(obj, path) {
+            return path.split('.').reduce((o, i) => o ? o[i] : undefined, obj);
         }
 
-        function addEvent(data) {
-            if(data.title === "Like") return;
-            const div = document.createElement('div');
-            const isGift = data.kind === 'gift';
-            const color = isGift ? 'var(--primary)' : 'var(--accent)';
-
-            div.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px; padding:8px; border-left:2px solid ${color}; background:rgba(255,255,255,0.02); margin-bottom:4px; border-radius:0 4px 4px 0;">
-                    <div style="font-weight:600; font-size:0.8rem;">${data.title || data.from}</div>
-                    <div style="font-size:0.75rem; color:var(--muted);">${data.text || (data.giftName + ' x' + data.count)}</div>
-                </div>
-            `;
-            eventList.prepend(div);
-
-            if(isGift) {
-                document.getElementById('toast-img').src = data.giftIconUrl || '';
-                document.getElementById('toast-title').innerText = data.from;
-                document.getElementById('toast-msg').innerText = `sent ${data.giftName} x${data.count}`;
-                document.getElementById('toast-overlay').style.display = 'flex';
-                setTimeout(() => document.getElementById('toast-overlay').style.display = 'none', 3000);
-            }
+        async function initSettings() {
+            const res = await fetch('/api/settings');
+            scratchConfig = await res.json();
+            renderSettings();
         }
 
-        // --- API & SETTINGS ---
-        async function loadSettings() {
-            try {
-                const res = await fetch('/api/settings');
-                const conf = await res.json();
-                const t = conf.tts || {};
+        function renderSettings() {
+            document.querySelectorAll('[data-bind]').forEach(el => {
+                const path = el.getAttribute('data-bind');
+                const val = getPath(scratchConfig, path);
 
-                document.getElementById('tts-enabled').checked = t.enabled;
-                document.getElementById('tts-lang').value = t.language || 'de-DE';
-                document.getElementById('tts-vol').value = t.volume;
-                document.getElementById('tts-speed').value = t.speed;
-                document.getElementById('tts-pitch').value = t.pitch;
-                document.getElementById('tts-random').checked = t.randomVoice;
+                if(el.type === 'checkbox') el.checked = !!val;
+                else el.value = (val === undefined || val === null) ? '' : val;
 
-                const a = t.allowed || {};
-                document.getElementById('allow-all').checked = a.all;
-                document.getElementById('allow-follow').checked = a.follower;
-                document.getElementById('allow-sub').checked = a.sub;
-
-                // Trigger
-                document.getElementById('trigger-method').value = t.trigger || 'any';
-
-                // Cost
-                const mode = t.mode || 'free';
-                document.querySelector(`input[name="cost"][value="${mode}"]`).checked = true;
-                if(t.costPerMsg) document.getElementById('tts-cost').value = t.costPerMsg;
-
-                updateUIState();
-            } catch(e) { console.error("Load failed", e); }
+                // Bind Event
+                el.onchange = (e) => {
+                    const newVal = el.type === 'checkbox' ? el.checked :
+                                   (el.type === 'number' || el.type === 'range') ? Number(el.value) : el.value;
+                    setPath(scratchConfig, path, newVal);
+                    updateUIState(); // Refresh calculated UI
+                };
+            });
+            updateUIState();
         }
 
         async function saveSettings() {
-            const body = {
-                tts: {
-                    enabled: document.getElementById('tts-enabled').checked,
-                    language: document.getElementById('tts-lang').value,
-                    volume: Number(document.getElementById('tts-vol').value),
-                    speed: Number(document.getElementById('tts-speed').value),
-                    pitch: Number(document.getElementById('tts-pitch').value),
-                    randomVoice: document.getElementById('tts-random').checked,
-                    allowed: {
-                        all: document.getElementById('allow-all').checked,
-                        follower: document.getElementById('allow-follow').checked,
-                        sub: document.getElementById('allow-sub').checked
-                    },
-                    trigger: document.getElementById('trigger-method').value,
-                    mode: document.querySelector('input[name="cost"]:checked').value,
-                    costPerMsg: Number(document.getElementById('tts-cost').value)
-                }
-            };
-            await fetch('/api/settings', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
-            alert("Settings Saved!");
+            await fetch('/api/settings', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(scratchConfig)
+            });
+            alert("Configuration Saved!");
         }
 
+        function updateUIState() {
+            // Visual Updates (Chips, Summaries) derived from scratchConfig
+            const tts = scratchConfig.tts || {};
+            document.getElementById('sum-tts').innerText = tts.enabled ? "On" : "Off";
+            document.getElementById('sum-tts').className = tts.enabled ? "sum-val on" : "sum-val";
+            document.getElementById('sum-trigger').innerText = (tts.trigger || "any").toUpperCase();
+        }
+
+        // --- FEATURES ---
+
+        // Danger Zone
+        function openResetModal() {
+            document.getElementById('reset-confirm-input').value = "";
+            document.getElementById('btn-do-reset').disabled = true;
+            document.getElementById('modal-reset').classList.add('active');
+        }
+
+        function checkResetBtn() {
+            const val = document.getElementById('reset-confirm-input').value;
+            document.getElementById('btn-do-reset').disabled = (val !== 'RESET');
+        }
+
+        async function doReset() {
+            await fetch('/api/reset-stats', { method: 'POST' });
+            document.getElementById('modal-reset').classList.remove('active');
+            alert("Stats reset.");
+        }
+
+        // Gifts
+        async function openGiftBrowser() {
+            document.getElementById('modal-gifts').classList.add('active');
+            const res = await fetch('/api/gifts');
+            const gifts = await res.json();
+            const grid = document.getElementById('gift-grid');
+            grid.innerHTML = "";
+
+            if(gifts.length === 0) {
+                grid.innerHTML = "<div style='grid-column:1/-1; text-align:center; color:gray;'>No gifts cached yet. Connect to TikTok and wait for gifts!</div>";
+                return;
+            }
+
+            gifts.forEach(g => {
+                const div = document.createElement('div');
+                div.style.background = "rgba(0,0,0,0.3)";
+                div.style.padding = "10px";
+                div.style.borderRadius = "8px";
+                div.style.textAlign = "center";
+                div.innerHTML = `
+                    <img src="${g.iconUrl}" style="width:40px; height:40px;">
+                    <div style="font-size:0.7rem; margin-top:5px; overflow:hidden; text-overflow:ellipsis;">${g.name}</div>
+                    <div style="font-size:0.65rem; color:#ffd700;">💎 ${g.cost}</div>
+                `;
+                grid.appendChild(div);
+            });
+        }
+
+        // Users
+        async function loadUsers(p) {
+            if(p < 1) return;
+            userPage = p;
+            document.getElementById('user-page-lbl').innerText = p;
+
+            const res = await fetch(`/api/users?page=${p}&limit=20&sort=score`);
+            const data = await res.json();
+            const tbody = document.querySelector('#user-table tbody');
+            tbody.innerHTML = "";
+
+            data.users.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="display:flex; align-items:center; gap:8px;">
+                        <img src="${u.profilePictureUrl || ''}" style="width:24px; height:24px; border-radius:50%; background:#333;">
+                        ${u.nickname || u.uniqueId}
+                    </td>
+                    <td><b>${u.points}</b></td>
+                    <td>${u.diamondCount}</td>
+                    <td>
+                        <button class="btn-icon" onclick="adjustPoints('${u.key}', 100)">+100</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function adjustPoints(id, delta) {
+            // Quick stub logic
+            await fetch(`/api/users/${encodeURIComponent(id)}/adjust`, {
+                method: 'POST',
+                headers: {'Content-Type':'application/json'},
+                body: JSON.stringify({ delta })
+            });
+            loadUsers(userPage);
+        }
+
+        // Connection
         async function connectSystem() {
             const u = document.getElementById('conn-user').value;
             if(!u) return;
@@ -525,55 +604,62 @@
             await fetch('/api/connect', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ uniqueId: u }) });
         }
 
-        // --- TTS ENGINE ---
+        async function checkStatus() {
+            const res = await fetch('/api/status');
+            const s = await res.json();
+            document.getElementById('sys-uptime').innerText = Math.floor(s.uptime) + "s";
+            document.getElementById('sys-addons').innerText = s.addonsLoaded;
+
+            if(s.connected) {
+                document.getElementById('status-text').innerText = `Online: @${s.uniqueId}`;
+                document.getElementById('status-dot').style.background = "#4ade80";
+                if(s.roomInfo) {
+                    document.getElementById('status-meta').innerText = `Viewers: ${s.roomInfo.roomUserCount || 0}`;
+                }
+            } else {
+                document.getElementById('status-text').innerText = "Offline";
+                document.getElementById('status-dot').style.background = "#666";
+            }
+        }
+        setInterval(checkStatus, 3000);
+
+        // TTS Test
         function testVoice() {
-            const text = document.getElementById('test-text').value;
-            speak(text);
+             const text = document.getElementById('test-text').value;
+             const msg = new SpeechSynthesisUtterance(text);
+             msg.lang = scratchConfig.tts.language;
+             msg.volume = scratchConfig.tts.volume;
+             msg.rate = scratchConfig.tts.speed;
+             msg.pitch = scratchConfig.tts.pitch;
+             window.speechSynthesis.speak(msg);
         }
 
-        function speak(text) {
-            logTTS("Speaking: " + text);
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = document.getElementById('tts-lang').value;
-            ut.volume = Number(document.getElementById('tts-vol').value);
-            ut.rate = Number(document.getElementById('tts-speed').value);
-            ut.pitch = Number(document.getElementById('tts-pitch').value);
-            window.speechSynthesis.speak(ut);
-        }
+        // --- BOOTSTRAP ---
+        initSettings();
+        showView('dashboard');
 
-        function logTTS(msg) {
-            const logs = document.getElementById('tts-logs');
-            const time = new Date().toLocaleTimeString().split(' ')[0];
-            const div = document.createElement('div');
-            div.className = "log-entry";
-            div.innerHTML = `<span style="color:var(--muted);">[${time}]</span> ${msg}`;
-            logs.prepend(div);
-        }
-
-        // --- WEBSOCKET ---
+        // --- WS MOCK OVERLAY (Events & Toast) ---
         const ws = new WebSocket(`ws://${location.host}/overlay/ws`);
-        ws.onopen = () => {
-            document.getElementById('status-text').innerText = "System Online";
-            document.getElementById('status-dot').style.background = "#4ade80";
-        };
         ws.onmessage = (msg) => {
             const data = JSON.parse(msg.data);
-            if(data.kind === 'toast') {
-                if(data.title.includes('Chat')) addChat(data);
-                else addEvent(data);
-            } else if (data.kind === 'gift') {
-                addEvent(data);
-            } else if (data.kind === 'speak') {
-                speak(data.text);
+            if(data.kind === 'speak') {
+                const u = new SpeechSynthesisUtterance(data.text);
+                const t = scratchConfig.tts || {};
+                u.lang = t.language || 'de-DE';
+                u.volume = t.volume;
+                u.rate = t.speed;
+                u.pitch = t.pitch;
+                window.speechSynthesis.speak(u);
+            } else if (data.kind === 'toast' || data.kind === 'gift') {
+                 // Simple event list append
+                 const list = document.getElementById('event-list');
+                 const d = document.createElement('div');
+                 d.innerText = `${data.title || 'Event'}: ${data.text || ''}`;
+                 d.style.padding = "5px"; d.style.borderBottom = "1px solid #333";
+                 list.prepend(d);
             }
         };
 
-        function sendMockChat() {
-            const txt = document.getElementById('chat-mock-input').value;
-            if(!txt) return;
-            addChat({ title: "Me", text: txt, userImage: "https://api.dicebear.com/9.x/avataaars/svg?seed=Me" });
-            document.getElementById('chat-mock-input').value = "";
-        }
     </script>
 </body>
 </html>

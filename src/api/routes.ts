@@ -2,7 +2,7 @@ import { Router } from "express";
 import { AddonHost } from "../addons/host";
 import { RingBuffer } from "../core/ringbuffer";
 import { ConfigStore } from "../core/configStore";
-import { UserStatsStore } from "../stats/store"; // Importieren!
+import { UserStatsStore } from "../stats/store";
 
 export function createApiRouter(
   addonHost: AddonHost,
@@ -10,7 +10,8 @@ export function createApiRouter(
   configStore: ConfigStore,
   connectorState: () => any,
   stats: UserStatsStore,
-  onConnect: (uniqueId: string) => void
+  onConnect: (uniqueId: string) => void,
+  getGiftCatalog: () => any[] // New param
 ) {
   const r = Router();
 
@@ -39,7 +40,9 @@ export function createApiRouter(
   r.get("/users", (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 20;
-    const result = stats.getPaginated(page, limit, "score");
+    const sort = (req.query.sort as "score" | "diamonds") || "score";
+
+    const result = stats.getPaginated(page, limit, sort);
     res.json(result);
   });
 
@@ -64,6 +67,8 @@ export function createApiRouter(
 
   // 3. Reset (Punkte löschen)
   r.post("/reset-stats", (req, res) => {
+      // NOTE: Protection logic (header check) can be added here if needed,
+      // but current task removed Supervisor requirement.
       stats.reset();
       res.json({ ok: true });
   });
@@ -72,20 +77,30 @@ export function createApiRouter(
   r.post("/chat", (req, res) => {
       const { text } = req.body;
       console.log("[Chat] WÜRDE SENDEN (Mock):", text);
-      // Hier später echte TikTok API Logik
       res.json({ ok: true, mocked: true });
+  });
+
+  // 5. Gifts Catalog (NEW)
+  r.get("/gifts", (req, res) => {
+      res.json(getGiftCatalog());
   });
 
   // --- STATUS & ADDONS ---
 
   r.get("/status", (_req, res) => {
     const coreConfig = configStore.getCore();
+    const cState = connectorState();
     res.json({
       uptime: process.uptime(),
       version: "1.0.0",
-      connector: connectorState(),
       overlay: { url: `ws://localhost:${coreConfig.port || 5175}/overlay/ws` },
       addonsLoaded: addonHost.getAddonsList().length,
+      // Expanded Connector State
+      connected: cState.connected,
+      uniqueId: cState.uniqueId,
+      roomInfo: cState.roomInfo,
+      lastError: cState.lastError,
+      mode: cState.mode
     });
   });
 
