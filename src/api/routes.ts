@@ -78,11 +78,10 @@ export function createApiRouter(
 
   // 4. Chat Senden (Live)
   r.post("/chat/send", async (req, res) => {
-      // NOTE: This route was renamed from /chat to match specification in Plan
-      // But keeping /chat as alias might be useful, but specification says /api/chat/send
-      // Express router mounted at /api, so this is POST /api/api/chat/send ??
-      // Wait, in index.ts: overlay.app.use("/api", createApiRouter(...));
-      // So r.post("/chat/send") becomes /api/chat/send.
+      const conf = configStore.getCore();
+      if (conf.chat?.enableSend === false) {
+          return res.status(403).json({ ok: false, reason: 'DISABLED' });
+      }
 
       const { text } = req.body;
       if (!text || typeof text !== 'string') return res.status(400).json({ ok: false, reason: "Text missing" });
@@ -96,14 +95,15 @@ export function createApiRouter(
           const result = await sendChat(text.trim());
           res.json(result);
       } catch (e: any) {
-          res.json({ ok: false, mode: "live", reason: e.message || "Unknown error" });
+          // Pass through known errors (NO_SESSIONID, RATE_LIMIT)
+          const reason = e.message;
+          res.json({ ok: false, mode: "live", reason });
       }
   });
 
-  // Legacy mock alias (removed or updated?) - Let's keep /chat for now as alias but log warning
+  // Legacy mock alias
   r.post("/chat", (req, res) => {
-      console.warn("[Deprecation] POST /api/chat is deprecated. Use /api/chat/send");
-      res.json({ ok: true, mocked: true });
+      res.status(410).json({ ok: false, reason: 'DEPRECATED' });
   });
 
   // 5. TikTok Session Management
@@ -150,7 +150,18 @@ export function createApiRouter(
 
   // 6. Gifts Catalog (NEW)
   r.get("/gifts", (req, res) => {
-      res.json(getGiftCatalog());
+      const catalog = getGiftCatalog();
+      if (catalog && catalog.length > 0) {
+          res.json(catalog);
+      } else {
+          // Fallback
+          try {
+              const fallback = require("../../fixtures/gifts_fallback.json");
+              res.json(fallback);
+          } catch(e) {
+              res.json([]);
+          }
+      }
   });
 
   // --- OVERLAY API ---

@@ -106,17 +106,21 @@
       function handleEvent(cmd) {
           if (cmd.kind === "speak") {
              const u = new SpeechSynthesisUtterance(cmd.text);
+             u.lang = "de-DE"; // Default
              window.speechSynthesis.speak(u);
           }
-          else if (cmd.kind === "scene-change") {
+          else if (cmd.kind === "scene_state") {
+              if (lockedSceneId) return;
+              activeSceneId = cmd.activeSceneId;
+              renderScene();
+          }
+          else if (cmd.kind === "scene") {
               // Ignore scene-change if locked via URL param
               if (lockedSceneId) return;
 
               activeSceneId = cmd.sceneId;
               // Ideally re-fetch full config if we suspect config changed, but here we just switch ID from cached config
-              // If config changed, we might need to reload config too.
-              // Let's reload config to be safe
-              loadConfig();
+              renderScene();
           }
           else if (cmd.kind === "dashboard-update") {
               // Heartbeat

@@ -10,7 +10,8 @@ const { normalizeChat, normalizeShare, normalizeGift } = require('../../dist/src
 
 // Load Config
 const configStore = new ConfigStore();
-const CORE_CONFIG = configStore.getCore();
+// Use defaults if file not present, but allow override
+let CORE_CONFIG = configStore.getCore();
 
 // We need to mock the Overlay Broadcast to assert outputs
 let overlayBroadcasts = [];
@@ -39,7 +40,9 @@ bus.subscribe((ev) => {
     }
 });
 
-function runReplay(fixturePath) {
+function runReplay(fixturePath, configOverride) {
+    if (configOverride) CORE_CONFIG = configOverride;
+
     console.log(`[Replay] Loading fixture: ${fixturePath}`);
     const rawEvents = JSON.parse(fs.readFileSync(fixturePath, 'utf-8'));
 

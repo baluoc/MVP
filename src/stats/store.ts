@@ -83,13 +83,19 @@ export class UserStatsStore {
     row.nickname = u.nickname ?? row.nickname;
     if(u.profilePictureUrl) row.profilePictureUrl = u.profilePictureUrl; // Avatar speichern!
 
+    // Update subscriber status if present in event
+    if(u.isSubscriber === true) row.isSubscriber = true;
+
     // Einfache Zähler
     switch (ev.type) {
       case "chat": row.chatCount++; break;
       case "like": row.likeCount += Number(ev.payload.likeDelta ?? 1); break;
       case "share": row.shareCount++; break;
       case "follow": row.followCount++; break;
-      case "subscribe": row.subscribeCount++; break;
+      case "subscribe":
+          row.subscribeCount++;
+          row.isSubscriber = true;
+          break;
       case "gift":
         // Gift Logik (vereinfacht für Kürze, Dedupe sollte hier sein wie im Original)
         row.giftCount += Number(ev.payload.count ?? 1);
@@ -105,13 +111,18 @@ export class UserStatsStore {
 
   private recalcScore(user: UserStats, cfg?: any) {
       // Config or Defaults
-      const p = cfg || { coin: 10, chat: 5, share: 50 };
+      const p = cfg || { coin: 10, chat: 5, share: 50, subBonus: 10 };
 
       let score = 0;
       score += (user.diamondCount || 0) * (p.coin || 10);
       score += (user.chatCount || 0) * (p.chat || 5);
       score += (user.shareCount || 0) * (p.share || 50);
       score += (user.likeCount || 0) * 1; // Like ist meist fix 1 oder wenig
+
+      // Sub Bonus (Percentage)
+      if (user.isSubscriber && p.subBonus > 0) {
+          score = Math.floor(score * (1 + p.subBonus / 100));
+      }
 
       user.points = score + (user.manualPoints || 0);
   }

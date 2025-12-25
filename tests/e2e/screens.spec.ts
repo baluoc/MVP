@@ -22,31 +22,37 @@ test('automated screenshots of all views', async ({ page }) => {
   // 2. System Settings
   await page.getByTestId('nav-system').click();
   await expect(page.getByTestId('view-settings-system')).toBeVisible();
+  await expect(page.getByTestId('view-dashboard')).toBeHidden(); // Negative Assertion
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_system.png') });
 
   // 3. Points & Level
   await page.getByTestId('nav-points').click();
   await expect(page.getByTestId('view-settings-points')).toBeVisible();
+  await expect(page.getByTestId('view-settings-system')).toBeHidden(); // Negative Assertion
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '03_points.png') });
 
   // 4. Broadcast
   await page.getByTestId('nav-broadcast').click();
   await expect(page.getByTestId('view-settings-broadcast')).toBeVisible();
+  await expect(page.getByTestId('view-dashboard')).toBeHidden();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '04_broadcast.png') });
 
   // 5. Chat
   await page.getByTestId('nav-chat').click();
   await expect(page.getByTestId('view-settings-chat')).toBeVisible();
+  await expect(page.getByTestId('view-dashboard')).toBeHidden();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_chat.png') });
 
   // 6. Commands
   await page.getByTestId('nav-commands').click();
   await expect(page.getByTestId('view-settings-commands')).toBeVisible();
+  await expect(page.getByTestId('view-dashboard')).toBeHidden();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_commands.png') });
 
   // 7. TTS
   await page.getByTestId('nav-tts').click();
   await expect(page.getByTestId('view-settings-tts')).toBeVisible();
+  await expect(page.getByTestId('view-dashboard')).toBeHidden();
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_tts.png') });
 
   // 8. Gifts / Assets (include Modal)
