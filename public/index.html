@@ -260,8 +260,45 @@
         <!-- SETTINGS: CHAT -->
         <div id="view-settings-chat" class="view" data-testid="view-settings-chat">
              <div class="settings-grid">
+                <!-- Session Management -->
                 <div class="card">
-                    <div class="card-header"><span class="card-title">Chat Integration</span></div>
+                    <div class="card-header"><span class="card-title">TikTok Session / Chat senden</span></div>
+                    <div class="card-body">
+                        <label>Session Modus</label>
+                        <select id="session-mode" onchange="updateSessionUI()">
+                            <option value="none">Keine Session</option>
+                            <option value="manual">Manuell eingeben</option>
+                            <option value="webview">Login im Webviewer (Beta)</option>
+                        </select>
+
+                        <div id="session-manual-ui" style="display:none; margin-top:10px;">
+                            <label>Session ID (Aus Browser-Cookies)</label>
+                            <input type="password" id="session-id-input" placeholder="Paste sessionid cookie value here">
+                            <div style="font-size:0.75rem; color:var(--muted); margin-top:5px;">
+                                <strong>Anleitung:</strong> 1. TikTok im Browser öffnen. 2. DevTools (F12) > Application > Cookies. 3. Wert von 'sessionid' kopieren.
+                            </div>
+                        </div>
+
+                        <div id="session-status" style="margin-top:15px; padding:10px; background:rgba(255,255,255,0.05); border-radius:6px; font-size:0.85rem;">
+                            Session Status: <span id="lbl-session-active">Unbekannt</span>
+                        </div>
+
+                        <div style="display:flex; gap:10px; margin-top:10px;">
+                            <button class="btn-primary" onclick="saveSession()">Session Speichern</button>
+                            <button class="btn-danger" onclick="clearSession()">Löschen</button>
+                        </div>
+
+                        <hr style="border:0; border-top:1px solid var(--border); margin:15px 0;">
+
+                        <div class="form-row">
+                            <input type="text" id="chat-test-msg" placeholder="Testnachricht senden...">
+                            <button class="btn-secondary" onclick="sendTestChat()">Senden</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Chat Integration (Legacy)</span></div>
                     <div class="card-body">
                         <div class="check-group">
                             <input type="checkbox" data-bind="chat.enableSend" data-testid="check-chat-send"> <strong>Chat Senden aktivieren</strong>
@@ -269,8 +306,6 @@
                         <div class="check-group">
                             <input type="checkbox" data-bind="chat.enableZoom"> <span>Zoom Chat aktivieren</span>
                         </div>
-                        <hr style="border:0; border-top:1px solid var(--border);">
-                        <div class="form-row"><label>Session ID / Cookie</label> <input type="password" data-bind="chat.sessionCookie" placeholder="Erforderlich zum Senden"></div>
                     </div>
                 </div>
              </div>
@@ -597,6 +632,74 @@
                 body: JSON.stringify(scratchConfig)
             });
             alert("Konfiguration gespeichert!");
+        }
+
+        // --- SESSION LOGIC ---
+        async function loadSession() {
+            const res = await fetch('/api/tiktok/session');
+            const data = await res.json();
+
+            document.getElementById('session-mode').value = data.mode;
+            document.getElementById('lbl-session-active').innerText = data.hasSessionId
+                ? `Gesetzt (Aktualisiert: ${new Date(data.updatedAt).toLocaleString()})`
+                : "Nicht gesetzt";
+            document.getElementById('lbl-session-active').style.color = data.hasSessionId ? "var(--success)" : "var(--muted)";
+
+            updateSessionUI();
+        }
+
+        function updateSessionUI() {
+            const mode = document.getElementById('session-mode').value;
+            document.getElementById('session-manual-ui').style.display = (mode === 'manual') ? 'block' : 'none';
+        }
+
+        async function saveSession() {
+            const mode = document.getElementById('session-mode').value;
+            const sessionId = document.getElementById('session-id-input').value;
+
+            const payload = { mode };
+            if(mode === 'manual' && sessionId) {
+                payload.sessionId = sessionId;
+            }
+
+            const res = await fetch('/api/tiktok/session', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok) {
+                alert("Session gespeichert!");
+                document.getElementById('session-id-input').value = ""; // clear for security
+                loadSession();
+            } else {
+                alert("Fehler beim Speichern");
+            }
+        }
+
+        async function clearSession() {
+            if(!confirm("Session wirklich löschen?")) return;
+            await fetch('/api/tiktok/session/clear', { method: 'POST' });
+            loadSession();
+            alert("Session gelöscht.");
+        }
+
+        async function sendTestChat() {
+            const txt = document.getElementById('chat-test-msg').value;
+            if(!txt) return;
+
+            const res = await fetch('/api/chat/send', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ text: txt })
+            });
+            const data = await res.json();
+
+            if(data.ok) {
+                alert("Nachricht gesendet!");
+            } else {
+                alert(`Fehler: ${data.reason} (Mode: ${data.mode})`);
+            }
         }
 
         function updateUIState() {
@@ -1018,6 +1121,7 @@
 
         // --- BOOTSTRAP ---
         initSettings();
+        loadSession(); // Load session status
         showView('dashboard');
 
         // --- WS MOCK OVERLAY (Events & Toast) ---

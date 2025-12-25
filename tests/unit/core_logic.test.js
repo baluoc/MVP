@@ -16,6 +16,14 @@ const TEST_CONFIG = {
         chat: 5,
         subBonus: 10
     },
+    tiktok: {
+        uniqueId: "mock_user",
+        session: {
+            mode: "manual",
+            sessionId: "OLD_SESSION",
+            updatedAt: 1000
+        }
+    },
     levels: { points: 100, multiplier: 1.5 },
     tts: { enabled: true, trigger: 'any', command: '!tts', allowed: { all: true } },
     overlay: { activeSceneId: 'default', scenes: [{ id: 'default', widgets: [] }] }
@@ -139,6 +147,27 @@ describe('Core Logic Audit', () => {
              const updated = store.getCore();
              assert.strictEqual(updated.overlay.activeSceneId, 'scene_2');
              assert.strictEqual(updated.overlay.scenes.length, 1, 'Scenes array should remain');
+        });
+    });
+
+    describe('4. Session Config Logic', () => {
+        it('should deep merge session config without losing keys', () => {
+             const store = new ConfigStore();
+             // Init with existing session
+             store.data = JSON.parse(JSON.stringify(TEST_CONFIG));
+             store.save = () => {};
+
+             // Update only sessionId
+             store.setCore({
+                 tiktok: {
+                     session: { sessionId: "NEW_SESSION" }
+                 }
+             });
+
+             const updated = store.getCore();
+             assert.strictEqual(updated.tiktok.session.sessionId, "NEW_SESSION");
+             assert.strictEqual(updated.tiktok.session.mode, "manual", "Mode should be preserved");
+             assert.strictEqual(updated.tiktok.uniqueId, "mock_user", "uniqueId should be preserved");
         });
     });
 });
