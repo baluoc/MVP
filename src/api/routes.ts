@@ -3,11 +3,10 @@ import { AddonHost } from "../addons/host";
 import { RingBuffer } from "../core/ringbuffer";
 import { ConfigStore } from "../core/configStore";
 import { UserStatsStore } from "../stats/store";
-import { mcpManager } from "../mcp/manager";
-import http from 'http';
-import { getWidgetRegistry } from "../overlay/registry";
 import { obsService } from "../connectors/obsService";
 import { streamerBotService } from "../connectors/streamerbotService";
+import { getWidgetRegistry } from "../overlay/registry";
+import { mcpAdminRouter, mcpProxyHandler } from "./mcp";
 
 export function createApiRouter(
   addonHost: AddonHost,
@@ -322,57 +321,14 @@ export function createApiRouter(
   });
 
   // --- MCP MANAGEMENT & PROXY ---
-  r.get("/mcp/status", (req, res) => {
-    // Return manager status (process state)
-    // NOTE: Real detailed status from MCP could be fetched via proxy if needed
-    const state = mcpManager.getStatus();
-    res.json(state);
-  });
+  // Mount the Admin API at /mcp (which makes it /api/mcp)
+  r.use("/mcp", mcpAdminRouter);
 
-  r.post("/mcp/start", (req, res) => {
-    mcpManager.start();
-    res.json(mcpManager.getStatus());
-  });
-
-  r.post("/mcp/stop", (req, res) => {
-    mcpManager.stop();
-    res.json(mcpManager.getStatus());
-  });
-
-  r.get("/mcp/logs", (req, res) => {
-    res.json(mcpManager.getLogs());
-  });
-
-  // Proxy all other MCP requests to the running service
-  r.use("/mcp", (req, res) => {
-    const state = mcpManager.getStatus();
-    if (state.status !== 'running') {
-      return res.status(503).json({ error: "MCP Service is not running" });
-    }
-
-    const options = {
-      hostname: 'localhost',
-      port: state.port,
-      path: '/mcp' + req.url, // mount point match - if req.url is /foo, path is /mcp/foo
-      method: req.method,
-      headers: { ...req.headers }
-    };
-
-    // Prevent loop or host header issues
-    delete options.headers.host;
-
-    const proxyReq = http.request(options, (proxyRes) => {
-      res.writeHead(proxyRes.statusCode || 500, proxyRes.headers);
-      proxyRes.pipe(res, { end: true });
-    });
-
-    proxyReq.on('error', (e) => {
-      console.error("[MCP Proxy] Error:", e.message);
-      if (!res.headersSent) res.status(502).json({ error: "Bad Gateway to MCP" });
-    });
-
-    req.pipe(proxyReq, { end: true });
-  });
+  // Legacy support: Proxy is also available under /api/mcp for internal usage if needed?
+  // The old code did `r.use("/mcp", (req, res) => ...)` which caught everything not matched above.
+  // mcpAdminRouter handles status/start/stop/logs.
+  // If we want to support protocol over /api/mcp as well (Legacy Alias), we append the proxy handler.
+  r.use("/mcp", mcpProxyHandler);
 
   // --- STATUS & ADDONS ---
 

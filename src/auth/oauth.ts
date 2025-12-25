@@ -8,14 +8,17 @@ import { ConfigStore } from '../core/configStore';
 const authCodes = new Map<string, { clientId: string, redirectUri: string, codeChallenge: string, expires: number }>();
 const accessTokens = new Map<string, { clientId: string, expires: number }>();
 
-// Clients
-// We load from ConfigStore to verify clientId/Secret.
-// NOTE: ConfigStore is not passed to setupOAuth in index.ts yet?
-// Wait, I need access to ConfigStore here.
-// I should change setupOAuth signature or instantiate a new ConfigStore?
-// ConfigStore reads from disk, so new instance is fine, but cleaner if passed.
-// For now, I'll instantiate locally to avoid changing index.ts signature too much unless needed.
-// Actually, index.ts calls `setupOAuth(overlay.app)`. I can modify index.ts to pass configStore.
+function getPublicBaseUrl(req: express.Request, configStore?: ConfigStore): string {
+    const conf = configStore?.getCore();
+    // 1. Config
+    if (conf?.mcp?.publicBaseUrl) {
+        return conf.mcp.publicBaseUrl.replace(/\/$/, '');
+    }
+    // 2. Request derivation
+    const proto = (req.headers['x-forwarded-proto'] as string) || req.protocol;
+    const host = (req.headers['x-forwarded-host'] as string) || req.get('host');
+    return `${proto}://${host}`;
+}
 
 export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
   // 0. Credential Management API
@@ -45,12 +48,7 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
 
   // 1. Well-known Discovery
   app.get('/.well-known/oauth-authorization-server', (req, res) => {
-    // Prefer configured MCP URL, fallback to request host
-    const conf = configStore?.getCore();
-    const configuredUrl = conf?.mcp?.url;
-
-    // If configuredUrl is set, ensure no trailing slash for consistency
-    const baseUrl = configuredUrl ? configuredUrl.replace(/\/$/, '') : `${req.protocol}://${req.get('host')}`;
+    const baseUrl = getPublicBaseUrl(req, configStore);
 
     res.json({
       issuer: baseUrl,
@@ -64,6 +62,30 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
     });
   });
 
+  app.get('/.well-known/oauth-protected-resource', (req, res) => {
+      const baseUrl = getPublicBaseUrl(req, configStore);
+      const conf = configStore?.getCore();
+      const mcpPath = conf?.mcp?.path || "/mcp";
+      const resource = `${baseUrl}${mcpPath}`;
+
+      res.json({
+          resource: resource
+      });
+  });
+
+  // Optional variant with path suffix if needed
+  app.get('/.well-known/oauth-protected-resource/mcp', (req, res) => {
+      const baseUrl = getPublicBaseUrl(req, configStore);
+      const conf = configStore?.getCore();
+      const mcpPath = conf?.mcp?.path || "/mcp";
+      const resource = `${baseUrl}${mcpPath}`;
+
+      res.json({
+          resource: resource
+      });
+  });
+
+
   // 2. Authorization Endpoint (Consent)
   app.get('/authorize', (req, res) => {
     const { response_type, client_id, redirect_uri, code_challenge, code_challenge_method, state } = req.query;
@@ -73,8 +95,6 @@ export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
     if (code_challenge_method !== 'S256') return res.status(400).send('Only S256 supported');
 
     // Render Consent Page
-    // We serve a static HTML file but injection of params via query needed?
-    // Actually, we can just serve the static file, and the static file parses the URL query params to display info.
     res.sendFile(path.join(process.cwd(), 'public', 'oauth_consent.html'));
   });
 
