@@ -3,9 +3,8 @@ import express from "express";
 import { EventBus } from "./core/bus";
 import { createOverlayServer } from "./overlay/server";
 import { UserStatsStore } from "./stats/store";
-// import { createStatsRouter } from "./api/stats"; // Brauchen wir nicht mehr zwingend
 import { startMock } from "./connectors/mock";
-import { startTikTok } from "./connectors/tiktok";
+import { TikTokService } from "./connectors/tiktokService";
 import { eventToOverlay } from "./core/eventToOverlay";
 import { AddonHost } from "./addons/host";
 import { ConfigStore } from "./core/configStore";
@@ -28,32 +27,50 @@ async function main() {
   // Server Setup
   const overlay = createOverlayServer(port);
   overlay.app.use(express.static("public"));
-  overlay.app.use(express.json()); // WICHTIG für POST Requests!
+  overlay.app.use(express.json());
 
   // Core Systems
   const bus = new EventBus();
-  const stats = new UserStatsStore(); // Stats instanziieren
+  const stats = new UserStatsStore();
   const ringBuffer = new RingBuffer(500);
 
   // Addons
   const addonsDir = path.join(__dirname, "../addons");
   const addonHost = new AddonHost(bus, overlay, stats, configStore, addonsDir);
 
-  // API Router (MIT stats!)
-  const connectorState = () => ({
-      mode: hasArg("--mock") ? "mock" : "tiktok",
-      connected: true // TODO: make dynamic?
-  });
+  // Connectors
+  const tiktokService = new TikTokService(bus);
+
+  const connectorState = () => {
+      if (hasArg("--mock")) {
+          return { mode: "mock", connected: true, uniqueId: "mock_user", lastError: null, roomInfo: null };
+      }
+      return { mode: "tiktok", ...tiktokService.getState() };
+  };
+
+  const getGiftCatalog = () => {
+      if (hasArg("--mock")) return []; // Mock gift catalog TODO
+      return tiktokService.getGiftCatalog();
+  }
 
   const connectSystem = (u: string) => {
       if (hasArg("--mock")) {
           startMock(bus);
       } else {
-          startTikTok(u, bus);
+          tiktokService.connect(u);
       }
   };
 
-  overlay.app.use("/api", createApiRouter(addonHost, ringBuffer, configStore, connectorState, stats, connectSystem));
+  // Pass additional getters to API router
+  overlay.app.use("/api", createApiRouter(
+      addonHost,
+      ringBuffer,
+      configStore,
+      connectorState,
+      stats,
+      connectSystem,
+      getGiftCatalog // NEW
+  ));
 
   // Bus Logic
   bus.subscribe((ev) => {
@@ -65,19 +82,37 @@ async function main() {
 
     // TTS Logic Trigger
     if (conf.tts && conf.tts.enabled) {
+        let shouldSpeak = false;
         let textToSpeak = "";
 
-        // Regel: Chat vorlesen?
-        if (ev.type === "chat" && conf.tts.readChat) {
-            textToSpeak = `${ev.user?.nickname} sagt: ${ev.payload.text}`;
-        }
-        // Regel: Geschenk vorlesen?
-        else if (ev.type === "gift" && conf.tts.readGifts) {
-            textToSpeak = `${ev.user?.nickname} sendet ${ev.payload.count} mal ${ev.payload.giftName}`;
+        // CHAT TTS
+        if (ev.type === "chat") {
+            const txt = ev.payload.text || "";
+            const trigger = conf.tts.trigger || "any"; // any, dot, slash, command
+            const cmd = conf.tts.command || "!tts";
+
+            if (trigger === "any") shouldSpeak = true;
+            else if (trigger === "dot" && txt.startsWith(".")) shouldSpeak = true;
+            else if (trigger === "slash" && txt.startsWith("/")) shouldSpeak = true;
+            else if (trigger === "command" && txt.startsWith(cmd)) shouldSpeak = true;
+
+            // TODO: Permissions check (allowed roles) - impl simplified for now
+            // if (!checkPermissions(ev.user, conf.tts.allowed)) shouldSpeak = false;
+
+            if (shouldSpeak) {
+                // Template
+                const tmpl = conf.tts.template || "{nickname} says {comment}";
+                textToSpeak = tmpl
+                    .replace("{nickname}", ev.user?.nickname || "User")
+                    .replace("{username}", ev.user?.uniqueId || "")
+                    .replace("{comment}", txt);
+            }
         }
 
-        // Sende Speak-Befehl an Frontend
-        if (textToSpeak) {
+        // TODO: Gift TTS (if configured to read gifts separate from chat)
+
+        // Broadcast Speak Command
+        if (shouldSpeak && textToSpeak) {
             overlay.broadcast({ kind: "speak", text: textToSpeak });
         }
     }
@@ -94,7 +129,7 @@ async function main() {
   setInterval(() => {
     overlay.broadcast({
       kind: "dashboard-update",
-      stats: { viewers: 0 }, // Viewers logic tbd
+      stats: { viewers: tiktokService.getState().roomInfo?.roomUserCount || 0 },
       leaderboard: stats.getLeaderboard()
     });
   }, 2000);

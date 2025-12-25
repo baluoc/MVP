@@ -26,6 +26,36 @@ export const DEFAULT_CONFIG = {
   obs: { ip: "127.0.0.1", port: 4455, password: "" },
   streamerbot: { address: "127.0.0.1", port: 8080, endpoint: "/" },
 
+  // Chat
+  chat: {
+    enableSend: false,
+    enableZoom: false,
+    sessionCookie: ""
+  },
+
+  // Commands
+  commands: {
+    enabled: true,
+    setupComplete: false,
+    builtIn: {
+      help: { enabled: true, trigger: "!help" },
+      score: { enabled: true, trigger: "!score" },
+      send: { enabled: true, trigger: "!send" },
+      spin: { enabled: true, trigger: "!spin" },
+      get: { enabled: false, trigger: "!get" }
+    },
+    listing: {
+      commands: { enabled: true, trigger: "!commands" },
+      subcommands: { enabled: true, trigger: "!subcommands" },
+      mycommands: { enabled: true, trigger: "!mycommands" }
+    }
+  },
+
+  // Gifts (Settings)
+  gifts: {
+    blackWhiteDefault: false
+  },
+
   // TTS (Das Herzstück)
   tts: {
     enabled: false,
@@ -78,6 +108,26 @@ export const DEFAULT_CONFIG = {
   ]
 };
 
+// Generic Deep Merge
+function deepMerge(target: any, source: any): any {
+  if (typeof target !== 'object' || target === null) return source;
+  if (typeof source !== 'object' || source === null) return target;
+
+  const output = { ...target };
+
+  for (const key of Object.keys(source)) {
+    if (source[key] instanceof Array) {
+        // Arrays werden ersetzt, nicht gemergt (meistens gewünschtes Verhalten bei Configs)
+        output[key] = source[key];
+    } else if (typeof source[key] === 'object' && source[key] !== null) {
+        output[key] = key in target ? deepMerge(target[key], source[key]) : source[key];
+    } else {
+        output[key] = source[key];
+    }
+  }
+  return output;
+}
+
 export class ConfigStore {
   private data: any;
 
@@ -88,13 +138,7 @@ export class ConfigStore {
   getCore() { return this.data; }
 
   setCore(newConf: any) {
-    // Deep Merge für verschachtelte Objekte wie 'tts'
-    this.data = {
-        ...this.data,
-        ...newConf,
-        tts: { ...this.data.tts, ...(newConf.tts || {}) },
-        points: { ...this.data.points, ...(newConf.points || {}) }
-    };
+    this.data = deepMerge(this.data, newConf);
     this.save();
   }
 
@@ -128,13 +172,8 @@ export class ConfigStore {
       if (fs.existsSync(CONFIG_FILE)) {
         const raw = fs.readFileSync(CONFIG_FILE, "utf-8");
         const loaded = JSON.parse(raw);
-        // Merge mit Defaults
-        this.data = { ...DEFAULT_CONFIG, ...loaded };
-
-        // Sicherstellen, dass verschachtelte Objekte existieren
-        if(!this.data.tts) this.data.tts = DEFAULT_CONFIG.tts;
-        this.data.tts = { ...DEFAULT_CONFIG.tts, ...this.data.tts };
-
+        // Merge mit Defaults (Deep!)
+        this.data = deepMerge({ ...DEFAULT_CONFIG }, loaded);
       } else {
         this.data = { ...DEFAULT_CONFIG };
       }
