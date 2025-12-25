@@ -30,7 +30,15 @@ test.describe('MCP System & Screens', () => {
         const dashboardHidden = await page.locator('#view-dashboard').isHidden();
         expect(dashboardHidden).toBeTruthy(); // Should be hidden
 
-        // 3. Verify MCP Status Loading/Offline initially (since process manager starts it?)
+        // 3. Verify New Cards exist
+        await expect(page.locator('.card-title').filter({ hasText: 'Taskboard' })).toBeVisible();
+        await expect(page.locator('.card-title').filter({ hasText: 'Artefakte & Screenshots' })).toBeVisible();
+
+        // 4. Verify Auth Inputs exist
+        await expect(page.locator('#mcp-client-id')).toBeVisible();
+        await expect(page.locator('#mcp-client-secret')).toBeVisible();
+
+        // 5. Verify MCP Status Loading/Offline initially (since process manager starts it?)
         // Actually, we can click Start.
         await page.click('#mcp-start-btn');
         await page.waitForTimeout(2000); // Wait for spawn

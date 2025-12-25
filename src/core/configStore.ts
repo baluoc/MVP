@@ -119,6 +119,14 @@ export const DEFAULT_CONFIG = {
     specialUsers: [] // [{ name: "agent_one", voice: "...", speed: 1.2 }]
   },
 
+  // MCP Configuration
+  mcp: {
+    auth: {
+      clientId: "",
+      clientSecret: ""
+    }
+  },
+
   // Overlay System
   overlay: {
     activeSceneId: "default",

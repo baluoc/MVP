@@ -234,6 +234,13 @@
         .policy-list li { margin-bottom: 5px; }
         .policy-list strong { color: var(--text); }
         .empty-state { color: var(--muted); font-style: italic; text-align: center; padding: 20px; }
+
+        /* Taskboard */
+        .task-col { background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px; display:flex; flex-direction:column; }
+        .col-head { font-weight: 700; text-align:center; margin-bottom:10px; text-transform:uppercase; font-size:0.8rem; color:var(--muted); border-bottom:2px solid var(--border); padding-bottom:5px; }
+        .task-list { display:flex; flex-direction:column; gap:8px; min-height:50px; }
+        .task-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 8px; font-size: 0.85rem; cursor:grab; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .task-card:hover { border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -299,6 +306,9 @@
 
                 <!-- Col 1: Live Vorschau -->
                 <div style="display:flex; flex-direction:column; gap:15px;">
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-secondary" style="font-size:0.7rem; padding:4px 8px;" onclick="showView('mcp')">MCP öffnen</button>
+                    </div>
                     <div class="stage-container-preview" id="preview-container">
                         <div class="stage-overlay-label">TIKTOK OUTPUT</div>
                         <iframe id="preview-frame" class="stage-iframe" src="about:blank"></iframe>
@@ -708,8 +718,20 @@
              <div class="card">
                  <div class="card-header"><span class="card-title">Verbindung & Auth</span></div>
                  <div class="card-body">
-                     <p class="description">OAuth 2.0 Integration testen</p>
-                     <button id="mcp-auth-test-btn" class="btn-secondary">Auth Testen</button>
+                     <p class="description">OAuth 2.0 Integration & Credentials</p>
+
+                     <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; margin-bottom:10px;">
+                         <div class="form-row"><label>Client ID</label> <input type="text" id="mcp-client-id" readonly></div>
+                         <div class="form-row"><label>Client Secret</label>
+                             <div style="display:flex; gap:5px; width:100%;">
+                                 <input type="text" id="mcp-client-secret" readonly value="********">
+                                 <button class="btn-icon" onclick="copySecret()">📋</button>
+                             </div>
+                         </div>
+                         <button class="btn-secondary" style="margin-top:5px; width:100%;" onclick="generateCredentials()">Neu Generieren</button>
+                     </div>
+
+                     <button id="mcp-auth-test-btn" class="btn-secondary">Auth Endpoints Testen</button>
                      <div id="mcp-auth-result" class="log-output small" style="margin-top:10px;"></div>
                  </div>
              </div>
@@ -726,17 +748,57 @@
                  </div>
              </div>
 
-             <!-- Card 4: DIV Queue -->
+             <!-- Card 4: Taskboard -->
+             <div class="card full-width">
+                 <div class="card-header">
+                     <span class="card-title">Taskboard</span>
+                     <button class="btn-secondary" onclick="createTask()">+ Task</button>
+                 </div>
+                 <div class="card-body">
+                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; min-height:200px;">
+                         <div class="task-col" data-status="backlog">
+                             <div class="col-head">Backlog</div>
+                             <div class="task-list" id="task-list-backlog"></div>
+                         </div>
+                         <div class="task-col" data-status="in_progress">
+                             <div class="col-head">In Arbeit</div>
+                             <div class="task-list" id="task-list-in_progress"></div>
+                         </div>
+                         <div class="task-col" data-status="done">
+                             <div class="col-head">Erledigt</div>
+                             <div class="task-list" id="task-list-done"></div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 5: DIV Queue -->
              <div class="card full-width">
                  <div class="card-header"><span class="card-title">DIV Queue (Änderungspakete)</span></div>
                  <div class="card-body">
+                     <div style="display:flex; gap:10px; margin-bottom:10px;">
+                         <button class="btn-secondary" onclick="filterDivs('all')">Alle</button>
+                         <button class="btn-secondary" onclick="filterDivs('draft')">Draft</button>
+                         <button class="btn-secondary" onclick="filterDivs('review')">Review</button>
+                         <button class="btn-secondary" onclick="filterDivs('applied')">Applied</button>
+                     </div>
                      <div id="mcp-div-list" class="item-list">
                          <p class="empty-state">Lade Pakete...</p>
                      </div>
                  </div>
              </div>
 
-             <!-- Card 5: Logs -->
+             <!-- Card 6: Artefakte (Screenshots) -->
+             <div class="card full-width">
+                 <div class="card-header"><span class="card-title">Artefakte & Screenshots</span></div>
+                 <div class="card-body">
+                     <div id="mcp-artifacts-list" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:10px;">
+                         <p class="empty-state">Lade Artefakte...</p>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 7: Logs -->
              <div class="card full-width">
                  <div class="card-header"><span class="card-title">Logs</span></div>
                  <div class="card-body">
@@ -895,12 +957,16 @@
 
         // --- MCP LOGIC ---
         let mcpInterval = null;
+        let allDivs = [];
 
         async function initMCPView() {
             if(mcpInterval) clearInterval(mcpInterval);
             mcpInterval = setInterval(updateMCPStatus, 2000);
             updateMCPStatus();
             loadMCPDivs();
+            loadCredentials();
+            loadTasks();
+            loadArtifacts();
 
             document.getElementById('mcp-start-btn').onclick = async () => {
                 await fetch('/api/mcp/start', { method: 'POST' });
@@ -921,6 +987,85 @@
                     document.getElementById('mcp-auth-result').style.color = "#ef4444";
                 }
             }
+        }
+
+        async function loadCredentials() {
+            const res = await fetch('/api/auth/credentials');
+            const data = await res.json();
+            document.getElementById('mcp-client-id').value = data.clientId || "";
+            document.getElementById('mcp-client-secret').value = data.clientSecret || "";
+        }
+
+        async function generateCredentials() {
+            if(!confirm("Neue Credentials generieren? Alte werden ungültig!")) return;
+            await fetch('/api/auth/credentials/generate', { method: 'POST' });
+            loadCredentials();
+        }
+
+        function copySecret() {
+            const id = document.getElementById('mcp-client-id').value;
+            navigator.clipboard.writeText(id);
+            alert("Client ID kopiert.");
+        }
+
+        async function loadTasks() {
+            try {
+                const res = await fetch('/api/mcp/tasks'); // Proxy
+                if(!res.ok) return;
+                const tasks = await res.json();
+
+                ['backlog', 'in_progress', 'done'].forEach(s => {
+                    const list = document.getElementById(`task-list-${s}`);
+                    list.innerHTML = "";
+                    tasks.filter(t => t.status === s).forEach(t => {
+                        const el = document.createElement('div');
+                        el.className = 'task-card';
+                        el.innerHTML = `<strong>${t.title}</strong><div style="font-size:0.7rem; color:var(--muted);">${new Date(t.updated).toLocaleTimeString()}</div>`;
+                        el.ondblclick = async () => {
+                            // Simple toggle status flow
+                            let next = 'in_progress';
+                            if(s === 'in_progress') next = 'done';
+                            if(s === 'done') next = 'backlog';
+                            await fetch(`/api/mcp/tasks/${t.id}`, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status: next})});
+                            loadTasks();
+                        };
+                        list.appendChild(el);
+                    });
+                });
+            } catch(e) { console.error("Tasks load error", e); }
+        }
+
+        async function createTask() {
+            const t = prompt("Task Titel:");
+            if(!t) return;
+            await fetch('/api/mcp/tasks', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({title: t}) });
+            loadTasks();
+        }
+
+        async function loadArtifacts() {
+            // "Artefakte: Tests/Screens/Logs".
+            // Let's assume strict filenames for now as per requirements: "1_dashboard.png", etc.
+            const files = [
+                '1_dashboard.png', '2_einstellungen_system.png', '3_einstellungen_tts.png',
+                '4_einstellungen_overlay.png', '5_overlay_composer.png', '6_einstellungen_broadcast.png',
+                '7_einstellungen_chat.png', '8_einstellungen_befehle.png', '9_einstellungen_gifts.png',
+                '10_users.png', '11_mcp.png'
+            ];
+
+            const list = document.getElementById('mcp-artifacts-list');
+            list.innerHTML = "";
+            files.forEach(f => {
+                const div = document.createElement('div');
+                div.style.minWidth = "100px";
+                div.style.textAlign = "center";
+                div.innerHTML = `
+                    <a href="/artifacts/${f}" target="_blank">
+                        <img src="/artifacts/${f}" style="width:100px; height:60px; object-fit:cover; border:1px solid var(--border); border-radius:4px;" onerror="this.src='https://via.placeholder.com/100x60?text=Missing'">
+                    </a>
+                    <div style="font-size:0.6rem; margin-top:2px; overflow:hidden; text-overflow:ellipsis;">${f}</div>
+                `;
+                list.appendChild(div);
+            });
         }
 
         async function updateMCPStatus() {
@@ -968,36 +1113,49 @@
                      return;
                  }
                  const divs = await res.json();
-                 if(divs.length === 0) {
-                     list.innerHTML = "<p class='empty-state'>Keine Pakete in der Warteschlange.</p>";
-                     return;
-                 }
-
-                 list.innerHTML = "";
-                 divs.forEach(div => {
-                     const item = document.createElement('div');
-                     item.className = 'card';
-                     item.style.marginBottom = '10px';
-                     item.style.padding = '10px';
-                     item.innerHTML = `
-                        <div style="display:flex; justify-content:space-between;">
-                            <strong>${div.titel}</strong>
-                            <span style="font-size:0.75rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${div.review.status}</span>
-                        </div>
-                        <div style="font-size:0.8rem; color:var(--muted); margin-top:5px;">
-                            ${div.autor} • ${new Date(div.erstelltAm).toLocaleString()} • ${div.rolle}
-                        </div>
-                        <div style="display:flex; gap:10px; margin-top:10px;">
-                            <button class="btn-secondary" onclick="mcpAction('${div.id}', 'validate')">Validieren</button>
-                            <button class="btn-secondary" onclick="mcpAction('${div.id}', 'apply')" ${div.review.status === 'applied' ? 'disabled' : ''}>Anwenden</button>
-                            <button class="btn-secondary" onclick="mcpAction('${div.id}', 'rollback')" ${div.review.status !== 'applied' ? 'disabled' : ''}>Rollback</button>
-                        </div>
-                     `;
-                     list.appendChild(item);
-                 });
+                 allDivs = divs;
+                 renderDivs(divs);
              } catch(e) {
                  list.innerHTML = "<p class='empty-state'>Verbindungsfehler</p>";
              }
+        }
+
+        function filterDivs(filter) {
+            if(filter === 'all') renderDivs(allDivs);
+            else renderDivs(allDivs.filter(d => d.review.status.includes(filter) || d.review.status === filter));
+        }
+
+        function renderDivs(divs) {
+             const list = document.getElementById('mcp-div-list');
+             if(divs.length === 0) {
+                 list.innerHTML = "<p class='empty-state'>Keine Pakete gefunden.</p>";
+                 return;
+             }
+             list.innerHTML = "";
+             divs.forEach(div => {
+                 const item = document.createElement('div');
+                 item.className = 'card';
+                 item.style.marginBottom = '10px';
+                 item.style.padding = '10px';
+                 const planItems = div.plan ? div.plan.slice(0,3).map(p=>`<li>${p}</li>`).join('') : '';
+
+                 item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <strong>${div.titel}</strong>
+                        <span style="font-size:0.75rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${div.review.status}</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-top:5px;">
+                        ${div.autor} • ${new Date(div.erstelltAm).toLocaleString()} • ${div.rolle}
+                    </div>
+                    <ul style="font-size:0.75rem; color:#bbb; padding-left:15px; margin:5px 0;">${planItems}</ul>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'validate')">Validieren</button>
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'apply')" ${div.review.status === 'applied' ? 'disabled' : ''}>Anwenden</button>
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'rollback')" ${div.review.status !== 'applied' ? 'disabled' : ''}>Rollback</button>
+                    </div>
+                 `;
+                 list.appendChild(item);
+             });
         }
 
         async function mcpAction(id, action) {

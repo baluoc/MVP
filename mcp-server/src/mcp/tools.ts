@@ -1,5 +1,6 @@
 import { DIVPacket, validateDIV } from '../div/validator';
 import { applyDIV, rollbackDIV } from '../div/applier';
+import { listTasks, createTask, updateTask, deleteTask } from '../tasks/store';
 import fs from 'fs';
 import path from 'path';
 
@@ -165,19 +166,38 @@ export const tools: Record<string, (args: any) => Promise<ToolResult>> = {
     },
 
     "system.get_logs": async () => {
-        // Need access to manager logs?
-        // Or reading from log file?
-        // Since we are INSIDE the MCP process, we don't have access to the Manager's log buffer easily unless we expose it or write to file.
-        // The previous step implemented `mcpManager` in Core.
-        // This is the MCP Service. It logs to stderr.
-        // If we want logs *of* the MCP service, we can't easily read our own stderr unless we hook it.
-        // BUT, maybe we can read `server.log` if we piped it?
-        // Requirement says "MCP kann Logs liefern".
-        // Let's implement a simple internal log buffer here too?
-        // For now, return a placeholder or read a shared log file if one exists.
+        // Return placeholder or if we had a shared log file
         return {
-             content: [{ type: "text", text: "Logs access not fully implemented inside isolated process." }],
+             content: [{ type: "text", text: "Logs access via tool not fully implemented (use /api/mcp/logs from core)." }],
              structuredContent: { logs: [] }
+        };
+    },
+
+    // --- Task Tools ---
+    "task.list": async () => {
+        const tasks = listTasks();
+        return {
+            content: [{ type: "text", text: `Found ${tasks.length} tasks.` }],
+            structuredContent: { count: tasks.length, tasks }
+        };
+    },
+
+    "task.create": async (args: { title: string, status?: any }) => {
+        if(!args.title) throw new Error("Title required");
+        const task = createTask(args.title, args.status);
+        return {
+            content: [{ type: "text", text: `Task created: ${task.id}` }],
+            structuredContent: { task }
+        };
+    },
+
+    "task.update": async (args: { id: string, status?: any, title?: string }) => {
+        if(!args.id) throw new Error("ID required");
+        const task = updateTask(args.id, { status: args.status, title: args.title });
+        if(!task) throw new Error("Task not found");
+        return {
+            content: [{ type: "text", text: `Task updated: ${task.id}` }],
+            structuredContent: { task }
         };
     }
 };
@@ -230,5 +250,23 @@ export const toolDefinitions: Tool[] = [
         title: "System Logs",
         description: "Returns recent logs.",
         inputSchema: { type: "object", properties: {}, additionalProperties: false }
+    },
+    {
+        name: "task.list",
+        title: "List Tasks",
+        description: "Lists all tasks from the board.",
+        inputSchema: { type: "object", properties: {}, additionalProperties: false }
+    },
+    {
+        name: "task.create",
+        title: "Create Task",
+        description: "Creates a new task.",
+        inputSchema: { type: "object", properties: { title: { type: "string" }, status: { type: "string", enum: ["backlog","in_progress","done"] } }, required: ["title"] }
+    },
+    {
+        name: "task.update",
+        title: "Update Task",
+        description: "Updates a task status or title.",
+        inputSchema: { type: "object", properties: { id: { type: "string" }, title: { type: "string" }, status: { type: "string", enum: ["backlog","in_progress","done"] } }, required: ["id"] }
     }
 ];

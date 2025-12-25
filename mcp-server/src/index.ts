@@ -6,6 +6,7 @@ import { validateDIV } from './div/validator';
 import { applyDIV, rollbackDIV } from './div/applier';
 import { DIVPacket } from './div/validator'; // Re-export type
 import { handleMCPRequest } from './mcp/protocol';
+import { listTasks, createTask, updateTask, deleteTask } from './tasks/store';
 
 // Redirect console.log to stderr to keep stdout clean for potential stdio transport
 const originalLog = console.log;
@@ -53,6 +54,25 @@ app.get('/mcp/status', (req, res) => {
 app.post('/mcp', async (req, res) => {
     const response = await handleMCPRequest(req.body);
     res.json(response);
+});
+
+// --- REST Endpoints for UI Convenience ---
+
+// Tasks
+app.get('/mcp/tasks', (req, res) => res.json(listTasks()));
+app.post('/mcp/tasks', (req, res) => {
+    const { title, status } = req.body;
+    if(!title) return res.status(400).json({error: "Title missing"});
+    res.json(createTask(title, status));
+});
+app.post('/mcp/tasks/:id', (req, res) => {
+    const t = updateTask(req.params.id, req.body);
+    if(!t) return res.status(404).json({error: "Not found"});
+    res.json(t);
+});
+app.delete('/mcp/tasks/:id', (req, res) => {
+    deleteTask(req.params.id);
+    res.json({ok: true});
 });
 
 // DIV Queue (REST - maintained for UI)

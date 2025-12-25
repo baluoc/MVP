@@ -2,19 +2,47 @@ import express from 'express';
 import crypto from 'crypto';
 import path from 'path';
 import fs from 'fs';
+import { ConfigStore } from '../core/configStore';
 
 // Simple in-memory storage for MVP (Auth Codes, Tokens)
-// In a real restart-persistent scenario, this would be in a DB/file.
-// For MVP, memory is acceptable as per requirements (single session usually).
 const authCodes = new Map<string, { clientId: string, redirectUri: string, codeChallenge: string, expires: number }>();
 const accessTokens = new Map<string, { clientId: string, expires: number }>();
 
-// Clients - In MVP, we can hardcode the allowed client or allow any for testing if specified.
-// Requirement: "mcp.auth (well-known URL, clientId, redirect, token)" implies we might need to validate clientId.
-// Let's allow a specific client ID "jules-mcp-client" or similar, or just allow all for MVP dev.
-// We'll enforce a simple check.
+// Clients
+// We load from ConfigStore to verify clientId/Secret.
+// NOTE: ConfigStore is not passed to setupOAuth in index.ts yet?
+// Wait, I need access to ConfigStore here.
+// I should change setupOAuth signature or instantiate a new ConfigStore?
+// ConfigStore reads from disk, so new instance is fine, but cleaner if passed.
+// For now, I'll instantiate locally to avoid changing index.ts signature too much unless needed.
+// Actually, index.ts calls `setupOAuth(overlay.app)`. I can modify index.ts to pass configStore.
 
-export function setupOAuth(app: express.Express) {
+export function setupOAuth(app: express.Express, configStore?: ConfigStore) {
+  // 0. Credential Management API
+  app.get('/api/auth/credentials', (req, res) => {
+      const conf = configStore?.getCore();
+      if (!conf || !conf.mcp || !conf.mcp.auth) return res.json({ clientId: "", clientSecret: "" });
+
+      const { clientId, clientSecret } = conf.mcp.auth;
+      // Mask secret
+      const maskedSecret = clientSecret ? clientSecret.substring(0, 4) + "*".repeat(clientSecret.length - 4) : "";
+      res.json({ clientId, clientSecret: maskedSecret, hasSecret: !!clientSecret });
+  });
+
+  app.post('/api/auth/credentials/generate', (req, res) => {
+      if (!configStore) return res.status(500).json({ error: "ConfigStore not available" });
+
+      const clientId = "client_" + crypto.randomBytes(8).toString('hex');
+      const clientSecret = "secret_" + crypto.randomBytes(16).toString('hex');
+
+      const conf = configStore.getCore();
+      if (!conf.mcp) conf.mcp = {};
+      conf.mcp.auth = { clientId, clientSecret };
+      configStore.setCore(conf);
+
+      res.json({ clientId, clientSecret });
+  });
+
   // 1. Well-known Discovery
   app.get('/.well-known/oauth-authorization-server', (req, res) => {
     const baseUrl = `${req.protocol}://${req.get('host')}`;

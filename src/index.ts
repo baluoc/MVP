@@ -31,9 +31,10 @@ async function main() {
 
   // Initialize OAuth Provider (Core) - must be before static to handle routes
   // But wait, express.static is usually generic. Specific routes take precedence.
-  setupOAuth(overlay.app);
+  setupOAuth(overlay.app, configStore);
 
   overlay.app.use(express.static("public"));
+  overlay.app.use("/artifacts", express.static(path.join(process.cwd(), "jules_review", "verification")));
   overlay.app.use(express.json());
 
   // Core Systems
