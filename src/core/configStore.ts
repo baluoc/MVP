@@ -34,11 +34,6 @@ export const DEFAULT_CONFIG = {
     port: 8080,
     endpoint: "/"
   },
-  simabot: {
-    enabled: false,
-    endpoint: "",
-    token: ""
-  },
 
   // Chat
   chat: {

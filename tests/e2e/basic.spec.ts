@@ -15,8 +15,8 @@ test('dashboard navigation and language check', async ({ page }) => {
   await expect(page).toHaveTitle(/TK Event Zentrale/);
 
   // Check Nav Items (German)
-  // Dashboard is now "Live Dashboard"
-  await expect(page.getByTestId('nav-dashboard')).toHaveText(/Live Dashboard/);
+  // Dashboard is now "Live Übersicht"
+  await expect(page.getByTestId('nav-dashboard')).toHaveText(/Live Übersicht/);
 
   await expect(page.getByTestId('nav-system')).toHaveText(/System/);
   await expect(page.getByTestId('nav-points')).toHaveText(/Punkte & Level/);

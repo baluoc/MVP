@@ -24,10 +24,6 @@ export function createApiRouter(
   const conf = configStore.getCore();
   if (conf.obs) obsService.configure(conf.obs);
   if (conf.streamerbot) streamerBotService.configure(conf.streamerbot);
-  // Migrate legacy Simabot if present?
-  if (conf.simabot && conf.simabot.enabled) {
-     // Optional: migrate config on fly or just ignore
-  }
 
   // --- CORE ROUTES ---
 
@@ -244,6 +240,18 @@ export function createApiRouter(
       try {
           if (type === 'switchScene') {
               await obsService.switchScene(data.sceneName);
+          } else if (type === 'getScenes') {
+              const scenes = await obsService.getScenes();
+              res.json({ ok: true, scenes });
+              return;
+          } else if (type === 'getInputs') {
+              const inputs = await obsService.getInputs();
+              res.json({ ok: true, inputs });
+              return;
+          } else if (type === 'toggleInput') {
+              await obsService.toggleInput(data.inputName, data.enabled);
+          } else if (type === 'setInputSettings') {
+              await obsService.setInputSettings(data.inputName, data.settings);
           } else {
               await obsService.sendRaw(type, data);
           }
@@ -285,27 +293,20 @@ export function createApiRouter(
           res.json({ ok: true, info: status });
       } else {
           streamerBotService.connect();
-          // Async connect, just return connecting state
           res.json({ ok: true, info: "Connecting..." });
       }
   });
 
-  r.post("/streamerbot/action", async (req, res) => {
-      const { action } = req.body; // Expecting action name/id
-      if(!action) return res.status(400).json({ error: "Missing action" });
-
-      try {
-          await streamerBotService.doAction(action);
-          res.json({ ok: true });
-      } catch(e:any) {
-           res.status(500).json({ ok: false, reason: e.message });
-      }
+  r.get("/streamerbot/actions", (req, res) => {
+      res.json(streamerBotService.getCachedActions());
   });
 
-  r.post("/streamerbot/raw", (req, res) => {
-      const { payload } = req.body;
+  r.post("/streamerbot/action", async (req, res) => {
+      const { actionId } = req.body;
+      if(!actionId) return res.status(400).json({ error: "Missing actionId" });
+
       try {
-          streamerBotService.sendJson(payload);
+          await streamerBotService.doAction(actionId);
           res.json({ ok: true });
       } catch(e:any) {
            res.status(500).json({ ok: false, reason: e.message });

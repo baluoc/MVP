@@ -4,9 +4,13 @@ import path from 'path';
 
 const SCREENSHOT_DIR = path.join(process.cwd(), 'jules_review', 'verification');
 
-if (!fs.existsSync(SCREENSHOT_DIR)) {
-  fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
-}
+test.beforeAll(() => {
+    // Clear old screens
+    if (fs.existsSync(SCREENSHOT_DIR)) {
+        fs.rmSync(SCREENSHOT_DIR, { recursive: true, force: true });
+    }
+    fs.mkdirSync(SCREENSHOT_DIR, { recursive: true });
+});
 
 test('automated screenshots of all views', async ({ page }) => {
   test.setTimeout(60000);
@@ -14,14 +18,14 @@ test('automated screenshots of all views', async ({ page }) => {
   // 1. Dashboard
   await page.goto('/');
   await expect(page.getByTestId('view-dashboard')).toBeVisible();
-  // Updated Title Expectation
-  await expect(page.getByTestId('page-title')).toHaveText('Live Dashboard');
+  // Updated Title Expectation - Strict German "Live Übersicht"
+  await expect(page.getByTestId('page-title')).toHaveText('Live Übersicht');
   await expect(page.locator('#metric-viewers')).toBeVisible();
 
   // Wait for preview iframe to load (scale transform applied)
   await page.waitForTimeout(500);
 
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_dashboard_rich.png') });
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_live_uebersicht.png') });
 
   // 2. System Settings
   await page.getByTestId('nav-system').click();
@@ -33,7 +37,7 @@ test('automated screenshots of all views', async ({ page }) => {
   await expect(page.getByTestId('nav-system')).toHaveClass(/active/);
   await expect(page.getByTestId('nav-dashboard')).not.toHaveClass(/active/);
 
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_system.png') });
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '02_settings_system.png') });
 
   // 3. Points & Level
   await page.getByTestId('nav-points').click();
@@ -113,7 +117,7 @@ test('automated screenshots of all views', async ({ page }) => {
   // 11. User DB
   await page.getByTestId('nav-users').click();
   await expect(page.getByTestId('view-users')).toBeVisible();
-  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_users.png') });
+  await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_stats.png') });
 
   // Extra: Reset Modal (Trigger from System Settings)
   await page.getByTestId('nav-system').click();

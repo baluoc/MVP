@@ -13,6 +13,7 @@ export class OBSService extends EventEmitter {
     private isConnected: boolean = false;
     private reconnectInterval: NodeJS.Timeout | null = null;
     private currentScene: string = "";
+    private explicitDisconnect: boolean = false;
 
     constructor() {
         super();
@@ -30,16 +31,15 @@ export class OBSService extends EventEmitter {
             this.isConnected = false;
             console.log('[OBS] Disconnected', err.message);
             this.emit('disconnected');
-            this.attemptReconnect();
+            if (!this.explicitDisconnect) {
+                this.attemptReconnect();
+            }
         });
 
         this.obs.on('CurrentProgramSceneChanged', (data) => {
             this.currentScene = data.sceneName;
             this.emit('sceneChanged', this.currentScene);
         });
-
-        // Forward generic events if needed for addons
-        // this.obs.on('Identified', ...)
     }
 
     public configure(cfg: OBSConfig) {
@@ -54,6 +54,8 @@ export class OBSService extends EventEmitter {
         if (this.isConnected) return;
         if (!this.config.ip) return;
 
+        this.explicitDisconnect = false;
+
         const url = `ws://${this.config.ip}:${this.config.port || 4455}`;
         try {
             await this.obs.connect(url, this.config.password);
@@ -64,6 +66,7 @@ export class OBSService extends EventEmitter {
     }
 
     public async disconnect() {
+        this.explicitDisconnect = true;
         if (this.reconnectInterval) clearInterval(this.reconnectInterval);
         this.reconnectInterval = null;
         try {
@@ -93,9 +96,54 @@ export class OBSService extends EventEmitter {
         await this.obs.call('SetCurrentProgramScene', { sceneName });
     }
 
+    public async getScenes() {
+        if (!this.isConnected) return [];
+        const res = await this.obs.call('GetSceneList');
+        // obs-websocket v5 returns { currentProgramSceneName, scenes: [] }
+        return res.scenes || [];
+    }
+
+    public async getInputs() {
+        if (!this.isConnected) return [];
+        // v5 uses GetInputList
+        const res = await this.obs.call('GetInputList');
+        return res.inputs || [];
+    }
+
+    public async toggleInput(inputName: string, enabled: boolean) {
+        if (!this.isConnected) throw new Error("Not connected");
+        // v5 uses SetSceneItemEnabled, but we need sceneItemIds usually.
+        // However, user requirement says "Input/Source enable/disable".
+        // Inputs are sources. In v5, enabling/disabling a source is usually done via SetSceneItemEnabled on a scene.
+        // But if we want to change global input settings? No, usually it's scene item visibility.
+        // Let's assume user means SceneItem visibility in current scene for simplicity, OR 'SetInputMute' for audio?
+        // Let's implement 'SetSceneItemEnabled' but we need the id.
+        // Complex in v5: We first need the scene item id for the input in the current scene.
+
+        try {
+            const scene = await this.obs.call('GetCurrentProgramScene');
+            const items = await this.obs.call('GetSceneItemList', { sceneName: scene.currentProgramSceneName });
+            const item = items.sceneItems.find((i: any) => i.sourceName === inputName);
+
+            if (item) {
+                // Fix: Ensure sceneItemId is a number. TS error was about complex union type.
+                const itemId = item.sceneItemId as number;
+                await this.obs.call('SetSceneItemEnabled', {
+                    sceneName: scene.currentProgramSceneName,
+                    sceneItemId: itemId,
+                    sceneItemEnabled: enabled
+                });
+            }
+        } catch(e) { console.error("[OBS] Toggle Input failed", e); throw e; }
+    }
+
+    public async setInputSettings(inputName: string, settings: any) {
+        if (!this.isConnected) throw new Error("Not connected");
+        await this.obs.call('SetInputSettings', { inputName, inputSettings: settings });
+    }
+
     public async sendRaw(requestType: string, requestData?: any) {
         if (!this.isConnected) throw new Error("Not connected");
-        // FIX: Cast string to any or specific type because obs-websocket-js types are strict about keys
         return await this.obs.call(requestType as any, requestData);
     }
 
