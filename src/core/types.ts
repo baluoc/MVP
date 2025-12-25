@@ -53,9 +53,64 @@ export type UserStats = {
   memberCount: number;
   diamondCount: number;
 
+  manualPoints: number; // NEW: Admin manual adjustment
   points: number; // Changed from optional to required for logic consistency
 };
 
 export type ScoringPolicy = Partial<
   Record<"chat" | "like" | "gift" | "share" | "follow" | "subscribe" | "member", number>
 >;
+
+export type WidgetConfig = {
+  id: string;
+  type: "chat" | "alert" | "leaderboard" | string;
+  x: number;
+  y: number;
+  width?: number; // Optional
+  height?: number; // Optional
+  scale: number;
+  visible: boolean;
+};
+
+export type AppConfig = {
+  core: {
+    port: number;
+  };
+  tiktok: {
+    sessionId?: string; // For writing to chat
+  };
+  points: {
+    name: string;
+    coin: number;      // Points per Coin
+    share: number;     // Points per Share
+    chat: number;      // Points per Msg
+    subBonus: number;  // Multiplier %
+  };
+  levels: {
+    points: number;         // Base Points
+    multiplier: number;    // Exponential Growth
+  };
+  obs: {
+    ip: string;
+    port: number;
+    password: "";
+  };
+  streamerbot: {
+    address: string;
+    port: number;
+    endpoint: string;
+  };
+  tts: {
+    enabled: boolean;
+    allowed: "all" | "follower" | "sub" | "mod";
+    voice: string;
+    speed: number;
+    pitch: number;
+    volume: number; // 0.0 - 1.0
+    prefix: string; // Command
+    cost: number;   // Points Cost
+    minLevel?: number; // Optional for now until I can verify extensive usage
+    readCommands?: boolean;
+  };
+  widgets: WidgetConfig[];
+};
