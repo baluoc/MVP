@@ -11,6 +11,7 @@ import { ConfigStore } from "./core/configStore";
 import { RingBuffer } from "./core/ringbuffer";
 import { createApiRouter } from "./api/routes";
 import { parseCommand, buildCommandResponse } from "./core/commands";
+import { setupOAuth } from "./auth/oauth";
 
 function getArg(name: string) {
   const i = process.argv.indexOf(name);
@@ -27,6 +28,11 @@ async function main() {
 
   // Server Setup
   const overlay = createOverlayServer(port, configStore);
+
+  // Initialize OAuth Provider (Core) - must be before static to handle routes
+  // But wait, express.static is usually generic. Specific routes take precedence.
+  setupOAuth(overlay.app);
+
   overlay.app.use(express.static("public"));
   overlay.app.use(express.json());
 

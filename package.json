@@ -1,6 +1,9 @@
 {
   "name": "mvp",
   "version": "1.0.0",
+  "workspaces": [
+    "mcp-server"
+  ],
   "description": "",
   "main": "index.js",
   "scripts": {
