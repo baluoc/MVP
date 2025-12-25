@@ -64,6 +64,15 @@
 
     <div class="main">
 
+        <!-- Connection Bar -->
+        <div style="background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 20px; display: flex; align-items: center; justify-content: space-between;">
+            <div style="font-weight: 600;">System Status</div>
+            <div style="display:flex; gap:10px; align-items:center;">
+                <input type="text" id="conn-user" placeholder="@TikTokUser" style="background:#0f111a; border:1px solid #333; color:white; padding:6px; border-radius: 4px;">
+                <button class="btn-primary" onclick="connectSystem()">Verbinden</button>
+            </div>
+        </div>
+
         <div id="view-dashboard" class="view active">
             <h2 style="margin-top: 0;">Live Übersicht</h2>
             <div class="grid">
@@ -138,6 +147,33 @@
     </div>
 
     <script>
+        async function connectSystem() {
+            const user = document.getElementById('conn-user').value;
+            if(!user) return alert("Bitte Username eingeben!");
+
+            const res = await fetch('/api/connect', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ uniqueId: user })
+            });
+            const data = await res.json();
+            if(data.ok) alert("Verbindung gestartet!");
+            else alert("Fehler: " + data.error);
+        }
+
+        function speak(text) {
+            // Prüfen, ob TTS im Frontend aktiviert ist (optional, falls Backend das nicht schon filtert)
+            const enabled = document.getElementById('conf-tts-enabled').value === "true";
+            if (!enabled) return;
+
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = "de-DE";
+            // Optional: Voice aus Dropdown lesen
+            // const voiceName = document.getElementById('conf-voice').value;
+            // ... Voice selection logic ...
+            window.speechSynthesis.speak(ut);
+        }
+
         // Navigation
         function showView(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
@@ -158,8 +194,11 @@
         ws.onmessage = (msg) => {
             const data = JSON.parse(msg.data);
 
+            if (data.kind === 'speak') {
+                speak(data.text);
+            }
             // Chat Toast from backend usually has kind='toast' and title='Chat ...'
-            if(data.kind === 'toast') {
+            else if(data.kind === 'toast') {
                 if(data.title.startsWith('Chat')) addChat(data);
                 else addEvent(data);
             } else if (data.kind === 'gift') {

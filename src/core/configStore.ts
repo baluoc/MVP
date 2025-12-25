@@ -77,6 +77,19 @@ export class ConfigStore {
     this.save();
   }
 
+  // --- ADDON MANAGEMENT ---
+  isAddonEnabled(addonId: string): boolean {
+    if (!this.data.addonsMeta) this.data.addonsMeta = {};
+    return this.data.addonsMeta[addonId]?.enabled ?? false;
+  }
+
+  setAddonEnabled(addonId: string, enabled: boolean) {
+    if (!this.data.addonsMeta) this.data.addonsMeta = {};
+    if (!this.data.addonsMeta[addonId]) this.data.addonsMeta[addonId] = {};
+    this.data.addonsMeta[addonId].enabled = enabled;
+    this.save();
+  }
+
   load() {
     try {
       if (fs.existsSync(CONFIG_FILE)) {

@@ -41,6 +41,7 @@ export type UserStats = {
   userId?: string;
   uniqueId?: string;
   nickname?: string;
+  profilePictureUrl?: string; // NEW
   firstSeenTs: number;
   lastSeenTs: number;
 

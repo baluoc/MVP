@@ -42,15 +42,46 @@ async function main() {
   // API Router (MIT stats!)
   const connectorState = () => ({
       mode: hasArg("--mock") ? "mock" : "tiktok",
-      connected: true
+      connected: true // TODO: make dynamic?
   });
 
-  overlay.app.use("/api", createApiRouter(addonHost, ringBuffer, configStore, connectorState, stats));
+  const connectSystem = (u: string) => {
+      if (hasArg("--mock")) {
+          startMock(bus);
+      } else {
+          startTikTok(u, bus);
+      }
+  };
+
+  overlay.app.use("/api", createApiRouter(addonHost, ringBuffer, configStore, connectorState, stats, connectSystem));
 
   // Bus Logic
   bus.subscribe((ev) => {
     console.log(`[Event] ${ev.type} von ${ev.user?.nickname ?? "Unknown"}`);
-    stats.ingest(ev);
+
+    // Config und Points logic
+    const conf = configStore.getCore();
+    stats.ingest(ev, conf.points);
+
+    // TTS Logic Trigger
+    if (conf.tts && conf.tts.enabled) {
+        let textToSpeak = "";
+
+        // Regel: Chat vorlesen?
+        if (ev.type === "chat" && conf.tts.readChat) {
+            textToSpeak = `${ev.user?.nickname} sagt: ${ev.payload.text}`;
+        }
+        // Regel: Geschenk vorlesen?
+        else if (ev.type === "gift" && conf.tts.readGifts) {
+            textToSpeak = `${ev.user?.nickname} sendet ${ev.payload.count} mal ${ev.payload.giftName}`;
+        }
+
+        // Sende Speak-Befehl an Frontend
+        if (textToSpeak) {
+            overlay.broadcast({ kind: "speak", text: textToSpeak });
+        }
+    }
+
     ringBuffer.push(ev);
     const cmd = eventToOverlay(ev);
     if (cmd) {
@@ -70,13 +101,7 @@ async function main() {
 
   await addonHost.loadAll();
 
-  if (hasArg("--mock")) {
-      startMock(bus);
-  } else {
-      const user = getArg("--user") || getArg("-u");
-      if (user) await startTikTok(user, bus);
-      else console.log("No user provided. Use --mock or --user <name>");
-  }
+  console.log("System ready. Waiting for connection...");
 }
 
 main().catch(console.error);
