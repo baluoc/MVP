@@ -60,4 +60,8 @@ test('OBSService - Connect and Actions', async (t) => {
     assert.strictEqual(mockObs.lastCall.req, 'SetSceneItemEnabled');
     assert.strictEqual(mockObs.lastCall.data.sceneItemId, 123);
     assert.strictEqual(mockObs.lastCall.data.sceneItemEnabled, true);
+
+    // Test Disconnect Cleanup
+    await obsService.disconnect();
+    assert.strictEqual(mockObs.connected, false);
 });

@@ -25,6 +25,10 @@ test('automated screenshots of all views', async ({ page }) => {
   // Wait for preview iframe to load (scale transform applied)
   await page.waitForTimeout(500);
 
+  // Verify Active Nav
+  await expect(page.getByTestId('nav-dashboard')).toHaveClass(/active/);
+  await expect(page.getByTestId('nav-users')).not.toHaveClass(/active/);
+
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '01_live_uebersicht.png') });
 
   // 2. System Settings
@@ -61,16 +65,19 @@ test('automated screenshots of all views', async ({ page }) => {
   // 5. Chat
   await page.getByTestId('nav-chat').click();
   await expect(page.getByTestId('view-settings-chat')).toBeVisible();
+  await expect(page.getByTestId('nav-chat')).toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '05_chat.png') });
 
   // 6. Commands
   await page.getByTestId('nav-commands').click();
   await expect(page.getByTestId('view-settings-commands')).toBeVisible();
+  await expect(page.getByTestId('nav-commands')).toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '06_commands.png') });
 
   // 7. TTS
   await page.getByTestId('nav-tts').click();
   await expect(page.getByTestId('view-settings-tts')).toBeVisible();
+  await expect(page.getByTestId('nav-tts')).toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '07_tts.png') });
 
   // 8. Gifts / Assets (include Modal)
@@ -112,11 +119,13 @@ test('automated screenshots of all views', async ({ page }) => {
   await page.getByTestId('nav-composer').click();
   await expect(page.getByTestId('view-overlay-composer')).toBeVisible();
   await expect(page.locator('#stage-container')).toBeVisible();
+  await expect(page.getByTestId('nav-composer')).toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '10_composer_wide.png') });
 
   // 11. User DB
   await page.getByTestId('nav-users').click();
   await expect(page.getByTestId('view-users')).toBeVisible();
+  await expect(page.getByTestId('nav-users')).toHaveClass(/active/);
   await page.screenshot({ path: path.join(SCREENSHOT_DIR, '11_stats.png') });
 
   // Extra: Reset Modal (Trigger from System Settings)

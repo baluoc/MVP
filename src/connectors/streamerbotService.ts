@@ -1,5 +1,6 @@
 import WebSocket from 'ws';
 import { EventEmitter } from 'events';
+import { calculateStreamerBotAuth } from '../utils/streamerbotAuth';
 
 interface SBConfig {
     address?: string;
@@ -52,9 +53,10 @@ export class StreamerBotService extends EventEmitter {
                 console.log('[Streamer.bot] Connected');
                 this.emit('connected');
 
-                // Initial Fetches
-                this.getActions();
-                this.getEvents();
+                // Note: Don't fetch immediately if auth is required. Wait for 'info' or explicit 'AuthenticationRequired' (v0.x varies).
+                // But standard flow:
+                // Connect -> Receive { info } with possible authenticationRequired: true
+                // If not auth required -> GetActions/Events
             });
 
             this.ws.on('close', () => {
@@ -75,6 +77,49 @@ export class StreamerBotService extends EventEmitter {
             this.ws.on('message', (data) => {
                  try {
                      const msg = JSON.parse(data.toString());
+
+                     // Auth Handling
+                     // Check if message indicates auth required (e.g. from initial info or error)
+                     // Standard Streamer.bot sends "info" on connect?
+                     // Or specific event?
+                     // Based on docs, SB sends `{"info": "Streamer.bot WebSocket Server", "version": "...", "source": "ws", "authenticationRequired": true, "salt": "...", "challenge": "..."}` on connect.
+
+                     if (msg.info && msg.authenticationRequired) {
+                         if (this.config.password) {
+                             const auth = calculateStreamerBotAuth(this.config.password, msg.salt, msg.challenge);
+                             this.sendJson({
+                                 request: 'Authenticate',
+                                 authentication: auth,
+                                 id: 'auth-req'
+                             });
+                         } else {
+                             console.warn("[Streamer.bot] Auth required but no password configured.");
+                         }
+                         return; // Wait for Auth response
+                     }
+
+                     // Auth Response?
+                     // If we sent Authenticate, we expect a response.
+                     if (msg.id === 'auth-req') {
+                         if (msg.status === 'ok') {
+                             console.log("[Streamer.bot] Authenticated successfully");
+                             this.getActions();
+                             this.getEvents();
+                         } else {
+                             console.error("[Streamer.bot] Authentication failed");
+                         }
+                         return;
+                     }
+
+                     // Standard Init (if no auth required, we might not get the info block in older versions, or just proceed)
+                     // If we get an event or response and we haven't initialized, maybe do it?
+                     // Ideally we trigger GetActions/Events only after Auth or if Auth not required.
+                     // Simple heuristic: If we receive "info" and auth NOT required, trigger init.
+                     if (msg.info && !msg.authenticationRequired) {
+                         this.getActions();
+                         this.getEvents();
+                     }
+
                      // Handle Responses
                      if (msg.status === 'ok') {
                          if (msg.actions) {
@@ -131,17 +176,19 @@ export class StreamerBotService extends EventEmitter {
     }
 
     private subscribeToDefaults() {
-        // We want to subscribe to General.Custom at minimum if it exists
-        // Structure of events from GetEvents is usually { "General": ["Custom", ...], ... }
         const subs: any = {};
         let hasSubs = false;
 
-        // Example: Subscribe to everything or selective
-        // For this task: Core relevant events (Action/General)
-        // If "General" exists, sub to it.
-        if (this.events["General"]) {
-            subs["General"] = this.events["General"];
-            hasSubs = true;
+        // Iterate over available categories in `this.events`
+        // `this.events` structure from GetEvents: { "General": ["Custom", ...], "Twitch": [...] }
+        for (const category of Object.keys(this.events)) {
+            // Subscribe to everything for robustness in this MVP context?
+            // Or filter? "General" is core.
+            if (category === 'General') {
+                subs[category] = this.events[category];
+                hasSubs = true;
+            }
+            // Add others as needed
         }
 
         if (hasSubs) {
@@ -150,7 +197,7 @@ export class StreamerBotService extends EventEmitter {
                 events: subs,
                 id: 'auto-sub'
             });
-            console.log("[Streamer.bot] Auto-subscribed to defaults");
+            console.log("[Streamer.bot] Auto-subscribed to defaults", Object.keys(subs));
         }
     }
 
