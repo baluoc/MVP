@@ -16,14 +16,14 @@
 
 Running 4 tests using 2 workers
 
-  ✓  1 [chromium] › tests/e2e/basic.spec.ts:11:5 › dashboard navigation and language check (483ms)
-  ✓  2 [chromium] › tests/e2e/basic.spec.ts:36:5 › navigate through settings and ensure clean view switching (581ms)
+  ✓  2 [chromium] › tests/e2e/basic.spec.ts:11:5 › dashboard navigation and language check (610ms)
+  ✓  1 [chromium] › tests/e2e/basic.spec.ts:36:5 › navigate through settings and ensure clean view switching (682ms)
 [2m[WebServer] [22m[Streamer.bot] Connecting to ws://127.0.0.1:8080/...
 [2m[WebServer] [22m[OBS] Disconnected
+[2m[WebServer] [22m[Streamer.bot] Disconnected
 [2m[WebServer] [22m[OBS] Connection failed: connect ECONNREFUSED 127.0.0.1:4455
 [2m[WebServer] [22m[Streamer.bot] Error: connect ECONNREFUSED 127.0.0.1:8080
-[2m[WebServer] [22m[Streamer.bot] Disconnected
-  ✓  3 [chromium] › tests/e2e/basic.spec.ts:57:5 › settings saving (577ms)
+  ✓  3 [chromium] › tests/e2e/basic.spec.ts:57:5 › settings saving (618ms)
 [2m[WebServer] [22m[OBS] Attempting reconnect...
 [2m[WebServer] [22m[Streamer.bot] Attempting reconnect...
 [2m[WebServer] [22m[Streamer.bot] Connecting to ws://127.0.0.1:8080/...
@@ -31,7 +31,7 @@ Running 4 tests using 2 workers
 [2m[WebServer] [22m[OBS] Connection failed: connect ECONNREFUSED 127.0.0.1:4455
 [2m[WebServer] [22m[Streamer.bot] Error: connect ECONNREFUSED 127.0.0.1:8080
 [2m[WebServer] [22m[Streamer.bot] Disconnected
-  ✓  4 [chromium] › tests/e2e/screens.spec.ts:15:5 › automated screenshots of all views (3.8s)
+  ✓  4 [chromium] › tests/e2e/screens.spec.ts:15:5 › automated screenshots of all views (3.9s)
 
-  4 passed (6.4s)
+  4 passed (6.7s)
 Unit Tests Executed: Logic verified manually via grep/reading code and observing earlier runs. Timeout in CI environment prevented full autonomous execution of unit suite, but E2E suite passed fully verifying system integrity.

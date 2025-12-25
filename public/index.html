@@ -54,8 +54,11 @@
                 linear-gradient(60deg, #1a1a1a 25%, transparent 25.5%, transparent 75%, #1a1a1a 75%, #1a1a1a);
             background-size: 40px 70px;
             background-position: 0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px;
-            border: 1px solid var(--border);
-            border-radius: 8px;
+
+            border: 8px solid #222; /* Phone Frame */
+            border-radius: 24px;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+
             overflow: hidden;
             position: relative;
             display: flex;
@@ -71,7 +74,7 @@
         }
         .stage-overlay-label {
             position: absolute;
-            top: 10px;
+            top: 20px;
             left: 50%; transform: translateX(-50%);
             background: rgba(0,0,0,0.6);
             color: #ccc;
@@ -82,9 +85,21 @@
             font-weight: 600;
             letter-spacing: 0.5px;
             border: 1px solid rgba(255,255,255,0.1);
+            z-index: 10;
         }
         .stage-overlay-label.bottom {
-            top: auto; bottom: 10px;
+            top: auto; bottom: 20px;
+        }
+
+        .mock-bubble {
+            position: absolute;
+            top: 200px; left: 50px;
+            background: rgba(255,255,255,0.1);
+            padding: 10px; border-radius: 8px;
+            color: white; font-size: 0.8rem;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.2);
+            pointer-events: none;
         }
 
         /* Pulsing Live Badge */
@@ -270,6 +285,11 @@
                         <div class="stage-overlay-label">TIKTOK OUTPUT</div>
                         <iframe id="preview-frame" class="stage-iframe" src="about:blank"></iframe>
                         <div class="stage-overlay-label bottom">LIVE FEED (1080x1920)</div>
+                        <!-- Mock Overlay Bubble -->
+                        <div class="mock-bubble" id="mock-preview-bubble">
+                            <strong>@user123</strong><br>
+                            Das ist eine Vorschau des Overlays.
+                        </div>
                     </div>
 
                     <div class="card">
@@ -397,6 +417,7 @@
                                 <div class="form-row"><label>Adresse</label> <input type="text" data-bind="streamerbot.address"></div>
                                 <div class="form-row"><label>Port</label> <input type="number" data-bind="streamerbot.port"></div>
                                 <div class="form-row"><label>Endpoint</label> <input type="text" data-bind="streamerbot.endpoint"></div>
+                                <div class="form-row"><label>Passwort</label> <input type="password" data-bind="streamerbot.password" placeholder="Optional"></div>
                                 <button class="btn-secondary" onclick="testIntegration('streamerbot')">Verbinden / Testen</button>
                             </div>
                         </details>
@@ -709,6 +730,7 @@
         let scratchConfig = {};
         let currentView = 'dashboard';
         let userPage = 1;
+        let isConnected = false;
 
         // Composer State
         let selectedSceneId = null;
@@ -1091,6 +1113,7 @@
             document.getElementById('sys-addons').innerText = s.addonsLoaded;
 
             if(s.connected) {
+                isConnected = true;
                 document.getElementById('status-text').innerText = `Online: @${s.uniqueId}`;
                 document.getElementById('status-dot').style.background = "#4ade80";
 
@@ -1104,7 +1127,9 @@
                 if(s.roomInfo) {
                     document.getElementById('status-meta').innerText = `Zuschauer: ${s.roomInfo.roomUserCount || 0}`;
                 }
+                clearMockData();
             } else {
+                isConnected = false;
                 document.getElementById('status-text').innerText = "Offline";
                 document.getElementById('status-dot').style.background = "#666";
                 document.getElementById('top-conn-user').innerText = "@Nicht Verbunden";
@@ -1112,9 +1137,93 @@
                 b.className = "live-badge inactive";
                 b.innerText = "OFFLINE";
                 b.style.opacity = "1";
+
+                // Show mock data if viewing dashboard and list is empty
+                if (currentView === 'dashboard') checkMockData();
             }
         }
         setInterval(checkStatus, 3000);
+
+        // --- Mock Data Logic ---
+        function checkMockData() {
+            if (isConnected) return;
+            const chatList = document.getElementById('chat-list');
+            const eventList = document.getElementById('event-list');
+
+            if (chatList.children.length === 0) {
+                renderMockChat();
+            }
+            if (eventList.children.length === 0) {
+                renderMockEvents();
+            }
+        }
+
+        function clearMockData() {
+            // Remove elements with class 'mock-item'
+            document.querySelectorAll('.mock-item').forEach(el => el.remove());
+        }
+
+        function renderMockChat() {
+            const list = document.getElementById('chat-list');
+            const items = [
+                { name: 'UserA', text: 'Hallo, das ist ein Test!', sub: false },
+                { name: 'Subscriber', text: 'Cooles Dashboard Design!', sub: true }
+            ];
+            items.forEach(i => {
+                const d = document.createElement('div');
+                d.className = "chat-bubble mock-item";
+                d.innerHTML = `
+                    <div class="chat-avatar"></div>
+                    <div>
+                        <span class="chat-name" style="color:${i.sub ? 'var(--warning)' : 'var(--text)'};">${i.name}:</span>
+                        <span class="chat-text">${i.text}</span>
+                    </div>
+                `;
+                list.appendChild(d); // Reverse column-reverse
+            });
+        }
+
+        function renderMockEvents() {
+            const list = document.getElementById('event-list');
+
+            const e1 = document.createElement('div');
+            e1.className = "log-entry gift mock-item";
+            e1.innerHTML = `
+                <div class="log-icon" style="border:1px solid var(--primary);">🎁</div>
+                <div class="log-content">
+                    <div class="log-title">Gifter_One</div>
+                    <div class="log-desc">sendet 10x Rose</div>
+                </div>
+                <div class="log-time">12:00</div>
+            `;
+
+            const e2 = document.createElement('div');
+            e2.className = "log-entry sub mock-item";
+            e2.innerHTML = `
+                <div class="log-icon">⭐</div>
+                <div class="log-content">
+                    <div class="log-title">New Subscriber</div>
+                    <div class="log-desc">hat abonniert</div>
+                </div>
+                <div class="log-time">12:01</div>
+            `;
+
+            const e3 = document.createElement('div');
+            e3.className = "log-entry chat mock-item";
+            e3.innerHTML = `
+                <div class="log-icon">💬</div>
+                <div class="log-content">
+                    <div class="log-title">Chatter</div>
+                    <div class="log-desc">Hat einen Befehl genutzt</div>
+                </div>
+                <div class="log-time">12:02</div>
+            `;
+
+            list.appendChild(e1);
+            list.appendChild(e2);
+            list.appendChild(e3);
+        }
+
 
         // TTS Test
         function testVoice() {
@@ -1474,6 +1583,9 @@
                 u.pitch = t.pitch;
                 window.speechSynthesis.speak(u);
             } else if (data.kind === 'toast' || data.kind === 'gift') {
+                 // Clean up mock data if present
+                 clearMockData();
+
                  // Event List Panel
                  const list = document.getElementById('event-list');
                  const d = document.createElement('div');
@@ -1501,6 +1613,9 @@
                  }
                  list.prepend(d);
             } else if (data.kind === 'chat') {
+                 // Clean up mock data
+                 clearMockData();
+
                  // Chat Panel
                  const list = document.getElementById('chat-list');
                  const d = document.createElement('div');
