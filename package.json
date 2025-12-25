@@ -31,6 +31,7 @@
   "homepage": "https://github.com/baluoc/MVP#readme",
   "dependencies": {
     "express": "^5.2.1",
+    "obs-websocket-js": "^5.0.7",
     "tiktok-live-connector": "^2.1.1-beta1",
     "ws": "^8.18.3"
   },
