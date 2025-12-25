@@ -6,246 +6,573 @@
     <title>TK Event Zentrale</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root { --bg: #0f111a; --panel: #1a1d29; --primary: #ff0050; --text: #fff; --muted: #8a8d98; --border: #2f3342; }
+        :root { --bg: #0f111a; --panel: #1a1d29; --primary: #ff0050; --accent: #00f2ea; --text: #fff; --muted: #8a8d98; --border: #2f3342; --success: #4ade80; --danger: #ef4444; --warning: #eab308; }
         body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; display: flex; height: 100vh; overflow: hidden; }
 
-        /* Layout */
-        .sidebar { width: 240px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; box-sizing: border-box; }
-        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        /* Layout & Scrollbars */
+        .sidebar { width: 240px; background: var(--panel); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px; flex-shrink: 0; }
+        .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: var(--bg); } ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
         /* Navigation */
-        .brand { font-size: 1.2rem; font-weight: 800; margin-bottom: 30px; color: var(--text); }
-        .brand span { color: var(--primary); }
-        .nav-item { padding: 10px; margin-bottom: 5px; border-radius: 6px; cursor: pointer; color: var(--muted); transition: 0.2s; display: flex; align-items: center; gap: 10px; }
-        .nav-item:hover, .nav-item.active { background: rgba(255, 0, 80, 0.1); color: var(--primary); }
+        .brand { font-size: 1.2rem; font-weight: 800; margin-bottom: 30px; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .brand span { color: var(--primary); background: rgba(255,0,80,0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.8em; }
+        .nav-item { padding: 12px; margin-bottom: 5px; border-radius: 8px; cursor: pointer; color: var(--muted); transition: 0.2s; display: flex; align-items: center; gap: 12px; font-weight: 500; }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.03); color: var(--text); }
+        .nav-item.active { background: rgba(255, 0, 80, 0.1); color: var(--primary); border-left: 3px solid var(--primary); }
 
         /* Views */
-        .view { display: none; padding: 20px; height: 100%; overflow-y: auto; box-sizing: border-box; }
-        .view.active { display: block; }
+        .view { display: none; padding: 25px; height: 100%; overflow-y: auto; box-sizing: border-box; }
+        .view.active { display: block; animation: fadeIn 0.2s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Dashboard Grid */
-        .grid { display: grid; grid-template-columns: 320px 1fr 320px; gap: 20px; height: calc(100vh - 80px); }
-        .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 10px; display: flex; flex-direction: column; overflow: hidden; }
-        .panel-head { padding: 15px; border-bottom: 1px solid var(--border); font-weight: 600; display: flex; justify-content: space-between; }
+        /* --- CARDS & GRID --- */
+        .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; padding-bottom: 50px; }
+        .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: border-color 0.2s; position: relative; }
+        .card:hover { border-color: rgba(255,255,255,0.1); }
 
-        /* Preview */
-        .preview-box { background: #000; flex: 1; position: relative; display: flex; justify-content: center; align-items: center; }
-        .overlay-msg { position: absolute; bottom: 100px; background: rgba(0,0,0,0.8); padding: 10px; border-radius: 8px; border: 1px solid var(--primary); display: none; }
+        .card-header { padding: 12px 15px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; height: 40px; }
+        .card-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
+        .card-body { padding: 15px; display: flex; flex-direction: column; gap: 15px; flex: 1; }
+        .card-footer { padding: 10px 15px; border-top: 1px solid var(--border); background: rgba(0,0,0,0.1); display: flex; justify-content: flex-end; gap: 10px; font-size: 0.8rem; }
+        .card-chips { display: flex; gap: 5px; }
 
-        /* Settings Form */
-        .settings-group { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-        .settings-group h3 { margin-top: 0; color: var(--primary); font-size: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; margin-bottom: 15px; }
-        .form-row { display: flex; gap: 20px; margin-bottom: 15px; }
-        .form-col { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-        label { font-size: 0.85rem; color: var(--muted); }
-        input, select { background: var(--bg); border: 1px solid var(--border); color: white; padding: 8px; border-radius: 4px; box-sizing: border-box; width: 100%; }
-        button.btn-primary { background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600; }
+        /* Card Overlay (Disabled State) */
+        .card-overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 17, 26, 0.85); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; backdrop-filter: blur(2px); border-radius: 11px; opacity: 0; pointer-events: none; transition: 0.3s; }
+        .card-overlay.active { opacity: 1; pointer-events: all; }
+        .overlay-msg { background: var(--panel); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateY(10px); }
+        .card.disabled .card-overlay { opacity: 1; pointer-events: all; } /* Fallback */
 
-        /* User Table */
-        table { width: 100%; border-collapse: collapse; }
-        th, td { text-align: left; padding: 10px; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
-        th { color: var(--muted); font-weight: 500; }
+        /* Badges & Chips */
+        .badge { font-size: 0.7rem; padding: 2px 8px; border-radius: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: inline-flex; align-items: center; }
+        .chip { font-size: 0.65rem; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+        .chip.active { background: rgba(74, 222, 128, 0.1); color: var(--success); border-color: rgba(74, 222, 128, 0.2); }
+        .badge.green { background: rgba(74, 222, 128, 0.15); color: var(--success); border: 1px solid rgba(74, 222, 128, 0.3); }
+        .badge.gray { background: rgba(255,255,255,0.05); color: var(--muted); border: 1px solid var(--border); }
+        .badge.red { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
 
+        /* Details / Accordion */
+        details { border: 1px solid var(--border); border-radius: 6px; overflow: hidden; background: rgba(0,0,0,0.1); }
+        details summary { padding: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; background: rgba(255,255,255,0.02); display: flex; align-items: center; justify-content: space-between; }
+        details summary:hover { background: rgba(255,255,255,0.05); }
+        details[open] summary { border-bottom: 1px solid var(--border); }
+        .details-content { padding: 15px; display: flex; flex-direction: column; gap: 15px; }
+
+        /* Form Elements */
+        label { font-size: 0.8rem; color: var(--muted); font-weight: 500; margin-bottom: 4px; display: block; }
+        .form-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 5px; }
+        .form-row label { margin-bottom: 0; }
+
+        input[type="text"], input[type="number"], select {
+            background: var(--bg); border: 1px solid var(--border); color: white; padding: 6px 10px; border-radius: 4px; font-size: 0.85rem; width: 100%; box-sizing: border-box; transition: 0.2s;
+        }
+        input:disabled, select:disabled { opacity: 0.5; cursor: not-allowed; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); }
+
+        /* Custom Toggle */
+        .check-group { display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.85rem; }
+        .check-group input { accent-color: var(--primary); }
+
+        /* Tooltip */
+        .with-tooltip { position: relative; cursor: help; border-bottom: 1px dotted var(--muted); }
+        .with-tooltip:hover::after {
+            content: attr(data-tooltip); position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%);
+            background: #000; color: #fff; padding: 5px 10px; border-radius: 4px; font-size: 0.75rem; white-space: nowrap; border: 1px solid var(--border); z-index: 100; margin-bottom: 5px;
+        }
+
+        /* Logs & Table */
+        .log-console { background: #000; padding: 10px; border-radius: 6px; font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; height: 180px; overflow-y: auto; color: #ccc; border: 1px solid var(--border); }
+        .log-entry { border-bottom: 1px solid #111; padding: 2px 0; display: flex; gap: 10px; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { text-align: left; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--border); padding: 5px; font-size: 0.75rem; text-transform: uppercase; }
+        td { padding: 8px 5px; border-bottom: 1px solid #222; }
+
+        /* Button */
+        .btn-primary { background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 0.85rem; }
+        .btn-icon { background: transparent; color: var(--muted); border: 1px solid var(--border); padding: 4px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .btn-icon:hover { color: var(--text); border-color: var(--text); }
+
+        /* Header Summary Bar */
+        .summary-bar { display: flex; gap: 15px; align-items: center; font-size: 0.8rem; color: var(--muted); margin-bottom: 20px; background: var(--panel); padding: 8px 15px; border-radius: 8px; border: 1px solid var(--border); }
+        .sum-item { display: flex; flex-direction: column; line-height: 1.1; }
+        .sum-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.7; }
+        .sum-val { color: var(--text); font-weight: 600; }
+        .sum-val.on { color: var(--success); }
     </style>
 </head>
 <body>
 
     <div class="sidebar">
-        <div class="brand"><span>TK</span> ZENTRALE</div>
+        <div class="brand"><span>TK</span> EVENT SERVER</div>
 
-        <div id="nav-dashboard" class="nav-item active" onclick="showView('dashboard')">📊 Live Dashboard</div>
-        <div id="nav-settings" class="nav-item" onclick="showView('settings')">⚙️ Einstellungen</div>
-        <div id="nav-users" class="nav-item" onclick="showView('users')">👥 Benutzer DB</div>
+        <div class="nav-item active" onclick="showView('dashboard')">📊 Dashboard</div>
+        <div class="nav-item" onclick="showView('settings')">⚙️ Settings</div>
+        <div class="nav-item" onclick="showView('users')">👥 User DB</div>
 
-        <div style="margin-top: auto; font-size: 0.8rem; color: var(--muted);">
-            Status: <span style="color: #4ade80;">● Verbunden</span>
+        <div style="margin-top: auto; padding-top:20px; border-top:1px solid var(--border);">
+            <div style="font-size: 0.75rem; color: var(--muted); margin-bottom: 5px;">CONNECTION</div>
+            <div style="display:flex; align-items:center; gap:8px;">
+                <div id="status-dot" style="width: 8px; height: 8px; background: #666; border-radius: 50%;"></div>
+                <span id="status-text" style="font-size: 0.85rem; color: #999;">Offline</span>
+            </div>
         </div>
     </div>
 
     <div class="main">
+        <!-- Top Bar -->
+        <div style="height: 50px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; background: var(--bg);">
+            <div style="font-weight: 600; font-size: 0.9rem;">System Control</div>
+            <div style="display:flex; gap:10px; align-items: center;">
+                <input type="text" id="conn-user" placeholder="@TikTokUser" value="agent_one" style="width: 140px; background: #000;">
+                <button class="btn-primary" onclick="connectSystem()">Verbinden</button>
+            </div>
+        </div>
 
         <div id="view-dashboard" class="view active">
-            <h2 style="margin-top: 0;">Live Übersicht</h2>
-            <div class="grid">
-                <div class="panel">
-                    <div class="panel-head">Live Bild (1080x1920)</div>
-                    <div class="preview-box">
-                        <iframe src="/overlay.html" style="width: 360px; height: 640px; border: none; transform: scale(0.85);"></iframe>
+            <div class="settings-grid" style="grid-template-columns: 350px 1fr 300px; height: calc(100vh - 130px);">
+                <!-- Live Preview -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Live Preview</span>
+                        <div class="card-chips"><span class="chip">1080x1920</span></div>
+                    </div>
+                    <div style="flex:1; background:#000; position:relative; display:flex; justify-content:center; align-items:center;">
+                        <span style="color:#333; font-size:0.8rem;">Overlay Frame</span>
+                        <div id="toast-overlay" style="position:absolute; bottom:100px; left:20px; right:20px; background:rgba(0,0,0,0.85); padding:10px; border-radius:8px; border:1px solid var(--primary); display:none; flex-direction:row; align-items:center; gap:10px;">
+                            <img id="toast-img" src="" style="width:40px; height:40px; border-radius:50%;">
+                            <div>
+                                <div id="toast-title" style="color:var(--primary); font-weight:bold; font-size:0.9rem;">User</div>
+                                <div id="toast-msg" style="color:white; font-size:0.8rem;">Text</div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-head">Live Chat</div>
-                    <div id="chat-list" style="flex: 1; overflow-y: auto; padding: 10px; font-size: 0.9rem; display: flex; flex-direction: column-reverse;"></div>
-                    <div style="padding: 10px; border-top: 1px solid var(--border); display: flex;">
-                        <input type="text" id="chat-input" placeholder="Nachricht senden..." style="flex: 1; margin-right: 10px;">
-                        <button class="btn-primary" onclick="sendChat()">Senden</button>
+                <!-- Chat -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Chat Stream</span>
+                        <div class="card-chips"><span class="chip active">LIVE</span></div>
+                    </div>
+                    <div id="chat-list" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column-reverse; gap:10px;"></div>
+                    <div style="padding:10px; border-top:1px solid var(--border); display:flex; gap:10px;">
+                        <input id="chat-mock-input" type="text" placeholder="Simulate Chat...">
+                        <button class="btn-primary" onclick="sendMockChat()">Send</button>
                     </div>
                 </div>
 
-                <div class="panel">
-                    <div class="panel-head">Ereignis-Protokoll</div>
-                    <div id="event-list" style="flex: 1; overflow-y: auto; padding: 10px;"></div>
+                <!-- Events -->
+                <div class="card">
+                    <div class="card-header"><span class="card-title">Events</span></div>
+                    <div id="event-list" style="flex:1; overflow-y:auto; padding:15px; display:flex; flex-direction:column; gap:8px;"></div>
                 </div>
             </div>
         </div>
 
         <div id="view-settings" class="view">
-            <h2>System Einstellungen</h2>
 
-            <div class="settings-group">
-                <h3>💰 Punktesystem</h3>
-                <div class="form-row">
-                    <div class="form-col"><label for="conf-coin">Punkte pro Münze (Geschenk)</label><input type="number" id="conf-coin"></div>
-                    <div class="form-col"><label for="conf-share">Punkte pro Teilen</label><input type="number" id="conf-share"></div>
-                </div>
-                <div class="form-row">
-                    <div class="form-col"><label for="conf-chat">Punkte pro Nachricht</label><input type="number" step="0.1" id="conf-chat"></div>
-                    <div class="form-col"><label for="conf-sub">Abo-Bonus (%)</label><input type="number" id="conf-sub"></div>
-                </div>
-            </div>
+            <!-- Summary Bar -->
+            <div class="summary-bar">
+                <div class="sum-item"><span class="sum-label">TTS Engine</span><span class="sum-val" id="sum-tts">Off</span></div>
+                <div style="width:1px; height:20px; background:var(--border);"></div>
+                <div class="sum-item"><span class="sum-label">Trigger</span><span class="sum-val" id="sum-trigger">Any</span></div>
+                <div style="width:1px; height:20px; background:var(--border);"></div>
+                <div class="sum-item"><span class="sum-label">Cost</span><span class="sum-val" id="sum-cost">Free</span></div>
+                <div style="width:1px; height:20px; background:var(--border);"></div>
+                <div class="sum-item"><span class="sum-label">Voice</span><span class="sum-val" id="sum-voice">Default</span></div>
 
-            <div class="settings-group">
-                <h3>🔊 Text-zu-Sprache (TTS)</h3>
-                <div class="form-row">
-                    <div class="form-col">
-                        <label for="conf-tts-enabled">Status</label>
-                        <select id="conf-tts-enabled"><option value="true">Aktiviert</option><option value="false">Deaktiviert</option></select>
-                    </div>
-                    <div class="form-col">
-                        <label for="conf-voice">Stimme</label>
-                        <select id="conf-voice"><option value="Google Deutsch">Google Deutsch</option></select>
-                    </div>
+                <div style="margin-left:auto;">
+                    <button class="btn-primary" onclick="saveSettings()">Save Config</button>
                 </div>
             </div>
 
-            <button class="btn-primary" onclick="saveSettings()">Einstellungen Speichern</button>
+            <div class="settings-grid">
+
+                <!-- General Settings -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">General Settings</span>
+                        <div class="card-chips">
+                            <span class="chip" id="chip-lang">DE</span>
+                            <span class="chip" id="chip-status">OFF</span>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Basic TTS configuration & master switch.</div>
+
+                        <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; margin-bottom:10px; border:1px solid var(--border);">
+                            <div class="check-group">
+                                <input type="checkbox" id="tts-enabled" onchange="updateUIState()">
+                                <span style="font-weight:600; color:white;">Enable TTS System</span>
+                            </div>
+                        </div>
+
+                        <div class="form-row"><label>Language</label><select id="tts-lang" style="width:60%"><option value="de-DE">Deutsch (DE)</option><option value="en-US">English (US)</option></select></div>
+                        <div class="form-row"><label>Voice</label><select id="tts-voice" style="width:60%"><option value="default">System Default</option></select></div>
+                        <div class="form-row"><label>Volume</label><input type="range" id="tts-vol" min="0" max="1" step="0.1" style="width:60%"></div>
+
+                        <details style="margin-top:10px;">
+                            <summary>Fine Tuning (Speed/Pitch)</summary>
+                            <div class="details-content">
+                                <div class="form-row"><label>Speed</label><input type="range" id="tts-speed" min="0.5" max="2" step="0.1" style="width:60%"></div>
+                                <div class="form-row"><label>Pitch</label><input type="range" id="tts-pitch" min="0.5" max="2" step="0.1" style="width:60%"></div>
+                                <div class="check-group"><input type="checkbox" id="tts-random"> <span>Random Voice per User</span></div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Allowed Users -->
+                <div class="card" id="card-permissions">
+                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
+                    <div class="card-header">
+                        <span class="card-title">Permissions</span>
+                        <div class="card-chips"><span class="chip" id="chip-roles">ALL</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Who is allowed to trigger TTS?</div>
+
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                            <div class="check-group"><input type="checkbox" id="allow-all" onchange="updateUIState()"> <strong>All Users</strong></div>
+                            <div class="check-group"><input type="checkbox" id="allow-follow"> <span>Followers</span></div>
+                            <div class="check-group"><input type="checkbox" id="allow-sub"> <span>Subs</span></div>
+                            <div class="check-group"><input type="checkbox" id="allow-mod"> <span>Mods</span></div>
+                            <div class="check-group"><input type="checkbox" id="allow-team"> <span>Team</span></div>
+                            <div class="check-group"><input type="checkbox" id="allow-top"> <span>Top Gifters</span></div>
+                        </div>
+
+                        <hr style="border:0; border-top:1px solid var(--border); width:100%; margin:15px 0;">
+
+                        <label>Trigger Method</label>
+                        <select id="trigger-method" onchange="updateUIState()">
+                            <option value="any">Any Comment</option>
+                            <option value="dot">Starts with dot (.)</option>
+                            <option value="slash">Starts with slash (/)</option>
+                            <option value="command">Specific Command (!tts)</option>
+                        </select>
+                        <div style="margin-top:8px;">
+                            <input type="text" id="tts-command" placeholder="!tts" disabled>
+                            <div id="hint-command" style="font-size:0.7rem; color:var(--muted); margin-top:2px; display:none;">Only active when Trigger = Command</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spam Protection -->
+                <div class="card" id="card-protection">
+                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
+                    <div class="card-header">
+                        <span class="card-title">Protection & Cost</span>
+                        <div class="card-chips"><span class="chip" id="chip-pricing">FREE</span></div>
+                    </div>
+                    <div class="card-body">
+                        <div style="font-size:0.8rem; color:var(--muted); margin-bottom:10px;">Prevent spam and manage pricing.</div>
+
+                        <div class="form-row"><label class="with-tooltip" data-tooltip="Seconds between messages">Cooldown (s)</label><input type="number" id="spam-cool" value="0" style="width:60px;"></div>
+                        <div class="form-row"><label>Max Length</label><input type="number" id="spam-len" value="300" style="width:60px;"></div>
+
+                        <div style="margin: 15px 0; border:1px solid var(--border); border-radius:6px; padding:10px;">
+                            <div class="check-group" style="margin-bottom:8px;">
+                                <input type="radio" name="cost" value="free" checked onchange="updateUIState()"> <span>Free for everyone</span>
+                            </div>
+                            <div class="check-group">
+                                <input type="radio" name="cost" value="cost" onchange="updateUIState()"> <span>Charge Points</span>
+                            </div>
+                            <div style="margin-left:24px; margin-top:5px;">
+                                <input type="number" id="tts-cost" placeholder="5" disabled style="width:80px;">
+                                <span style="font-size:0.75rem; color:var(--muted);">pts per msg</span>
+                            </div>
+                        </div>
+
+                        <details>
+                            <summary>Advanced Filtering</summary>
+                            <div class="details-content">
+                                <div class="check-group"><input type="checkbox" id="filter-spam" checked> <span>Block Letter Spam (aaaaa)</span></div>
+                                <div class="check-group"><input type="checkbox" id="filter-mentions"> <span>Block @Mentions</span></div>
+                            </div>
+                        </details>
+                    </div>
+                </div>
+
+                <!-- Special Users Table -->
+                <div class="card" id="card-special">
+                    <div class="card-overlay"><div class="overlay-msg">Please Enable TTS First</div></div>
+                    <div class="card-header">
+                        <span class="card-title">Special Users</span>
+                        <div class="card-chips">
+                            <button class="btn-icon" title="Add User">+</button>
+                            <button class="btn-icon" title="Import">⬇</button>
+                        </div>
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <div style="padding:10px; border-bottom:1px solid var(--border);">
+                            <input type="text" placeholder="🔍 Search User..." style="padding:4px 8px;">
+                        </div>
+                        <div style="overflow-y:auto; max-height:200px;">
+                            <table>
+                                <thead><tr><th>User</th><th>Voice</th><th>Actions</th></tr></thead>
+                                <tbody>
+                                    <tr><td colspan="3" style="text-align:center; color:var(--muted); padding:20px;">No overrides defined</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logs & Test -->
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-title">Tester & Logs</span>
+                        <div class="card-chips">
+                             <button class="btn-icon" onclick="document.getElementById('tts-logs').innerHTML=''" title="Clear">🗑</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <input type="text" id="test-text" placeholder="Hello World" value="Hello World">
+                            <button class="btn-primary" onclick="testVoice()">▶</button>
+                        </div>
+                        <div id="tts-logs" class="log-console">
+                            <div class="log-entry"><span style="color:#666;">[Sys]</span> Ready.</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <div id="view-users" class="view">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h2>Benutzer Datenbank</h2>
-                <button class="btn-primary" style="background: #ef4444;" onclick="resetStats()">⚠️ Alle Punkte Löschen</button>
-            </div>
-            <div class="panel">
-                <table>
-                    <thead><tr><th>Name</th><th>Punkte</th><th>Diamanten</th><th>Zuletzt gesehen</th></tr></thead>
-                    <tbody id="user-table-body"></tbody>
-                </table>
+            <h2>User Database</h2>
+            <div class="card">
+                <div class="card-body">
+                    <p style="color:var(--muted);">User management table placeholder.</p>
+                </div>
             </div>
         </div>
 
     </div>
 
     <script>
-        // Navigation
+        // --- UI & LOGIC ---
         function showView(id) {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + id).classList.add('active');
-            document.getElementById('nav-' + id).classList.add('active');
+
+            // Highlight nav
+            const navs = document.querySelectorAll('.nav-item');
+            if(id === 'dashboard') navs[0].classList.add('active');
+            if(id === 'settings') navs[1].classList.add('active');
+            if(id === 'users') navs[2].classList.add('active');
 
             if(id === 'settings') loadSettings();
-            if(id === 'users') loadUsers();
         }
 
-        // --- DASHBOARD LOGIC ---
+        function updateUIState() {
+            // 1. Master Switch (Overlay Logic)
+            const enabled = document.getElementById('tts-enabled').checked;
+            const overlays = document.querySelectorAll('.card-overlay');
+            const statusChip = document.getElementById('chip-status');
+            const sumTTS = document.getElementById('sum-tts');
+
+            if(enabled) {
+                overlays.forEach(el => el.classList.remove('active'));
+                statusChip.innerText = "ACTIVE"; statusChip.className = "chip active";
+                sumTTS.innerText = "On"; sumTTS.className = "sum-val on";
+            } else {
+                overlays.forEach(el => el.classList.add('active'));
+                statusChip.innerText = "OFF"; statusChip.className = "chip";
+                sumTTS.innerText = "Off"; sumTTS.className = "sum-val";
+            }
+
+            // 2. Trigger Dependency
+            const method = document.getElementById('trigger-method').value;
+            const cmdInput = document.getElementById('tts-command');
+            const cmdHint = document.getElementById('hint-command');
+
+            if(method === 'command') {
+                cmdInput.disabled = false;
+                cmdHint.style.display = 'none';
+            } else {
+                cmdInput.disabled = true;
+                cmdHint.style.display = 'block';
+            }
+            document.getElementById('sum-trigger').innerText = method.toUpperCase();
+
+            // 3. Cost Dependency
+            const costMode = document.querySelector('input[name="cost"]:checked').value;
+            const costInput = document.getElementById('tts-cost');
+            const pricingChip = document.getElementById('chip-pricing');
+
+            if(costMode === 'free') {
+                costInput.disabled = true;
+                pricingChip.innerText = "FREE"; pricingChip.className = "chip active";
+                document.getElementById('sum-cost').innerText = "Free";
+            } else {
+                costInput.disabled = false;
+                pricingChip.innerText = "PAID"; pricingChip.className = "chip";
+                document.getElementById('sum-cost').innerText = (costInput.value || 5) + " pts";
+            }
+
+            // 4. Lang Chip
+            document.getElementById('chip-lang').innerText = document.getElementById('tts-lang').value.split('-')[0].toUpperCase();
+        }
+
+        // --- MOCK CHAT & EVENTS ---
         const chatList = document.getElementById('chat-list');
         const eventList = document.getElementById('event-list');
 
-        // WebSocket for live updates
-        const ws = new WebSocket(`ws://${location.host}/overlay/ws`);
-        ws.onmessage = (msg) => {
-            const data = JSON.parse(msg.data);
-
-            // Chat Toast from backend usually has kind='toast' and title='Chat ...'
-            if(data.kind === 'toast') {
-                if(data.title.startsWith('Chat')) addChat(data);
-                else addEvent(data);
-            } else if (data.kind === 'gift') {
-                addEvent(data);
-            }
-        };
-
         function addChat(data) {
             const div = document.createElement('div');
-            div.style.marginBottom = "5px";
-            div.innerHTML = `<strong style="color: var(--primary);">${data.title.replace('Chat ', '')}:</strong> ${data.text}`;
-            chatList.prepend(div); // Newest top
+            const img = data.userImage || `https://api.dicebear.com/9.x/avataaars/svg?seed=${data.title}`;
+            div.innerHTML = `
+                <div style="display:flex; gap:10px; align-items:flex-start;">
+                    <img src="${img}" style="width:28px; height:28px; border-radius:50%; border:1px solid var(--border);">
+                    <div>
+                        <div style="font-size:0.75rem; font-weight:700; color:var(--primary);">${data.title.replace('Chat ', '')}</div>
+                        <div style="font-size:0.85rem; color:#ddd;">${data.text}</div>
+                    </div>
+                </div>
+            `;
+            chatList.prepend(div);
+            if(document.getElementById('tts-enabled').checked) {
+                logTTS(`${data.title}: ${data.text}`);
+            }
         }
 
         function addEvent(data) {
-            if(data.title === 'Like') return; // Filter spammy likes from main event list
+            if(data.title === "Like") return;
             const div = document.createElement('div');
-            div.style.padding = "10px"; div.style.background = "rgba(255,255,255,0.05)"; div.style.marginBottom = "5px"; div.style.borderRadius = "5px";
-            const txt = data.text || (data.giftName ? `${data.giftName} x${data.count}` : '');
-            div.innerHTML = `<strong>${data.title || data.from}</strong><br><small style="color:#ccc;">${txt}</small>`;
+            const isGift = data.kind === 'gift';
+            const color = isGift ? 'var(--primary)' : 'var(--accent)';
+
+            div.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px; padding:8px; border-left:2px solid ${color}; background:rgba(255,255,255,0.02); margin-bottom:4px; border-radius:0 4px 4px 0;">
+                    <div style="font-weight:600; font-size:0.8rem;">${data.title || data.from}</div>
+                    <div style="font-size:0.75rem; color:var(--muted);">${data.text || (data.giftName + ' x' + data.count)}</div>
+                </div>
+            `;
             eventList.prepend(div);
+
+            if(isGift) {
+                document.getElementById('toast-img').src = data.giftIconUrl || '';
+                document.getElementById('toast-title').innerText = data.from;
+                document.getElementById('toast-msg').innerText = `sent ${data.giftName} x${data.count}`;
+                document.getElementById('toast-overlay').style.display = 'flex';
+                setTimeout(() => document.getElementById('toast-overlay').style.display = 'none', 3000);
+            }
         }
 
-        async function sendChat() {
-            const input = document.getElementById('chat-input');
-            await fetch('/api/chat', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ text: input.value }) });
-            input.value = "";
-        }
-
-        // --- SETTINGS LOGIC ---
+        // --- API & SETTINGS ---
         async function loadSettings() {
-            const res = await fetch('/api/settings');
-            const conf = await res.json();
+            try {
+                const res = await fetch('/api/settings');
+                const conf = await res.json();
+                const t = conf.tts || {};
 
-            // Safety check in case fields missing
-            const p = conf.points || {};
-            document.getElementById('conf-coin').value = p.coin || 10;
-            document.getElementById('conf-share').value = p.share || 50;
-            document.getElementById('conf-chat').value = p.chat || 5;
-            document.getElementById('conf-sub').value = p.subBonus || 10;
+                document.getElementById('tts-enabled').checked = t.enabled;
+                document.getElementById('tts-lang').value = t.language || 'de-DE';
+                document.getElementById('tts-vol').value = t.volume;
+                document.getElementById('tts-speed').value = t.speed;
+                document.getElementById('tts-pitch').value = t.pitch;
+                document.getElementById('tts-random').checked = t.randomVoice;
 
-            const t = conf.tts || {};
-            document.getElementById('conf-tts-enabled').value = t.enabled ? "true" : "false";
+                const a = t.allowed || {};
+                document.getElementById('allow-all').checked = a.all;
+                document.getElementById('allow-follow').checked = a.follower;
+                document.getElementById('allow-sub').checked = a.sub;
+
+                // Trigger
+                document.getElementById('trigger-method').value = t.trigger || 'any';
+
+                // Cost
+                const mode = t.mode || 'free';
+                document.querySelector(`input[name="cost"][value="${mode}"]`).checked = true;
+                if(t.costPerMsg) document.getElementById('tts-cost').value = t.costPerMsg;
+
+                updateUIState();
+            } catch(e) { console.error("Load failed", e); }
         }
 
         async function saveSettings() {
             const body = {
-                points: {
-                    coin: Number(document.getElementById('conf-coin').value),
-                    share: Number(document.getElementById('conf-share').value),
-                    chat: Number(document.getElementById('conf-chat').value),
-                    subBonus: Number(document.getElementById('conf-sub').value)
-                },
                 tts: {
-                    enabled: document.getElementById('conf-tts-enabled').value === "true",
-                    voice: document.getElementById('conf-voice').value
+                    enabled: document.getElementById('tts-enabled').checked,
+                    language: document.getElementById('tts-lang').value,
+                    volume: Number(document.getElementById('tts-vol').value),
+                    speed: Number(document.getElementById('tts-speed').value),
+                    pitch: Number(document.getElementById('tts-pitch').value),
+                    randomVoice: document.getElementById('tts-random').checked,
+                    allowed: {
+                        all: document.getElementById('allow-all').checked,
+                        follower: document.getElementById('allow-follow').checked,
+                        sub: document.getElementById('allow-sub').checked
+                    },
+                    trigger: document.getElementById('trigger-method').value,
+                    mode: document.querySelector('input[name="cost"]:checked').value,
+                    costPerMsg: Number(document.getElementById('tts-cost').value)
                 }
             };
             await fetch('/api/settings', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(body) });
-            alert("Gespeichert!");
+            alert("Settings Saved!");
         }
 
-        // --- USER DB LOGIC ---
-        async function loadUsers() {
-            const res = await fetch('/api/users?limit=20');
-            const data = await res.json();
-            const tbody = document.getElementById('user-table-body');
-            tbody.innerHTML = '';
-
-            data.users.forEach(u => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${u.nickname || u.uniqueId}</td>
-                    <td style="color: var(--primary); font-weight:bold;">${Math.floor(u.points || 0)}</td>
-                    <td>${u.diamondCount}</td>
-                    <td>${new Date(u.lastSeenTs).toLocaleTimeString()}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+        async function connectSystem() {
+            const u = document.getElementById('conn-user').value;
+            if(!u) return;
+            document.getElementById('status-text').innerText = "Connecting...";
+            document.getElementById('status-dot').style.background = "#eab308";
+            await fetch('/api/connect', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ uniqueId: u }) });
         }
 
-        async function resetStats() {
-            if(confirm("Wirklich ALLE Punkte löschen?")) {
-                await fetch('/api/reset-stats', { method: 'POST' });
-                loadUsers();
+        // --- TTS ENGINE ---
+        function testVoice() {
+            const text = document.getElementById('test-text').value;
+            speak(text);
+        }
+
+        function speak(text) {
+            logTTS("Speaking: " + text);
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = document.getElementById('tts-lang').value;
+            ut.volume = Number(document.getElementById('tts-vol').value);
+            ut.rate = Number(document.getElementById('tts-speed').value);
+            ut.pitch = Number(document.getElementById('tts-pitch').value);
+            window.speechSynthesis.speak(ut);
+        }
+
+        function logTTS(msg) {
+            const logs = document.getElementById('tts-logs');
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+            const div = document.createElement('div');
+            div.className = "log-entry";
+            div.innerHTML = `<span style="color:var(--muted);">[${time}]</span> ${msg}`;
+            logs.prepend(div);
+        }
+
+        // --- WEBSOCKET ---
+        const ws = new WebSocket(`ws://${location.host}/overlay/ws`);
+        ws.onopen = () => {
+            document.getElementById('status-text').innerText = "System Online";
+            document.getElementById('status-dot').style.background = "#4ade80";
+        };
+        ws.onmessage = (msg) => {
+            const data = JSON.parse(msg.data);
+            if(data.kind === 'toast') {
+                if(data.title.includes('Chat')) addChat(data);
+                else addEvent(data);
+            } else if (data.kind === 'gift') {
+                addEvent(data);
+            } else if (data.kind === 'speak') {
+                speak(data.text);
             }
+        };
+
+        function sendMockChat() {
+            const txt = document.getElementById('chat-mock-input').value;
+            if(!txt) return;
+            addChat({ title: "Me", text: txt, userImage: "https://api.dicebear.com/9.x/avataaars/svg?seed=Me" });
+            document.getElementById('chat-mock-input').value = "";
         }
     </script>
 </body>

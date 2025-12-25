@@ -43,7 +43,7 @@ export class UserStatsStore {
     };
   }
 
-  ingest(ev: AppEvent) {
+  ingest(ev: AppEvent, pointsConfig?: any) {
     const key = userKey(ev);
     if (!key) return;
 
@@ -94,13 +94,20 @@ export class UserStatsStore {
     // PUNKTE BERECHNUNG (Live-Update)
     // Hier könnte man später komplexe Logik einbauen (aus Config)
     // Fürs Erste: 1 Like = 1 Punkt, 1 Chat = 5 Punkte
-    this.recalcScore(row);
+    this.recalcScore(row, pointsConfig);
   }
 
-  private recalcScore(user: UserStats) {
-      // Beispiel-Formel (sollte idealerweise Config nutzen, aber hier im Store hardcoded als Fallback)
-      // Wir machen das später dynamisch via Config im Ingest
-      user.points = (user.likeCount * 1) + (user.chatCount * 5) + (user.diamondCount * 10) + (user.manualPoints || 0);
+  private recalcScore(user: UserStats, cfg?: any) {
+      // Config or Defaults
+      const p = cfg || { coin: 10, chat: 5, share: 50 };
+
+      let score = 0;
+      score += (user.diamondCount || 0) * (p.coin || 10);
+      score += (user.chatCount || 0) * (p.chat || 5);
+      score += (user.shareCount || 0) * (p.share || 50);
+      score += (user.likeCount || 0) * 1; // Like ist meist fix 1 oder wenig
+
+      user.points = score + (user.manualPoints || 0);
   }
 
   // Support for manual adjustment
@@ -121,7 +128,7 @@ export class UserStatsStore {
       if (!user) return null;
 
       user.manualPoints = (user.manualPoints || 0) + delta;
-      this.recalcScore(user);
+      this.recalcScore(user); // Nutzt hier nur Fallback-Werte, aber das ist ok für manuellen Eingriff
 
       this.save();
       return user;

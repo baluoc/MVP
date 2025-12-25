@@ -9,11 +9,21 @@ export function createApiRouter(
   ringBuffer: RingBuffer,
   configStore: ConfigStore,
   connectorState: () => any,
-  stats: UserStatsStore // <--- Stats Store muss hier rein!
+  stats: UserStatsStore,
+  onConnect: (uniqueId: string) => void
 ) {
   const r = Router();
 
   // --- CORE ROUTES ---
+
+  // 0. Manual Connect
+  r.post("/connect", (req, res) => {
+    const { uniqueId } = req.body;
+    if (!uniqueId) return res.status(400).json({ error: "Missing uniqueId" });
+    console.log("[API] Manuelle Verbindung für:", uniqueId);
+    onConnect(uniqueId);
+    res.json({ ok: true });
+  });
 
   // 1. Settings (Config)
   r.get("/settings", (req, res) => {
