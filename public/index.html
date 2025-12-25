@@ -156,6 +156,7 @@
         .settings-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px; padding-bottom: 50px; }
         .card { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: border-color 0.2s; position: relative; }
         .card:hover { border-color: rgba(255,255,255,0.1); }
+        .card.full-width { grid-column: 1 / -1; }
 
         .card-header { padding: 12px 15px; border-bottom: 1px solid var(--border); background: rgba(0,0,0,0.2); display: flex; justify-content: space-between; align-items: center; height: 40px; }
         .card-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; }
@@ -219,6 +220,27 @@
         .stage-widget:hover, .stage-widget.selected { border-color: var(--primary); z-index: 10; }
         .stage-widget .handle { width: 10px; height: 10px; background: white; position: absolute; bottom: -5px; right: -5px; cursor: nwse-resize; display: none; }
         .stage-widget.selected .handle { display: block; }
+
+        /* MCP SPECIFIC */
+        .status-indicator { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 1.1rem; margin-bottom: 10px; }
+        .status-dot { width: 12px; height: 12px; border-radius: 50%; background: #666; display: inline-block; }
+        .status-dot.running { background: #4ade80; box-shadow: 0 0 10px #4ade80; }
+        .status-dot.error { background: #ef4444; }
+
+        .log-output { background: #111; border: 1px solid var(--border); padding: 10px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; color: #ddd; height: 100px; overflow-y: auto; white-space: pre-wrap; }
+        .log-output.small { height: 60px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .policy-list { list-style: none; padding: 0; font-size: 0.85rem; color: var(--muted); }
+        .policy-list li { margin-bottom: 5px; }
+        .policy-list strong { color: var(--text); }
+        .empty-state { color: var(--muted); font-style: italic; text-align: center; padding: 20px; }
+
+        /* Taskboard */
+        .task-col { background: rgba(0,0,0,0.2); border-radius: 6px; padding: 10px; display:flex; flex-direction:column; }
+        .col-head { font-weight: 700; text-align:center; margin-bottom:10px; text-transform:uppercase; font-size:0.8rem; color:var(--muted); border-bottom:2px solid var(--border); padding-bottom:5px; }
+        .task-list { display:flex; flex-direction:column; gap:8px; min-height:50px; }
+        .task-card { background: var(--panel); border: 1px solid var(--border); border-radius: 4px; padding: 8px; font-size: 0.85rem; cursor:grab; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .task-card:hover { border-color: var(--primary); }
     </style>
 </head>
 <body>
@@ -242,6 +264,9 @@
         <div class="nav-group">Overlay</div>
         <div class="nav-item nav-sub" onclick="showView('overlays')" data-view="overlays" data-testid="nav-overlays">Overlays</div>
         <div class="nav-item nav-sub" onclick="showView('overlay-composer')" data-view="overlay-composer" data-testid="nav-composer">Overlay-Composer</div>
+
+        <div class="nav-group">Entwicklung</div>
+        <div class="nav-item nav-sub" onclick="showView('mcp')" data-view="mcp" data-testid="nav-mcp">MCP Workshop</div>
 
 
         <div style="margin-top: auto; padding-top:20px; border-top:1px solid var(--border);">
@@ -281,6 +306,9 @@
 
                 <!-- Col 1: Live Vorschau -->
                 <div style="display:flex; flex-direction:column; gap:15px;">
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button class="btn-secondary" style="font-size:0.7rem; padding:4px 8px;" onclick="showView('mcp')">MCP öffnen</button>
+                    </div>
                     <div class="stage-container-preview" id="preview-container">
                         <div class="stage-overlay-label">TIKTOK OUTPUT</div>
                         <iframe id="preview-frame" class="stage-iframe" src="about:blank"></iframe>
@@ -664,6 +692,122 @@
             </div>
         </div>
 
+        <!-- MCP VIEW -->
+        <div id="view-mcp" class="view hidden" data-testid="view-mcp">
+          <div class="view-header" style="margin-bottom:20px;">
+            <h2>MCP - Master Control Program</h2>
+          </div>
+
+          <div class="dashboard-grid">
+             <!-- Card 1: Status -->
+             <div class="card">
+                 <div class="card-header"><span class="card-title">Status</span></div>
+                 <div class="card-body">
+                     <div id="mcp-status-display" class="status-indicator">
+                         <span class="status-dot"></span> <span class="status-text">Laden...</span>
+                     </div>
+                     <div class="status-details" id="mcp-status-details"></div>
+                     <div class="btn-group">
+                         <button id="mcp-start-btn" class="btn-primary">Start</button>
+                         <button id="mcp-stop-btn" class="btn-danger">Stop</button>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 2: Auth -->
+             <div class="card">
+                 <div class="card-header"><span class="card-title">Verbindung & Auth</span></div>
+                 <div class="card-body">
+                     <p class="description">OAuth 2.0 Integration & Credentials</p>
+
+                     <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:6px; margin-bottom:10px;">
+                         <div class="form-row"><label>Public URL</label> <input type="text" id="mcp-public-url" readonly></div>
+                         <div class="form-row"><label>Client ID</label> <input type="text" id="mcp-client-id" readonly></div>
+                         <div class="form-row"><label>Client Secret</label>
+                             <div style="display:flex; gap:5px; width:100%;">
+                                 <input type="text" id="mcp-client-secret" readonly value="********">
+                                 <button class="btn-icon" onclick="copySecret()">📋</button>
+                             </div>
+                         </div>
+                         <button class="btn-secondary" style="margin-top:5px; width:100%;" onclick="generateCredentials()">Neu Generieren</button>
+                     </div>
+
+                     <button id="mcp-auth-test-btn" class="btn-secondary">Auth Endpoints Testen</button>
+                     <div id="mcp-auth-result" class="log-output small" style="margin-top:10px;"></div>
+                 </div>
+             </div>
+
+             <!-- Card 3: Policies -->
+             <div class="card">
+                 <div class="card-header"><span class="card-title">Rollen & Policies</span></div>
+                 <div class="card-body">
+                     <ul class="policy-list">
+                         <li><strong>addon_dev:</strong> addons/**, public/**</li>
+                         <li><strong>core_fix:</strong> src/**, public/**</li>
+                         <li><strong>config_mgr:</strong> data/config.json</li>
+                     </ul>
+                 </div>
+             </div>
+
+             <!-- Card 4: Taskboard -->
+             <div class="card full-width">
+                 <div class="card-header">
+                     <span class="card-title">Taskboard</span>
+                     <button class="btn-secondary" onclick="createTask()">+ Task</button>
+                 </div>
+                 <div class="card-body">
+                     <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; min-height:200px;">
+                         <div class="task-col" data-status="backlog">
+                             <div class="col-head">Backlog</div>
+                             <div class="task-list" id="task-list-backlog"></div>
+                         </div>
+                         <div class="task-col" data-status="in_progress">
+                             <div class="col-head">In Arbeit</div>
+                             <div class="task-list" id="task-list-in_progress"></div>
+                         </div>
+                         <div class="task-col" data-status="done">
+                             <div class="col-head">Erledigt</div>
+                             <div class="task-list" id="task-list-done"></div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 5: DIV Queue -->
+             <div class="card full-width">
+                 <div class="card-header"><span class="card-title">DIV Queue (Änderungspakete)</span></div>
+                 <div class="card-body">
+                     <div style="display:flex; gap:10px; margin-bottom:10px;">
+                         <button class="btn-secondary" onclick="filterDivs('all')">Alle</button>
+                         <button class="btn-secondary" onclick="filterDivs('draft')">Draft</button>
+                         <button class="btn-secondary" onclick="filterDivs('review')">Review</button>
+                         <button class="btn-secondary" onclick="filterDivs('applied')">Applied</button>
+                     </div>
+                     <div id="mcp-div-list" class="item-list">
+                         <p class="empty-state">Lade Pakete...</p>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 6: Artefakte (Screenshots) -->
+             <div class="card full-width">
+                 <div class="card-header"><span class="card-title">Artefakte & Screenshots</span></div>
+                 <div class="card-body">
+                     <div id="mcp-artifacts-list" style="display:flex; gap:10px; overflow-x:auto; padding-bottom:10px;">
+                         <p class="empty-state">Lade Artefakte...</p>
+                     </div>
+                 </div>
+             </div>
+
+             <!-- Card 7: Logs -->
+             <div class="card full-width">
+                 <div class="card-header"><span class="card-title">Logs</span></div>
+                 <div class="card-body">
+                    <div id="mcp-logs" class="log-output" style="height: 200px;"></div>
+                 </div>
+             </div>
+          </div>
+        </div>
 
         <!-- USER DB -->
         <div id="view-users" class="view" data-testid="view-users">
@@ -732,6 +876,9 @@
                 <p style="font-size:0.8rem; color:var(--muted); margin-top:10px;">
                     Der Server verbindet sich mit dem Live-Chat dieses Users. Der Stream muss live sein.
                 </p>
+                <hr>
+                <p style="text-align:center; font-size:0.8rem; color:var(--muted);">oder</p>
+                <button class="btn-secondary" style="width:100%;" onclick="showView('mcp'); document.getElementById('modal-connect').classList.remove('active');">MCP Workshop öffnen</button>
             </div>
             <div class="modal-footer">
                 <button class="btn-secondary" onclick="document.getElementById('modal-connect').classList.remove('active')">Abbrechen</button>
@@ -762,7 +909,8 @@
             "settings-gifts": "Einstellungen: Geschenke",
             "overlays": "Overlays",
             "overlay-composer": "Overlay-Composer",
-            "users": "User DB"
+            "users": "User DB",
+            "mcp": "MCP - Master Control Program"
         };
 
         // --- CORE NAVIGATION ---
@@ -770,7 +918,7 @@
             // 1. Reset all Views and Navs
             document.querySelectorAll('.view').forEach(el => {
                 el.classList.remove('active');
-                el.style.display = '';
+                el.style.display = ''; // Reset inline display if toggled by CSS
             });
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -784,17 +932,6 @@
             const activeNav = document.querySelector(`.nav-item[data-view='${id}']`);
             if (activeNav) {
                 activeNav.classList.add('active');
-            } else {
-                console.warn("No nav item found for view:", id);
-            }
-
-            // Guard: Assert single active nav
-            const actives = document.querySelectorAll('.nav-item.active');
-            if(actives.length > 1) {
-                console.warn("FIX: Multiple active navs found. Cleaning up...");
-                actives.forEach(el => {
-                    if(el !== activeNav) el.classList.remove('active');
-                });
             }
 
             currentView = id;
@@ -808,9 +945,7 @@
             if(id === 'users') loadUsers(1);
             if(id === 'overlays') loadOverlaySettings();
             if(id === 'overlay-composer') initComposer();
-            if(id === 'settings-broadcast') {
-                 // Try to prefill lists if connected?
-            }
+            if(id === 'mcp') initMCPView();
 
             // If Dashboard, update iframe scale and render mock data if needed
             if(id === 'dashboard') {
@@ -818,6 +953,228 @@
                 if (!isConnected) {
                     checkMockData();
                 }
+            }
+        }
+
+        // --- MCP LOGIC ---
+        let mcpInterval = null;
+        let allDivs = [];
+
+        async function initMCPView() {
+            if(mcpInterval) clearInterval(mcpInterval);
+            mcpInterval = setInterval(updateMCPStatus, 2000);
+            updateMCPStatus();
+            loadMCPDivs();
+            loadCredentials();
+            loadTasks();
+            loadArtifacts();
+
+            document.getElementById('mcp-start-btn').onclick = async () => {
+                await fetch('/api/mcp/start', { method: 'POST' });
+                updateMCPStatus();
+            };
+            document.getElementById('mcp-stop-btn').onclick = async () => {
+                await fetch('/api/mcp/stop', { method: 'POST' });
+                updateMCPStatus();
+            };
+            document.getElementById('mcp-auth-test-btn').onclick = async () => {
+                const res = await fetch('/.well-known/oauth-authorization-server');
+                if(res.ok) {
+                    const data = await res.json();
+                    document.getElementById('mcp-auth-result').innerText = "OK: " + JSON.stringify(data, null, 2);
+                    document.getElementById('mcp-auth-result').style.color = "#4ade80";
+                } else {
+                    document.getElementById('mcp-auth-result').innerText = "Fehler: " + res.status;
+                    document.getElementById('mcp-auth-result').style.color = "#ef4444";
+                }
+            }
+        }
+
+        async function loadCredentials() {
+            // Get credentials
+            const res = await fetch('/api/auth/credentials');
+            const data = await res.json();
+            document.getElementById('mcp-client-id').value = data.clientId || "";
+            document.getElementById('mcp-client-secret').value = data.clientSecret || "";
+
+            // Get Discovery info for URL
+            const discRes = await fetch('/.well-known/oauth-authorization-server');
+            if (discRes.ok) {
+                const disc = await discRes.json();
+                document.getElementById('mcp-public-url').value = disc.issuer || "";
+            }
+        }
+
+        async function generateCredentials() {
+            if(!confirm("Neue Credentials generieren? Alte werden ungültig!")) return;
+            await fetch('/api/auth/credentials/generate', { method: 'POST' });
+            loadCredentials();
+        }
+
+        function copySecret() {
+            const id = document.getElementById('mcp-client-id').value;
+            navigator.clipboard.writeText(id);
+            alert("Client ID kopiert.");
+        }
+
+        async function loadTasks() {
+            try {
+                const res = await fetch('/api/mcp/tasks'); // Proxy
+                if(!res.ok) return;
+                const tasks = await res.json();
+
+                ['backlog', 'in_progress', 'done'].forEach(s => {
+                    const list = document.getElementById(`task-list-${s}`);
+                    list.innerHTML = "";
+                    tasks.filter(t => t.status === s).forEach(t => {
+                        const el = document.createElement('div');
+                        el.className = 'task-card';
+                        el.innerHTML = `<strong>${t.title}</strong><div style="font-size:0.7rem; color:var(--muted);">${new Date(t.updated).toLocaleTimeString()}</div>`;
+                        el.ondblclick = async () => {
+                            // Simple toggle status flow
+                            let next = 'in_progress';
+                            if(s === 'in_progress') next = 'done';
+                            if(s === 'done') next = 'backlog';
+                            await fetch(`/api/mcp/tasks/${t.id}`, { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({status: next})});
+                            loadTasks();
+                        };
+                        list.appendChild(el);
+                    });
+                });
+            } catch(e) { console.error("Tasks load error", e); }
+        }
+
+        async function createTask() {
+            const t = prompt("Task Titel:");
+            if(!t) return;
+            await fetch('/api/mcp/tasks', { method: 'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({title: t}) });
+            loadTasks();
+        }
+
+        async function loadArtifacts() {
+            // "Artefakte: Tests/Screens/Logs".
+            // Let's assume strict filenames for now as per requirements: "1_dashboard.png", etc.
+            const files = [
+                '1_dashboard.png', '2_einstellungen_system.png', '3_einstellungen_tts.png',
+                '4_einstellungen_overlay.png', '5_overlay_composer.png', '6_einstellungen_broadcast.png',
+                '7_einstellungen_chat.png', '8_einstellungen_befehle.png', '9_einstellungen_gifts.png',
+                '10_users.png', '11_mcp.png'
+            ];
+
+            const list = document.getElementById('mcp-artifacts-list');
+            list.innerHTML = "";
+            files.forEach(f => {
+                const div = document.createElement('div');
+                div.style.minWidth = "100px";
+                div.style.textAlign = "center";
+                div.innerHTML = `
+                    <a href="/artifacts/${f}" target="_blank">
+                        <img src="/artifacts/${f}" style="width:100px; height:60px; object-fit:cover; border:1px solid var(--border); border-radius:4px;" onerror="this.src='https://via.placeholder.com/100x60?text=Missing'">
+                    </a>
+                    <div style="font-size:0.6rem; margin-top:2px; overflow:hidden; text-overflow:ellipsis;">${f}</div>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        async function updateMCPStatus() {
+            if(currentView !== 'mcp') {
+                if(mcpInterval) clearInterval(mcpInterval);
+                return;
+            }
+            try {
+                const res = await fetch('/api/mcp/status');
+                const data = await res.json();
+                const dot = document.querySelector('#mcp-status-display .status-dot');
+                const text = document.querySelector('#mcp-status-display .status-text');
+                const details = document.getElementById('mcp-status-details');
+
+                if(data.status === 'running') {
+                    dot.className = 'status-dot running';
+                    text.innerText = "Läuft (PID: " + data.pid + ", Port: " + data.port + ")";
+                    details.innerHTML = `URL: ${data.url}<br>Uptime: Running`;
+
+                    // Fetch Logs
+                    const logsRes = await fetch('/api/mcp/logs');
+                    const logs = await logsRes.json();
+                    const logContainer = document.getElementById('mcp-logs');
+                    if (logs && logs.length > 0) {
+                        logContainer.innerText = logs.join('\n');
+                        logContainer.scrollTop = logContainer.scrollHeight;
+                    }
+
+                } else {
+                    dot.className = 'status-dot ' + (data.status === 'error' ? 'error' : '');
+                    text.innerText = data.status === 'stopped' ? "Gestoppt" : "Fehler";
+                    details.innerHTML = data.lastError ? `Fehler: ${data.lastError}` : '';
+                }
+            } catch(e) {
+                console.error(e);
+            }
+        }
+
+        async function loadMCPDivs() {
+             const list = document.getElementById('mcp-div-list');
+             try {
+                 const res = await fetch('/api/mcp/div'); // Proxies to MCP service
+                 if(res.status === 503) {
+                     list.innerHTML = "<p class='empty-state'>MCP Service läuft nicht.</p>";
+                     return;
+                 }
+                 const divs = await res.json();
+                 allDivs = divs;
+                 renderDivs(divs);
+             } catch(e) {
+                 list.innerHTML = "<p class='empty-state'>Verbindungsfehler</p>";
+             }
+        }
+
+        function filterDivs(filter) {
+            if(filter === 'all') renderDivs(allDivs);
+            else renderDivs(allDivs.filter(d => d.review.status.includes(filter) || d.review.status === filter));
+        }
+
+        function renderDivs(divs) {
+             const list = document.getElementById('mcp-div-list');
+             if(divs.length === 0) {
+                 list.innerHTML = "<p class='empty-state'>Keine Pakete gefunden.</p>";
+                 return;
+             }
+             list.innerHTML = "";
+             divs.forEach(div => {
+                 const item = document.createElement('div');
+                 item.className = 'card';
+                 item.style.marginBottom = '10px';
+                 item.style.padding = '10px';
+                 const planItems = div.plan ? div.plan.slice(0,3).map(p=>`<li>${p}</li>`).join('') : '';
+
+                 item.innerHTML = `
+                    <div style="display:flex; justify-content:space-between;">
+                        <strong>${div.titel}</strong>
+                        <span style="font-size:0.75rem; background:rgba(255,255,255,0.1); padding:2px 6px; border-radius:4px;">${div.review.status}</span>
+                    </div>
+                    <div style="font-size:0.8rem; color:var(--muted); margin-top:5px;">
+                        ${div.autor} • ${new Date(div.erstelltAm).toLocaleString()} • ${div.rolle}
+                    </div>
+                    <ul style="font-size:0.75rem; color:#bbb; padding-left:15px; margin:5px 0;">${planItems}</ul>
+                    <div style="display:flex; gap:10px; margin-top:10px;">
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'validate')">Validieren</button>
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'apply')" ${div.review.status === 'applied' ? 'disabled' : ''}>Anwenden</button>
+                        <button class="btn-secondary" onclick="mcpAction('${div.id}', 'rollback')" ${div.review.status !== 'applied' ? 'disabled' : ''}>Rollback</button>
+                    </div>
+                 `;
+                 list.appendChild(item);
+             });
+        }
+
+        async function mcpAction(id, action) {
+            const res = await fetch(`/api/mcp/div/${id}/${action}`, { method: 'POST' });
+            const data = await res.json();
+            if(res.ok) {
+                alert(action + " erfolgreich!");
+                loadMCPDivs();
+            } else {
+                alert("Fehler: " + (data.error || JSON.stringify(data)));
             }
         }
 

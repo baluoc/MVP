@@ -119,6 +119,15 @@ export const DEFAULT_CONFIG = {
     specialUsers: [] // [{ name: "agent_one", voice: "...", speed: 1.2 }]
   },
 
+  // MCP Configuration
+  mcp: {
+    url: "https://mcp.overhill-circle.de",
+    auth: {
+      clientId: "",
+      clientSecret: ""
+    }
+  },
+
   // Overlay System
   overlay: {
     activeSceneId: "default",
