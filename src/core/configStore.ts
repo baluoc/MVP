@@ -10,41 +10,67 @@ export const DEFAULT_CONFIG = {
   // Punktesystem
   points: {
     name: "Punkte",
-    coin: 10,       // 10 Punkte pro Coin (Wert)
-    share: 50,      // 50 Punkte pro Share
-    chat: 5,        // 5 Punkte pro Nachricht
-    subBonus: 10    // 10% Bonus für Abonnenten
+    coin: 10,
+    share: 50,
+    chat: 5,
+    subBonus: 10
   },
 
   // Level System
   levels: {
-    points: 100,        // Basis: 100 Punkte für Level 2
-    multiplier: 1.5     // Exponentieller Faktor
+    points: 100,
+    multiplier: 1.5
   },
 
   // Integrationen
-  obs: {
-    ip: "127.0.0.1",
-    port: 4455,
-    password: ""
-  },
-  streamerbot: {
-    address: "127.0.0.1",
-    port: 8080,
-    endpoint: "/"
-  },
+  obs: { ip: "127.0.0.1", port: 4455, password: "" },
+  streamerbot: { address: "127.0.0.1", port: 8080, endpoint: "/" },
 
-  // TTS (Text-zu-Sprache)
+  // TTS (Das Herzstück)
   tts: {
     enabled: false,
-    voice: "Google Deutsch",
-    volume: 1.0,
-    minLevel: 0,      // Ab welchem Level darf man sprechen?
-    readChat: false,  // Soll jeder Chat gelesen werden?
-    readGifts: true   // Sollen Geschenke gelesen werden?
+    language: "de-DE",
+    voice: "default",
+    randomVoice: true,
+    volume: 0.7,
+    speed: 1.0,
+    pitch: 1.0,
+
+    // Who
+    allowed: {
+      all: true,
+      follower: true,
+      sub: true,
+      mod: true,
+      team: true,
+      topGifters: true,
+      whitelist: [] // Liste von Usernamen
+    },
+
+    // When/Trigger
+    trigger: "any", // "any", "dot", "slash", "command"
+    command: "!tts",
+
+    // Cost
+    mode: "free", // "free", "cost"
+    costPerMsg: 5,
+
+    // Protection
+    spam: {
+      cooldown: 0,
+      maxQueue: 5,
+      maxChar: 300,
+      filterSpam: true,
+      filterMentions: false,
+      filterCommands: false
+    },
+
+    // Advanced
+    template: "{nickname} sagt {comment}",
+    specialUsers: [] // [{ name: "agent_one", voice: "...", speed: 1.2 }]
   },
 
-  // Overlay Widgets (Positionen)
+  // Overlay Widgets
   widgets: [
     { id: "chat", type: "chat", x: 20, y: 20, visible: true, scale: 1 },
     { id: "alert", type: "alert", x: 100, y: 100, visible: true, scale: 1 },
@@ -60,8 +86,15 @@ export class ConfigStore {
   }
 
   getCore() { return this.data; }
+
   setCore(newConf: any) {
-    this.data = { ...this.data, ...newConf };
+    // Deep Merge für verschachtelte Objekte wie 'tts'
+    this.data = {
+        ...this.data,
+        ...newConf,
+        tts: { ...this.data.tts, ...(newConf.tts || {}) },
+        points: { ...this.data.points, ...(newConf.points || {}) }
+    };
     this.save();
   }
 
@@ -95,18 +128,17 @@ export class ConfigStore {
       if (fs.existsSync(CONFIG_FILE)) {
         const raw = fs.readFileSync(CONFIG_FILE, "utf-8");
         const loaded = JSON.parse(raw);
-        // Merge mit Defaults, damit neue Felder (wie 'tts') vorhanden sind
-        this.data = { ...DEFAULT_CONFIG, ...loaded,
-            points: { ...DEFAULT_CONFIG.points, ...(loaded.points || {}) },
-            levels: { ...DEFAULT_CONFIG.levels, ...(loaded.levels || {}) },
-            tts: { ...DEFAULT_CONFIG.tts, ...(loaded.tts || {}) },
-            obs: { ...DEFAULT_CONFIG.obs, ...(loaded.obs || {}) }
-        };
+        // Merge mit Defaults
+        this.data = { ...DEFAULT_CONFIG, ...loaded };
+
+        // Sicherstellen, dass verschachtelte Objekte existieren
+        if(!this.data.tts) this.data.tts = DEFAULT_CONFIG.tts;
+        this.data.tts = { ...DEFAULT_CONFIG.tts, ...this.data.tts };
+
       } else {
         this.data = { ...DEFAULT_CONFIG };
       }
     } catch (e) {
-      console.error("[Config] Load failed, using defaults", e);
       this.data = { ...DEFAULT_CONFIG };
     }
   }
@@ -115,8 +147,6 @@ export class ConfigStore {
     try {
       if (!fs.existsSync("data")) fs.mkdirSync("data");
       fs.writeFileSync(CONFIG_FILE, JSON.stringify(this.data, null, 2));
-    } catch (e) {
-      console.error("[Config] Save failed", e);
-    }
+    } catch (e) { console.error("[Config] Save failed", e); }
   }
 }
