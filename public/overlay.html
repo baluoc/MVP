@@ -93,7 +93,11 @@
           stage.innerHTML = "";
           if (!config.scenes) return;
           const scene = config.scenes.find(s => s.id === activeSceneId);
-          if (!scene) return;
+          if (!scene) {
+             console.warn("Scene not found:", activeSceneId);
+             stage.innerHTML = `<div style="color:white; font-size:2rem; padding:50px;">Szene nicht gefunden: ${activeSceneId}</div>`;
+             return;
+          }
 
           widgets = scene.widgets || [];
           widgets.forEach(w => {

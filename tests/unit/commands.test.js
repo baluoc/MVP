@@ -1,11 +1,18 @@
-import { test } from 'node:test';
-import assert from 'node:assert';
-import { parseCommand, buildCommandResponse } from '../../src/core/commands';
+const { test } = require('node:test');
+const assert = require('node:assert');
+const { parseCommand, buildCommandResponse } = require('../../dist/src/core/commands');
 
 test('Command Logic', async (t) => {
 
     await t.test('parseCommand - basics', () => {
-        const conf = { commands: { builtIn: { score: { enabled: true, trigger: '!score' } } } };
+        // Mock full config structure to avoid crashes if code expects deeper nesting
+        const conf = {
+            commands: {
+                builtIn: {
+                    score: { enabled: true, trigger: '!score' }
+                }
+            }
+        };
 
         // Match
         const res = parseCommand('!score', conf);
