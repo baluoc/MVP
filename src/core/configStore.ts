@@ -121,7 +121,8 @@ export const DEFAULT_CONFIG = {
 
   // MCP Configuration
   mcp: {
-    url: "https://mcp.overhill-circle.de",
+    publicBaseUrl: "https://mcp.overhill-circle.de", // Was "url" - user requested "publicBaseUrl"
+    path: "/mcp",
     auth: {
       clientId: "",
       clientSecret: ""

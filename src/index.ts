@@ -11,7 +11,8 @@ import { ConfigStore } from "./core/configStore";
 import { RingBuffer } from "./core/ringbuffer";
 import { createApiRouter } from "./api/routes";
 import { parseCommand, buildCommandResponse } from "./core/commands";
-import { setupOAuth } from "./auth/oauth";
+import { setupOAuth, verifyAuth } from "./auth/oauth";
+import { mcpAdminRouter, mcpProxyHandler } from "./api/mcp";
 
 function getArg(name: string) {
   const i = process.argv.indexOf(name);
@@ -30,12 +31,21 @@ async function main() {
   const overlay = createOverlayServer(port, configStore);
 
   // Initialize OAuth Provider (Core) - must be before static to handle routes
-  // But wait, express.static is usually generic. Specific routes take precedence.
   setupOAuth(overlay.app, configStore);
 
   overlay.app.use(express.static("public"));
   overlay.app.use("/artifacts", express.static(path.join(process.cwd(), "jules_review", "verification")));
   overlay.app.use(express.json());
+
+  // UI Alias
+  overlay.app.get("/ui", (req, res) => res.redirect("/"));
+
+  // MCP Routes (Public Protocol Endpoint)
+  // Protected by OAuth verifyAuth
+  overlay.app.post("/mcp", verifyAuth, mcpProxyHandler);
+
+  // MCP Admin Alias
+  overlay.app.use("/mcp-admin", mcpAdminRouter);
 
   // Core Systems
   const bus = new EventBus();
