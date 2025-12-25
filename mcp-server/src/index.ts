@@ -5,6 +5,11 @@ import fs from 'fs';
 import { validateDIV } from './div/validator';
 import { applyDIV, rollbackDIV } from './div/applier';
 import { DIVPacket } from './div/validator'; // Re-export type
+import { handleMCPRequest } from './mcp/protocol';
+
+// Redirect console.log to stderr to keep stdout clean for potential stdio transport
+const originalLog = console.log;
+console.log = console.error;
 
 const app = express();
 app.use(express.json());
@@ -44,7 +49,13 @@ app.get('/mcp/status', (req, res) => {
   res.json({ status: 'running', port, pid: process.pid, cwd: ROOT_DIR });
 });
 
-// DIV Queue
+// MCP Protocol Endpoint
+app.post('/mcp', async (req, res) => {
+    const response = await handleMCPRequest(req.body);
+    res.json(response);
+});
+
+// DIV Queue (REST - maintained for UI)
 app.get('/mcp/div', (req, res) => {
     res.json(listDIVs());
 });
